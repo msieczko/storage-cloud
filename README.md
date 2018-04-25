@@ -1,3 +1,5 @@
+### Protokół
+
 Funkcja | Komenda klienta | Komenda admina | Odpowiedź serwera
 --- | --- | --- | ---
 Logowanie | LOGIN username pass | <- | LOGGED sid warn_count [warn_list]
