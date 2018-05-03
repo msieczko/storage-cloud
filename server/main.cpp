@@ -38,7 +38,7 @@ int  main(int argc, char **argv)
 
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = INADDR_ANY;
-    server.sin_port = 0;
+    server.sin_port = htons(52137);
     if (bind(sock, (struct sockaddr *) &server, sizeof server)
         == -1) {
         perror("binding stream socket");
@@ -95,7 +95,7 @@ int  main(int argc, char **argv)
         * gniazdo sock nie zostanie nigdy zamkniete jawnie,
         * jednak wszystkie deskryptory zostana zamkniete gdy proces 
         * zostanie zakonczony (np w wyniku wystapienia sygnalu) 
-        */
+    */
 
         exit(0);
 }

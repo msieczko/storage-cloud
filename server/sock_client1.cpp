@@ -9,6 +9,8 @@
 
 #define DATA "Half a league, half a league . . ."
 
+#define DATA2 "XDHalf a league, half a league . . .XDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXD"
+
 int main(int argc, char *argv[])
 {
     int sock;
@@ -43,5 +45,10 @@ int main(int argc, char *argv[])
     if (write( sock, DATA, sizeof DATA ) == -1)
 
         perror("writing on stream socket");
+    
+    sleep(10);
+    
+    write( sock, DATA2, sizeof DATA2 );
+    
     close(sock);
     exit(0);}
