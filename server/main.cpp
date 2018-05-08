@@ -129,8 +129,8 @@ void server() {
         if (rv == -1) {
             break;
         } else if (rv != 0) {
-            unsigned int len;
             struct sockaddr_in clientaddr;
+            unsigned int len = sizeof(clientaddr);
 
             msgsock = accept(sock, (struct sockaddr *) &clientaddr, &len);
 
