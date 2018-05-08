@@ -6,33 +6,94 @@
 #include <sys/socket.h>
 #include <stdlib.h>
 #include <string.h>
+#include <arpa/inet.h>
+#include <iostream>
+#include <signal.h>
+#include <vector>
 
-#define TRUE 1
-#define READ_SIZE 20
-#define MAX_FDS 20
+using namespace std;
+
 #define max(a,b) (((a)>(b)) ? (a):(b))
 
-int main(int argc, char **argv) {
+volatile bool should_exit = false;
+
+void sig_handler(int signo)
+{
+    if (signo == SIGTERM) {
+        printf("received SIGTERM\n");
+        should_exit = true;
+    }
+}
+
+void process(int sock) {
+    int n;
+    char buffer[256];
+    bzero(buffer, 256);
+
+    fd_set set;
+    struct timeval timeout;
+    int rv;
+
+    while(!should_exit) {
+        FD_ZERO(&set); /* clear the set */
+        FD_SET(sock, &set); /* add our file descriptor to the set */
+        timeout.tv_sec = 2;
+        timeout.tv_usec = 0;
+        rv = select(sock + 1, &set, NULL, NULL, &timeout);
+
+        if (rv == -1) {
+            break;
+        } else if (rv != 0) {
+            bzero(buffer, 256);
+            n = read(sock, buffer, 255);
+
+            if (n == 0) {
+                printf("no new data, closing\n");
+                break;
+            }
+
+            if (n < 0) {
+                perror("ERROR reading from socket");
+                break;
+            }
+
+            cout<<"Message: "<<buffer<<endl;
+
+            for(int i = 0; i < n; i++) {
+                if (buffer[i] >= 'a' && buffer[i] <= 'z') {
+                    buffer[i] -= 32;
+                } else if (buffer[i] >= 'A' && buffer[i] <= 'Z') {
+                    buffer[i] += 32;
+                }
+            }
+
+            cout<<"Sending: "<<buffer<<endl;
+            n = write(sock, buffer, n);
+            cout<<"Sent "<<n<<" bytes"<<endl;
+        }
+    }
+
+    cout<<"closed connection process"<<endl;
+
+    close(sock);
+}
+
+void server() {
+    if (signal(SIGTERM, sig_handler) == SIG_ERR)
+        printf("\ncan't catch SIGTERM\n");
+
     int sock;
     unsigned int length;
     struct sockaddr_in server;
-    fd_set ready;
-    struct timeval to;
-    int msgsock = -1, nfds, nactive;
-    int socktab[MAX_FDS];
-    char buf[1024];
-    int rval = 0;
+    int msgsock = -1;
 
-    for (int i = 0; i < MAX_FDS; i++)
-        socktab[i] = 0;
+    vector <pid_t> threads;
 
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == -1) {
         perror("opening stream socket");
         exit(1);
     }
-        
-    nfds = sock+1;
 
     /* dowiaz adres do gniazda */
 
@@ -45,64 +106,90 @@ int main(int argc, char **argv) {
     }
 
     /* wydrukuj na konsoli przydzielony port */
-    length = sizeof( server);
+    length = sizeof(server);
     if (getsockname(sock,(struct sockaddr *) &server, &length) == -1) {
         perror("getting socket name");
         exit(1);
     }
     printf("Socket port #%d\n", ntohs(server.sin_port));
 
-    /* zacznij przyjmowaæ polaczenia... */
     listen(sock, 5);
 
-    do {
-        FD_ZERO(&ready);
-        FD_SET(sock, &ready);
-        for (int i = 0; i < MAX_FDS; i++) /* dodaj aktywne do zbioru */
-            if (socktab[i] > 0)
-                FD_SET(socktab[i], &ready);
-        to.tv_sec = 5;
-        to.tv_usec = 0;
-        if ((nactive=select(nfds, &ready, (fd_set *)0, (fd_set *)0, &to)) == -1) {
-            perror("select");
-            continue;
-        }
+    fd_set set;
+    struct timeval timeout;
+    int rv;
 
-        if (FD_ISSET(sock, &ready)) {
-            msgsock = accept(sock, (struct sockaddr *)0, (unsigned int *)0);
+    do {
+        FD_ZERO(&set); /* clear the set */
+        FD_SET(sock, &set); /* add our file descriptor to the set */
+        timeout.tv_sec = 2;
+        timeout.tv_usec = 0;
+        rv = select(sock + 1, &set, NULL, NULL, &timeout);
+
+        if (rv == -1) {
+            break;
+        } else if (rv != 0) {
+            unsigned int len;
+            struct sockaddr_in clientaddr;
+
+            msgsock = accept(sock, (struct sockaddr *) &clientaddr, &len);
+
             if (msgsock == -1)
                 perror("accept");
             else {
-                nfds = max(nfds, msgsock + 1); /* brak sprawdzenia czy msgsock>MAX_FDS */
-                socktab[msgsock] = msgsock;
-                printf("accepted...\n");
-            }
-        } 
-        
-        for (int i = 0; i < MAX_FDS; i++)
-            if ((msgsock=socktab[i]) > 0 && FD_ISSET(socktab[i], &ready)) {
-                memset(buf, 0, sizeof buf);
-                if ((rval = read(msgsock, buf, READ_SIZE)) == -1)
-                    perror("reading stream message");
-                if (rval == 0) {
-                    printf("Ending connection\n");
-                    close(msgsock);
-                    socktab[msgsock] = -1;
+                printf("accepted connection from %s:%d\n", inet_ntoa(clientaddr.sin_addr),
+                       (int) ntohs(clientaddr.sin_port));
+                int pid = fork();
+
+                if (pid < 0) {
+                    perror("ERROR on fork");
+                } else if (pid == 0) {
+                    close(sock);
+                    process(msgsock);
+                    exit(0);
                 } else {
-                    printf("- %2d ->%s\n", msgsock, buf);
-                    sleep( 1 );
+                    threads.push_back(pid);
+                    close(msgsock);
                 }
             }
-            
-        if (nactive == 0)
-            printf("Timeout, restarting select...\n");
-    } while(TRUE);
+        }
+    } while(!should_exit);
 
-    /*
-        * gniazdo sock nie zostanie nigdy zamkniete jawnie,
-        * jednak wszystkie deskryptory zostana zamkniete gdy proces 
-        * zostanie zakonczony (np w wyniku wystapienia sygnalu) 
-    */
+    cout<<"closing all connections"<<endl;
 
-    exit(0);
+    for(int i = 0; i < threads.size(); i++) {
+        kill(threads[i], SIGTERM);
+    }
+
+    close(sock);
+
+    cout<<"closed main server process"<<endl;
+}
+
+int main(int argc, char **argv) {
+    int server_pid = fork();
+
+    if (server_pid < 0) {
+        perror("ERROR starting server");
+    } else if (server_pid == 0) {
+        server();
+        exit(0);
+    }
+
+    string cmd;
+
+    while(1) {
+        cout<<"> "<<flush;
+        cin>>cmd;
+
+        if (cmd == "exit") {
+            cout<<"closing server"<<endl;
+            break;
+        }
+    }
+
+    kill(server_pid, SIGTERM);
+
+    cout<<"server closed"<<endl;
+    return 0;
 }

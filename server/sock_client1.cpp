@@ -46,9 +46,10 @@ int main(int argc, char *argv[])
 
         perror("writing on stream socket");
     
-    sleep(10);
+    sleep(30);
     
     write( sock, DATA2, sizeof DATA2 );
     
     close(sock);
-    exit(0);}
+    exit(0);
+}
