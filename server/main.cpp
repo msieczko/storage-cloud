@@ -10,12 +10,29 @@
 #include <iostream>
 #include <signal.h>
 #include <vector>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <errno.h>
 
 using namespace std;
 
 #define max(a,b) (((a)>(b)) ? (a):(b))
 
 volatile bool should_exit = false;
+volatile int last_sig_pid = 0;
+
+struct connection {
+    pid_t pid;
+    string addr;
+    int port;
+};
+
+static void hdl (int sig, siginfo_t *siginfo, void *context)
+{
+    if(sig == SIGINT) {
+        last_sig_pid = siginfo->si_pid;
+    }
+}
 
 void sig_handler(int signo)
 {
@@ -23,9 +40,13 @@ void sig_handler(int signo)
         printf("received SIGTERM\n");
         should_exit = true;
     }
+    
+    if (signo == SIGINT) {
+        printf("received SIGUSR1\n");
+    }
 }
 
-void process(int sock) {
+void process(int sock, int server_pid) {
     int n;
     char buffer[256];
     bzero(buffer, 256);
@@ -79,15 +100,24 @@ void process(int sock) {
 }
 
 void server() {
+    struct sigaction act;
+    memset (&act, '\0', sizeof(act));
+    act.sa_sigaction = &hdl;
+    act.sa_flags = SA_RESTART | SA_SIGINFO;
+    if (sigaction(SIGINT, &act, NULL) < 0) {
+        perror ("sigaction");
+    }
+    
+    int server_pid = getpid();
     if (signal(SIGTERM, sig_handler) == SIG_ERR)
         printf("\ncan't catch SIGTERM\n");
-
+    
     int sock;
     unsigned int length;
     struct sockaddr_in server;
     int msgsock = -1;
-
-    vector <pid_t> threads;
+    
+    vector <connection> threads;
 
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == -1) {
@@ -127,7 +157,21 @@ void server() {
         rv = select(sock + 1, &set, NULL, NULL, &timeout);
 
         if (rv == -1) {
-            break;
+            if(errno == EINTR) {
+                if(should_exit) {
+                    break;
+                } else {
+                    if(last_sig_pid == getppid()) {
+                        cout<<"There are "<<threads.size()<<" connections active:"<<endl;
+                        for(int i = 0; i < threads.size(); i++) {
+                            cout<<"["<<threads[i].pid<<"] "<<threads[i].addr<<":"<<threads[i].port<<endl;
+                        }
+                    }
+                }
+            } else {
+                perror("select");
+                break;
+            }
         } else if (rv != 0) {
             struct sockaddr_in clientaddr;
             unsigned int len = sizeof(clientaddr);
@@ -145,20 +189,39 @@ void server() {
                     perror("ERROR on fork");
                 } else if (pid == 0) {
                     close(sock);
-                    process(msgsock);
+                    process(msgsock, server_pid);
                     exit(0);
                 } else {
-                    threads.push_back(pid);
+                    connection tmp;
+                    tmp.pid = pid;
+                    tmp.addr = inet_ntoa(clientaddr.sin_addr);
+                    tmp.port = (int) ntohs(clientaddr.sin_port);
+                    threads.push_back(tmp);
                     close(msgsock);
                 }
             }
         }
+        
+        int waitstatus;
+        
+        int died_pid = waitpid(-1, &waitstatus, WNOHANG);
+        
+        if(died_pid > 0) {
+            for(int i=0; i<threads.size(); i++) {
+                if(threads[i].pid == died_pid) {
+                    threads.erase(threads.begin() + i);
+                    cout<<"removed connection"<<endl;
+                    break;
+                }
+            }
+        }
+        
     } while(!should_exit);
 
-    cout<<"closing all connections"<<endl;
+    cout<<"closing all connections "<<should_exit<<endl;
 
     for(int i = 0; i < threads.size(); i++) {
-        kill(threads[i], SIGTERM);
+        kill(threads[i].pid, SIGTERM);
     }
 
     close(sock);
@@ -185,6 +248,14 @@ int main(int argc, char **argv) {
         if (cmd == "exit") {
             cout<<"closing server"<<endl;
             break;
+        }
+        
+        if (cmd == "list") {
+            kill(server_pid, SIGINT);
+        }
+        
+        if (cmd == "help") {
+            cout<<"Available commands:\n  exit - closes server\n  list - lists active connections"<<endl;
         }
     }
 
