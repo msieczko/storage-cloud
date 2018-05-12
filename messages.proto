@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package StorageCloud;
+
+message Param {
+    string paramId = 1;
+    oneof value {
+        string SParamVal = 2;
+        int64 IParamVal = 3;
+    }
+}
+
+message Command {
+    // TODO uzupelnic wszystkie typy
+    enum CommandType {
+        LOGIN = 0;
+        RELOGIN = 1;
+        LOGOUT = 2;
+        REGISTER = 3;
+        STAT = 4;
+        LIST_FILES = 5;
+    }
+
+    CommandType type = 1;
+
+    repeated Param params = 2;
+
+    // używane do list plików/użytkowników/etc
+    repeated string list = 3;
+
+    bytes data = 4;
+}
+
+message EncodedMessage {
+    int64 dataSize = 1;
+    bytes hash = 2;
+    bytes data = 3;
+}
+
+message File {
+    string name = 1;
+    int64 size = 2;
+    repeated Param metadata = 3;
+}
+
+message ServerResponse {
+    enum ResponseType {
+        OK = 0;
+        ERROR = 1;
+        LOGGED = 2;
+        STAT = 3;
+        FILES = 4;
+        SHARED = 5;
+        DATA = 6;
+        CAN_SEND = 7;
+    }
+
+    ResponseType type = 1;
+
+    repeated Param params = 2;
+
+    repeated string list = 3;
+
+    repeated File fileList = 4;
+
+    bytes data = 5;
+}
