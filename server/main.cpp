@@ -1,20 +1,29 @@
-#include <netinet/in.h>
-#include <netdb.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include <arpa/inet.h>
+#include <cerrno>
+#include <csignal>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <iostream>
-#include <signal.h>
-#include <vector>
-#include <sys/types.h>
-#include <sys/wait.h>
+#include <netdb.h>
+#include <netinet/in.h>
 #include <sys/shm.h>
 #include <sys/socket.h>
-#include <errno.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <sys/types.h>
+#include <bits/ipc.h>
+
+#include <google/protobuf/message.h>
+#include <google/protobuf/descriptor.h>
+#include <google/protobuf/io/zero_copy_stream_impl.h>
+#include <google/protobuf/io/coded_stream.h>
+#include <google/protobuf/io/zero_copy_stream_impl_lite.h>
+
+#include "protbuf/messages.pb.h"
 
 #define MAX_CONNECTIONS 10
+#define MAX_PACKET_SIZE 4096
 
 using namespace std;
 
@@ -45,6 +54,15 @@ void sig_handler(int signo)
     }
 }
 
+void parseMessage(char buf[], int len) {
+    StorageCloud::EncodedMessage msg;
+    msg.ParseFromArray(buf, len);
+    cout<<"Parsing message"<<endl;
+    cout<<"size: "<<msg.datasize()<<endl;
+    cout<<"hash: "<<msg.hash()<<endl;
+    cout<<"data: "<<msg.data()<<endl;
+}
+
 void process(int sock, int server_pid) {
     ssize_t n;
     char buffer[256];
@@ -53,6 +71,8 @@ void process(int sock, int server_pid) {
     fd_set set;
     struct timeval timeout;
     int rv;
+
+    bool message_in_progress = false;
 
     while(!should_exit) {
         FD_ZERO(&set); /* clear the set */
@@ -65,7 +85,8 @@ void process(int sock, int server_pid) {
             break;
         } else if (rv != 0) {
             bzero(buffer, 256);
-            n = read(sock, buffer, 255);
+
+            n = read(sock, buffer, 4);
 
             if (n == 0) {
                 printf("no new data, closing\n");
@@ -77,19 +98,29 @@ void process(int sock, int server_pid) {
                 break;
             }
 
-            cout<<"Message: "<<buffer<<endl;
+            int size = ((buffer[0]<<24)|(buffer[1]<<16)|(buffer[2]<<8)|(buffer[3]));
 
-            for(int i = 0; i < n; i++) {
-                if (buffer[i] >= 'a' && buffer[i] <= 'z') {
-                    buffer[i] -= 32;
-                } else if (buffer[i] >= 'A' && buffer[i] <= 'Z') {
-                    buffer[i] += 32;
-                }
-            }
+            cout<<"Size: "<<size<<endl;
 
-            cout<<"Sending: "<<buffer<<endl;
-            n = write(sock, buffer, n);
-            cout<<"Sent "<<n<<" bytes"<<endl;
+            n = recv(sock, buffer, size - 4, MSG_WAITALL);
+
+            cout<<"got all data"<<endl;
+
+            parseMessage(buffer, size);
+
+//            for(int i = 0; i < n; i++) {
+//                if (buffer[i] >= 'a' && buffer[i] <= 'z') {
+//                    buffer[i] -= 32;
+//                } else if (buffer[i] >= 'A' && buffer[i] <= 'Z') {
+//                    buffer[i] += 32;
+//                }
+//            }
+
+
+
+//            cout<<"Sending: "<<buffer<<endl;
+//            n = write(sock, buffer, n);
+//            cout<<"Sent "<<n<<" bytes"<<endl;
         }
     }
 
