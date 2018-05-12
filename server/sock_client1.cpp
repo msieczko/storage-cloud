@@ -6,10 +6,23 @@
 #include <sys/socket.h>
 #include <stdlib.h>
 #include <string.h>
+#include <iostream>
+
+#include <google/protobuf/message.h>
+#include <google/protobuf/descriptor.h>
+#include <google/protobuf/io/zero_copy_stream_impl.h>
+#include <google/protobuf/io/coded_stream.h>
+#include <google/protobuf/io/zero_copy_stream_impl_lite.h>
+
+#include "protbuf/messages.pb.h"
 
 #define DATA "Half a league, half a league . . ."
 
 #define DATA2 "XDHalf a league, half a league . . .XDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXD"
+
+using namespace google::protobuf::io;
+
+using namespace std;
 
 int main(int argc, char *argv[])
 {
@@ -42,14 +55,35 @@ int main(int argc, char *argv[])
         perror("connecting stream socket");
         exit(1);
     }
-    if (write( sock, DATA, sizeof DATA ) == -1)
+
+    StorageCloud::EncodedMessage msg;
+    msg.set_hash("lel nice");
+    msg.set_datasize(1234567890);
+    msg.set_data("welp XD");
+
+    msg.SerializeToArray(buf+4, 1020);
+
+    int siz = msg.ByteSize() + 4;
+
+    cout<<"size: "<<siz<<" ("<<siz-4<<"+4)"<<endl;
+
+    buf[3] = siz & 0xFF;
+    buf[2] = (siz >> 8) & 0xFF;
+    buf[1] = (siz >> 16) & 0xFF;
+    buf[0] = (siz >> 24) & 0xFF;
+
+    if (write( sock, buf, siz ) == -1)
 
         perror("writing on stream socket");
-    
-    sleep(3);
-    
-    write( sock, DATA2, sizeof DATA2 );
-    
+
+//    if (write( sock, DATA, sizeof DATA ) == -1)
+//
+//        perror("writing on stream socket");
+//
+//    sleep(3);
+//
+//    write( sock, DATA2, sizeof DATA2 );
+//
     close(sock);
     exit(0);
 }
