@@ -8,6 +8,12 @@ using namespace google::protobuf::io;
 
 using namespace std;
 
+void encrypt(const uint8_t in[], uint8_t out[], int len) {
+    for(int i=0; i<len; i++) {
+        out[i] = (uint8_t) (in[i]+1);
+    }
+}
+
 int main(int argc, char *argv[])
 {
     int sock;
@@ -41,9 +47,18 @@ int main(int argc, char *argv[])
     }
 
     StorageCloud::EncodedMessage msg;
-    msg.set_hash("lel nice");
-    msg.set_datasize(1234567890);
-    msg.set_data("welp XD");
+
+    uint8_t hash[HASH_SIZE];
+    unsigned char data[30] = "bardzo wazne dane XDXDddddddd";
+    uint8_t edata[30];
+
+    encrypt(data, edata, 30);
+
+    SHA512(edata, 30, hash);
+
+    msg.set_hash((char*)hash, HASH_SIZE);
+    msg.set_datasize(sizeof(edata));
+    msg.set_data((char*)edata, sizeof(edata));
 
     msg.SerializeToArray(buf+4, 1020);
 
