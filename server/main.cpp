@@ -1,9 +1,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <stdio.h>
-#include <sys/types.h>
 #include <unistd.h>
-#include <sys/socket.h>
 #include <stdlib.h>
 #include <string.h>
 #include <arpa/inet.h>
@@ -12,27 +10,28 @@
 #include <vector>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/shm.h>
+#include <sys/socket.h>
 #include <errno.h>
+
+#define MAX_CONNECTIONS 10
 
 using namespace std;
 
-#define max(a,b) (((a)>(b)) ? (a):(b))
-
 volatile bool should_exit = false;
-volatile int last_sig_pid = 0;
 
 struct connection {
     pid_t pid;
-    string addr;
+    char addr[25];
     int port;
 };
 
-static void hdl (int sig, siginfo_t *siginfo, void *context)
-{
-    if(sig == SIGINT) {
-        last_sig_pid = siginfo->si_pid;
-    }
-}
+struct shm_data {
+    connection connections[MAX_CONNECTIONS];
+    int active_connections;
+};
+
+#define SHMSIZE sizeof(shm_data)
 
 void sig_handler(int signo)
 {
@@ -47,7 +46,7 @@ void sig_handler(int signo)
 }
 
 void process(int sock, int server_pid) {
-    int n;
+    ssize_t n;
     char buffer[256];
     bzero(buffer, 256);
 
@@ -60,7 +59,7 @@ void process(int sock, int server_pid) {
         FD_SET(sock, &set); /* add our file descriptor to the set */
         timeout.tv_sec = 2;
         timeout.tv_usec = 0;
-        rv = select(sock + 1, &set, NULL, NULL, &timeout);
+        rv = select(sock + 1, &set, nullptr, nullptr, &timeout);
 
         if (rv == -1) {
             break;
@@ -99,15 +98,7 @@ void process(int sock, int server_pid) {
     close(sock);
 }
 
-void server() {
-    struct sigaction act;
-    memset (&act, '\0', sizeof(act));
-    act.sa_sigaction = &hdl;
-    act.sa_flags = SA_RESTART | SA_SIGINFO;
-    if (sigaction(SIGINT, &act, NULL) < 0) {
-        perror ("sigaction");
-    }
-    
+void server(shm_data* shm) {
     int server_pid = getpid();
     if (signal(SIGTERM, sig_handler) == SIG_ERR)
         printf("\ncan't catch SIGTERM\n");
@@ -116,8 +107,6 @@ void server() {
     unsigned int length;
     struct sockaddr_in server;
     int msgsock = -1;
-    
-    vector <connection> threads;
 
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == -1) {
@@ -154,24 +143,10 @@ void server() {
         FD_SET(sock, &set); /* add our file descriptor to the set */
         timeout.tv_sec = 2;
         timeout.tv_usec = 0;
-        rv = select(sock + 1, &set, NULL, NULL, &timeout);
+        rv = select(sock + 1, &set, nullptr, nullptr, &timeout);
 
         if (rv == -1) {
-            if(errno == EINTR) {
-                if(should_exit) {
-                    break;
-                } else {
-                    if(last_sig_pid == getppid()) {
-                        cout<<"There are "<<threads.size()<<" connections active:"<<endl;
-                        for(int i = 0; i < threads.size(); i++) {
-                            cout<<"["<<threads[i].pid<<"] "<<threads[i].addr<<":"<<threads[i].port<<endl;
-                        }
-                    }
-                }
-            } else {
-                perror("select");
-                break;
-            }
+            break;
         } else if (rv != 0) {
             struct sockaddr_in clientaddr;
             unsigned int len = sizeof(clientaddr);
@@ -192,11 +167,14 @@ void server() {
                     process(msgsock, server_pid);
                     exit(0);
                 } else {
-                    connection tmp;
-                    tmp.pid = pid;
-                    tmp.addr = inet_ntoa(clientaddr.sin_addr);
-                    tmp.port = (int) ntohs(clientaddr.sin_port);
-                    threads.push_back(tmp);
+                    string tmp_addr;
+                    connection* new_connection = &shm->connections[shm->active_connections];
+                    new_connection->pid = pid;
+                    tmp_addr = inet_ntoa(clientaddr.sin_addr);
+                    tmp_addr.copy(new_connection->addr, tmp_addr.size());
+                    new_connection->addr[tmp_addr.size()] = 0;
+                    new_connection->port = (int) ntohs(clientaddr.sin_port);
+                    shm->active_connections++;
                     close(msgsock);
                 }
             }
@@ -207,12 +185,18 @@ void server() {
         int died_pid = waitpid(-1, &waitstatus, WNOHANG);
         
         if(died_pid > 0) {
-            for(int i=0; i<threads.size(); i++) {
-                if(threads[i].pid == died_pid) {
-                    threads.erase(threads.begin() + i);
-                    cout<<"removed connection"<<endl;
-                    break;
+            bool found = false;
+            for(int i=0; i<shm->active_connections; i++) {
+                if (shm->connections[i].pid == died_pid) {
+                    found = true;
+                    shm->active_connections--;
                 }
+                if (found) {
+                    shm->connections[i] = shm->connections[i+1];
+                }
+            }
+            if(found) {
+                cout<<"removed connection"<<endl;
             }
         }
         
@@ -220,8 +204,8 @@ void server() {
 
     cout<<"closing all connections "<<should_exit<<endl;
 
-    for(int i = 0; i < threads.size(); i++) {
-        kill(threads[i].pid, SIGTERM);
+    for(int i = 0; i < shm->active_connections; i++) {
+        kill(shm->connections[i].pid, SIGTERM);
     }
 
     close(sock);
@@ -230,18 +214,26 @@ void server() {
 }
 
 int main(int argc, char **argv) {
+    int shmid;
+    shm_data *shm;
+
+    shmid = shmget(2010, SHMSIZE, 0666 | IPC_CREAT);
+    shm = (shm_data *) shmat(shmid, nullptr, 0);
+
+    shm->active_connections = 0;
+
     int server_pid = fork();
 
     if (server_pid < 0) {
         perror("ERROR starting server");
     } else if (server_pid == 0) {
-        server();
+        server(shm);
         exit(0);
     }
 
     string cmd;
 
-    while(1) {
+    while(true) {
         cout<<"> "<<flush;
         cin>>cmd;
 
@@ -251,7 +243,12 @@ int main(int argc, char **argv) {
         }
         
         if (cmd == "list") {
-            kill(server_pid, SIGINT);
+            cout<<"There are "<<shm->active_connections<<" active connections"<<endl;
+            for(int i=0; i<shm->active_connections; i++) {
+                cout<<"["<<shm->connections[i].pid<<"] ";
+                cout<<shm->connections[i].addr<<":";
+                cout<<shm->connections[i].port<<endl;
+            }
         }
         
         if (cmd == "help") {
@@ -260,6 +257,11 @@ int main(int argc, char **argv) {
     }
 
     kill(server_pid, SIGTERM);
+
+    waitpid(server_pid, nullptr, 0);
+
+    shmdt(shm);
+    shmctl(shmid, IPC_RMID, nullptr);
 
     cout<<"server closed"<<endl;
     return 0;

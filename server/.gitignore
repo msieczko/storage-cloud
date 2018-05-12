@@ -1,0 +1,5 @@
+server
+client
+Makefile
+cmake-build-debug
+build/
