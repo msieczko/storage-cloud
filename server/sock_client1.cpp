@@ -1,20 +1,4 @@
-#include <netinet/in.h>
-#include <netdb.h>
-#include <stdio.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <stdlib.h>
-#include <string.h>
-#include <iostream>
-
-#include <google/protobuf/message.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/io/zero_copy_stream_impl.h>
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/io/zero_copy_stream_impl_lite.h>
-
-#include "protbuf/messages.pb.h"
+#include "main.h"
 
 #define DATA "Half a league, half a league . . ."
 
@@ -63,7 +47,7 @@ int main(int argc, char *argv[])
 
     msg.SerializeToArray(buf+4, 1020);
 
-    int siz = msg.ByteSize() + 4;
+    uint32_t siz = msg.ByteSize() + 4;
 
     cout<<"size: "<<siz<<" ("<<siz-4<<"+4)"<<endl;
 

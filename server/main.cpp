@@ -1,29 +1,6 @@
-#include <cerrno>
-#include <csignal>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <iostream>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <sys/shm.h>
-#include <sys/socket.h>
-#include <sys/wait.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <sys/types.h>
-#include <bits/ipc.h>
-
-#include <google/protobuf/message.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/io/zero_copy_stream_impl.h>
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/io/zero_copy_stream_impl_lite.h>
-
-#include "protbuf/messages.pb.h"
+#include "main.h"
 
 #define MAX_CONNECTIONS 10
-#define MAX_PACKET_SIZE 4096
 
 using namespace std;
 
@@ -54,7 +31,7 @@ void sig_handler(int signo)
     }
 }
 
-void parseMessage(char buf[], int len) {
+void parseMessage(uint8_t buf[], int len) {
     StorageCloud::EncodedMessage msg;
     msg.ParseFromArray(buf, len);
     cout<<"Parsing message"<<endl;
@@ -65,14 +42,12 @@ void parseMessage(char buf[], int len) {
 
 void process(int sock, int server_pid) {
     ssize_t n;
-    char buffer[256];
-    bzero(buffer, 256);
+    uint8_t buffer[MAX_PACKET_SIZE];
+    uint8_t size_buf[4];
 
     fd_set set;
     struct timeval timeout;
     int rv;
-
-    bool message_in_progress = false;
 
     while(!should_exit) {
         FD_ZERO(&set); /* clear the set */
@@ -84,9 +59,8 @@ void process(int sock, int server_pid) {
         if (rv == -1) {
             break;
         } else if (rv != 0) {
-            bzero(buffer, 256);
 
-            n = read(sock, buffer, 4);
+            n = read(sock, size_buf, 4);
 
             if (n == 0) {
                 printf("no new data, closing\n");
@@ -98,13 +72,18 @@ void process(int sock, int server_pid) {
                 break;
             }
 
-            int size = ((buffer[0]<<24)|(buffer[1]<<16)|(buffer[2]<<8)|(buffer[3]));
+            uint32_t size = ((size_buf[0]<<24)|(size_buf[1]<<16)|(size_buf[2]<<8)|(size_buf[3]));
 
             cout<<"Size: "<<size<<endl;
 
+            if(size > MAX_PACKET_SIZE - 4) {
+                cout<<"message too big"<<endl;
+                break;
+            }
+
             n = recv(sock, buffer, size - 4, MSG_WAITALL);
 
-            cout<<"got all data"<<endl;
+            cout<<"got all data ("<<n<<")"<<endl;
 
             parseMessage(buffer, size);
 
