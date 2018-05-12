@@ -31,13 +31,84 @@ void sig_handler(int signo)
     }
 }
 
+void calculateHash(const uint8_t buf[], int len, uint8_t digest[]) {
+    SHA512(buf, (size_t) len, digest);
+}
+
+bool compareHash(const uint8_t hash1[], const uint8_t hash2[]) {
+    for(int i=0; i<HASH_SIZE; i++) {
+        if(hash1[i] != hash2[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+string printHash(const uint8_t hash[]) {
+    string wyn;
+    char buf[2];
+    for(int i=0; i<HASH_SIZE; i++) {
+        sprintf(buf, "%02x", hash[i]);
+        wyn.push_back(buf[1]);
+        wyn.push_back(buf[0]);
+    }
+    return wyn;
+}
+
+void encrypt(const uint8_t in[], uint8_t out[], int len) {
+    for(int i=0; i<len; i++) {
+        out[i] = (uint8_t) (in[i]+1);
+    }
+}
+
+void decrypt(const uint8_t in[], uint8_t out[], int len) {
+    for(int i=0; i<len; i++) {
+        out[i] = (uint8_t) (in[i]-1);
+    }
+}
+
 void parseMessage(uint8_t buf[], int len) {
     StorageCloud::EncodedMessage msg;
     msg.ParseFromArray(buf, len);
     cout<<"Parsing message"<<endl;
     cout<<"size: "<<msg.datasize()<<endl;
-    cout<<"hash: "<<msg.hash()<<endl;
-    cout<<"data: "<<msg.data()<<endl;
+    cout<<"hash: "<<printHash((uint8_t*) msg.hash().c_str())<<"("<<msg.hash().length()<<", "<<HASH_SIZE<<")"<<endl;
+    cout<<"data: "<<msg.data()<<"("<<msg.data().length()<<")"<<endl;
+
+    if(msg.datasize() != msg.data().length()) {
+        cout<<"wrong data length"<<endl;
+        return;
+    }
+
+    if(!msg.data().length() || msg.hash().length() != HASH_SIZE) {
+        cout<<"wrong data or hash length"<<endl;
+        return;
+    }
+
+    uint8_t hash[HASH_SIZE];
+
+    calculateHash((uint8_t*) msg.data().c_str(), msg.datasize(), hash);
+
+    bool hash_ok = compareHash(hash, (uint8_t*) msg.hash().c_str());
+
+    if(!hash_ok) {
+        cout<<"wrong hash"<<endl;
+        cout<<"should be "<<printHash((uint8_t*) msg.hash().c_str())<<endl;
+        cout<<"got       "<<printHash(hash)<<endl;
+        return;
+    }
+
+    uint8_t* data = new uint8_t [msg.datasize()];
+
+    decrypt((uint8_t*) msg.data().c_str(), data, msg.datasize());
+
+    cout<<"decrypted data: "<<flush;
+
+    for(int i=0; i<msg.datasize(); i++) {
+        cout<<(char) data[i]<<flush;
+    }
+    cout<<endl;
 }
 
 void process(int sock, int server_pid) {
@@ -83,9 +154,11 @@ void process(int sock, int server_pid) {
 
             n = recv(sock, buffer, size - 4, MSG_WAITALL);
 
-            cout<<"got all data ("<<n<<")"<<endl;
+            if (n == size - 4) {
+                cout<<"got all data ("<<n<<")"<<endl;
 
-            parseMessage(buffer, size);
+                parseMessage(buffer, size);
+            }
 
 //            for(int i = 0; i < n; i++) {
 //                if (buffer[i] >= 'a' && buffer[i] <= 'z') {
