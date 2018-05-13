@@ -56,16 +56,18 @@ string printHash(const uint8_t hash[]) {
     return wyn;
 }
 
-void encrypt(const uint8_t in[], uint8_t out[], int len) {
-    for(int i=0; i<len; i++) {
+void encrypt(const uint8_t in[], const uint16_t in_len, uint8_t out[], uint16_t* out_len) {
+    for(int i=0; i<in_len; i++) {
         out[i] = (uint8_t) (in[i]+1);
     }
+    *out_len = in_len;
 }
 
-void decrypt(const uint8_t in[], uint8_t out[], int len) {
-    for(int i=0; i<len; i++) {
+void decrypt(const uint8_t in[], const uint16_t in_len, uint8_t out[], uint16_t* out_len) {
+    for(int i=0; i<in_len; i++) {
         out[i] = (uint8_t) (in[i]-1);
     }
+    *out_len = in_len;
 }
 
 void parseMessage(uint8_t buf[], int len) {
@@ -76,19 +78,32 @@ void parseMessage(uint8_t buf[], int len) {
     cout<<"hash: "<<printHash((uint8_t*) msg.hash().c_str())<<"("<<msg.hash().length()<<", "<<HASH_SIZE<<")"<<endl;
     cout<<"data: "<<msg.data()<<"("<<msg.data().length()<<")"<<endl;
 
-    if(msg.datasize() != msg.data().length()) {
-        cout<<"wrong data length"<<endl;
-        return;
-    }
-
     if(!msg.data().length() || msg.hash().length() != HASH_SIZE) {
         cout<<"wrong data or hash length"<<endl;
         return;
     }
 
+    uint8_t* data = new uint8_t [msg.datasize()];
+
+    uint16_t data_size = 0; //decrypted data size
+
+    decrypt((uint8_t*) msg.data().c_str(), msg.datasize(), data, &data_size);
+
+    if(msg.datasize() != data_size) {
+        cout<<"wrong data length"<<endl;
+        return;
+    }
+
+    cout<<"decrypted data: "<<flush;
+
+    for(int i=0; i<data_size; i++) {
+        cout<<(char) data[i]<<flush;
+    }
+    cout<<endl;
+
     uint8_t hash[HASH_SIZE];
 
-    calculateHash((uint8_t*) msg.data().c_str(), msg.datasize(), hash);
+    calculateHash(data, data_size, hash);
 
     bool hash_ok = compareHash(hash, (uint8_t*) msg.hash().c_str());
 
@@ -98,17 +113,6 @@ void parseMessage(uint8_t buf[], int len) {
         cout<<"got       "<<printHash(hash)<<endl;
         return;
     }
-
-    uint8_t* data = new uint8_t [msg.datasize()];
-
-    decrypt((uint8_t*) msg.data().c_str(), data, msg.datasize());
-
-    cout<<"decrypted data: "<<flush;
-
-    for(int i=0; i<msg.datasize(); i++) {
-        cout<<(char) data[i]<<flush;
-    }
-    cout<<endl;
 }
 
 void process(int sock, int server_pid) {
