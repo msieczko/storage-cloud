@@ -52,9 +52,9 @@ int main(int argc, char *argv[])
     unsigned char data[30] = "bardzo wazne dane XDXDddddddd";
     uint8_t edata[30];
 
-    encrypt(data, edata, 30);
+    SHA512(data, 30, hash);
 
-    SHA512(edata, 30, hash);
+    encrypt(data, edata, 30);
 
     msg.set_hash((char*)hash, HASH_SIZE);
     msg.set_datasize(sizeof(edata));
