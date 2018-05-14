@@ -4,6 +4,8 @@
 
 using namespace std;
 
+using namespace StorageCloud;
+
 volatile bool should_exit = false;
 
 struct connection {
@@ -70,8 +72,61 @@ void decrypt(const uint8_t in[], const uint16_t in_len, uint8_t out[], uint16_t*
     *out_len = in_len;
 }
 
-void parseMessage(uint8_t buf[], int len) {
-    StorageCloud::EncodedMessage msg;
+void processAndSend(uint8_t buf[], int len, int sock) {
+    EncodedMessage msg;
+
+    uint8_t hash[HASH_SIZE];
+    uint8_t out_buf[MAX_PACKET_SIZE];
+    uint8_t* data = new uint8_t[len + 100]; //max encrypted size
+    uint16_t size=0;
+
+    SHA512(buf, 30, hash);
+
+    encrypt(buf, len, data, &size);
+
+    msg.set_hash((char*)hash, HASH_SIZE);
+    msg.set_datasize(len);
+    msg.set_data((char*)data, size);
+
+    msg.SerializeToArray(buf + 4, MAX_PACKET_SIZE - 4);
+
+    uint32_t siz = msg.ByteSize() + 4;
+
+    cout<<"sending response with size: "<<siz<<" ("<<siz-4<<"+4)"<<endl;
+
+    buf[3] = siz & 0xFF;
+    buf[2] = (siz >> 8) & 0xFF;
+    buf[1] = (siz >> 16) & 0xFF;
+    buf[0] = (siz >> 24) & 0xFF;
+
+    if (write( sock, out_buf, siz ) == -1) {
+        perror("writing on stream socket");
+        return;
+    }
+}
+
+void sendServerResponse(const ServerResponse& res, int sock) {
+    uint8_t* buf = new uint8_t[res.ByteSize()];
+    res.SerializeToArray(buf, res.ByteSize());
+    processAndSend(buf, res.ByteSize(), sock);
+}
+
+void parseCommand(uint8_t buf[], uint32_t len, int sock) {
+    Command cmd;
+
+    cmd.ParseFromArray(buf, len);
+
+    cout<<"received command '"<<Command::CommandType_Name(cmd.type())<<"' ("<<cmd.type()<<"), with "<<cmd.params_size()<<" params"<<endl;
+
+    if(cmd.type() == Command::LOGIN) {
+        ServerResponse res;
+        res.set_type(ServerResponse::LOGGED);
+        sendServerResponse(res, sock);
+    }
+}
+
+void parseMessage(uint8_t buf[], int len, int sock) {
+    EncodedMessage msg;
     msg.ParseFromArray(buf, len);
     cout<<"Parsing message"<<endl;
     cout<<"size: "<<msg.datasize()<<endl;
@@ -113,6 +168,8 @@ void parseMessage(uint8_t buf[], int len) {
         cout<<"got       "<<printHash(hash)<<endl;
         return;
     }
+
+    parseCommand(data, data_size, sock);
 }
 
 void process(int sock, int server_pid) {
@@ -147,7 +204,7 @@ void process(int sock, int server_pid) {
                 break;
             }
 
-            uint32_t size = ((size_buf[0]<<24)|(size_buf[1]<<16)|(size_buf[2]<<8)|(size_buf[3]));
+            uint32_t size = ((size_buf[0]<<24u)|(size_buf[1]<<16u)|(size_buf[2]<<8u)|(size_buf[3]));
 
             cout<<"Size: "<<size<<endl;
 
@@ -161,7 +218,7 @@ void process(int sock, int server_pid) {
             if (n == size - 4) {
                 cout<<"got all data ("<<n<<")"<<endl;
 
-                parseMessage(buffer, size);
+                parseMessage(buffer, size, sock);
             }
 
 //            for(int i = 0; i < n; i++) {
@@ -320,7 +377,7 @@ int main(int argc, char **argv) {
 
     string cmd;
 
-    while(true) {
+    while(!should_exit) {
         cout<<"> "<<flush;
         cin>>cmd;
 

@@ -1,9 +1,5 @@
 #include "main.h"
 
-#define DATA "Half a league, half a league . . ."
-
-#define DATA2 "XDHalf a league, half a league . . .XDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXDXD"
-
 using namespace google::protobuf::io;
 
 using namespace std;
@@ -46,19 +42,29 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
+    StorageCloud::Command cmd;
+    cmd.set_type(StorageCloud::Command::LOGIN);
+    StorageCloud::Param* tmp_param = cmd.add_params();
+    tmp_param->set_paramid("param123");
+    tmp_param->set_iparamval(1234567);
+    uint8_t* data = new uint8_t[cmd.ByteSize()];
+    cmd.SerializeToArray(data, cmd.ByteSize());
+
+    cout<<"cmd size: "<<cmd.ByteSize()<<endl;
+
     StorageCloud::EncodedMessage msg;
 
     uint8_t hash[HASH_SIZE];
-    unsigned char data[30] = "bardzo wazne dane XDXDddddddd";
-    uint8_t edata[30];
 
-    SHA512(data, 30, hash);
+    uint8_t* edata = new uint8_t[cmd.ByteSize()];
 
-    encrypt(data, edata, 30);
+    SHA512(data, cmd.ByteSize(), hash);
+
+    encrypt(data, edata, cmd.ByteSize());
 
     msg.set_hash((char*)hash, HASH_SIZE);
-    msg.set_datasize(sizeof(edata));
-    msg.set_data((char*)edata, sizeof(edata));
+    msg.set_datasize(cmd.ByteSize());
+    msg.set_data((char*)edata, cmd.ByteSize());
 
     msg.SerializeToArray(buf+4, 1020);
 
