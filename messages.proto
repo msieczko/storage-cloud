@@ -13,12 +13,13 @@ message Param {
 message Command {
     // TODO uzupelnic wszystkie typy
     enum CommandType {
-        LOGIN = 0;
-        RELOGIN = 1;
-        LOGOUT = 2;
-        REGISTER = 3;
-        STAT = 4;
-        LIST_FILES = 5;
+        NULL = 0;
+        LOGIN = 1;
+        RELOGIN = 2;
+        LOGOUT = 3;
+        REGISTER = 4;
+        STAT = 5;
+        LIST_FILES = 6;
     }
 
     CommandType type = 1;
@@ -45,14 +46,15 @@ message File {
 
 message ServerResponse {
     enum ResponseType {
-        OK = 0;
-        ERROR = 1;
-        LOGGED = 2;
-        STAT = 3;
-        FILES = 4;
-        SHARED = 5;
-        DATA = 6;
-        CAN_SEND = 7;
+        NULL = 0;
+        OK = 1;
+        ERROR = 2;
+        LOGGED = 3;
+        STAT = 4;
+        FILES = 5;
+        SHARED = 6;
+        DATA = 7;
+        CAN_SEND = 8;
     }
 
     ResponseType type = 1;

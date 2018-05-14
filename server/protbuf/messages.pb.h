@@ -81,17 +81,18 @@ extern ServerResponseDefaultTypeInternal _ServerResponse_default_instance_;
 namespace StorageCloud {
 
 enum Command_CommandType {
-  Command_CommandType_LOGIN = 0,
-  Command_CommandType_RELOGIN = 1,
-  Command_CommandType_LOGOUT = 2,
-  Command_CommandType_REGISTER = 3,
-  Command_CommandType_STAT = 4,
-  Command_CommandType_LIST_FILES = 5,
+  Command_CommandType_NULL_ = 0,
+  Command_CommandType_LOGIN = 1,
+  Command_CommandType_RELOGIN = 2,
+  Command_CommandType_LOGOUT = 3,
+  Command_CommandType_REGISTER = 4,
+  Command_CommandType_STAT = 5,
+  Command_CommandType_LIST_FILES = 6,
   Command_CommandType_Command_CommandType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   Command_CommandType_Command_CommandType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool Command_CommandType_IsValid(int value);
-const Command_CommandType Command_CommandType_CommandType_MIN = Command_CommandType_LOGIN;
+const Command_CommandType Command_CommandType_CommandType_MIN = Command_CommandType_NULL_;
 const Command_CommandType Command_CommandType_CommandType_MAX = Command_CommandType_LIST_FILES;
 const int Command_CommandType_CommandType_ARRAYSIZE = Command_CommandType_CommandType_MAX + 1;
 
@@ -106,19 +107,20 @@ inline bool Command_CommandType_Parse(
     Command_CommandType_descriptor(), name, value);
 }
 enum ServerResponse_ResponseType {
-  ServerResponse_ResponseType_OK = 0,
-  ServerResponse_ResponseType_ERROR = 1,
-  ServerResponse_ResponseType_LOGGED = 2,
-  ServerResponse_ResponseType_STAT = 3,
-  ServerResponse_ResponseType_FILES = 4,
-  ServerResponse_ResponseType_SHARED = 5,
-  ServerResponse_ResponseType_DATA = 6,
-  ServerResponse_ResponseType_CAN_SEND = 7,
+  ServerResponse_ResponseType_NULL_ = 0,
+  ServerResponse_ResponseType_OK = 1,
+  ServerResponse_ResponseType_ERROR = 2,
+  ServerResponse_ResponseType_LOGGED = 3,
+  ServerResponse_ResponseType_STAT = 4,
+  ServerResponse_ResponseType_FILES = 5,
+  ServerResponse_ResponseType_SHARED = 6,
+  ServerResponse_ResponseType_DATA = 7,
+  ServerResponse_ResponseType_CAN_SEND = 8,
   ServerResponse_ResponseType_ServerResponse_ResponseType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   ServerResponse_ResponseType_ServerResponse_ResponseType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool ServerResponse_ResponseType_IsValid(int value);
-const ServerResponse_ResponseType ServerResponse_ResponseType_ResponseType_MIN = ServerResponse_ResponseType_OK;
+const ServerResponse_ResponseType ServerResponse_ResponseType_ResponseType_MIN = ServerResponse_ResponseType_NULL_;
 const ServerResponse_ResponseType ServerResponse_ResponseType_ResponseType_MAX = ServerResponse_ResponseType_CAN_SEND;
 const int ServerResponse_ResponseType_ResponseType_ARRAYSIZE = ServerResponse_ResponseType_ResponseType_MAX + 1;
 
@@ -368,6 +370,8 @@ class Command : public ::google::protobuf::Message /* @@protoc_insertion_point(c
   // nested types ----------------------------------------------------
 
   typedef Command_CommandType CommandType;
+  static const CommandType NULL_ =
+    Command_CommandType_NULL_;
   static const CommandType LOGIN =
     Command_CommandType_LOGIN;
   static const CommandType RELOGIN =
@@ -808,6 +812,8 @@ class ServerResponse : public ::google::protobuf::Message /* @@protoc_insertion_
   // nested types ----------------------------------------------------
 
   typedef ServerResponse_ResponseType ResponseType;
+  static const ResponseType NULL_ =
+    ServerResponse_ResponseType_NULL_;
   static const ResponseType OK =
     ServerResponse_ResponseType_OK;
   static const ResponseType ERROR =

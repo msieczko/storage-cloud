@@ -247,26 +247,27 @@ void AddDescriptorsImpl() {
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\016messages.proto\022\014StorageCloud\"K\n\005Param\022"
       "\017\n\007paramId\030\001 \001(\t\022\023\n\tSParamVal\030\002 \001(\tH\000\022\023\n"
-      "\tIParamVal\030\003 \001(\003H\000B\007\n\005value\"\326\001\n\007Command\022"
+      "\tIParamVal\030\003 \001(\003H\000B\007\n\005value\"\340\001\n\007Command\022"
       "/\n\004type\030\001 \001(\0162!.StorageCloud.Command.Com"
       "mandType\022#\n\006params\030\002 \003(\0132\023.StorageCloud."
-      "Param\022\014\n\004list\030\003 \003(\t\022\014\n\004data\030\004 \001(\014\"Y\n\013Com"
-      "mandType\022\t\n\005LOGIN\020\000\022\013\n\007RELOGIN\020\001\022\n\n\006LOGO"
-      "UT\020\002\022\014\n\010REGISTER\020\003\022\010\n\004STAT\020\004\022\016\n\nLIST_FIL"
-      "ES\020\005\">\n\016EncodedMessage\022\020\n\010dataSize\030\001 \001(\003"
-      "\022\014\n\004hash\030\002 \001(\014\022\014\n\004data\030\003 \001(\014\"I\n\004File\022\014\n\004"
-      "name\030\001 \001(\t\022\014\n\004size\030\002 \001(\003\022%\n\010metadata\030\003 \003"
-      "(\0132\023.StorageCloud.Param\"\230\002\n\016ServerRespon"
-      "se\0227\n\004type\030\001 \001(\0162).StorageCloud.ServerRe"
-      "sponse.ResponseType\022#\n\006params\030\002 \003(\0132\023.St"
-      "orageCloud.Param\022\014\n\004list\030\003 \003(\t\022$\n\010fileLi"
-      "st\030\004 \003(\0132\022.StorageCloud.File\022\014\n\004data\030\005 \001"
-      "(\014\"f\n\014ResponseType\022\006\n\002OK\020\000\022\t\n\005ERROR\020\001\022\n\n"
-      "\006LOGGED\020\002\022\010\n\004STAT\020\003\022\t\n\005FILES\020\004\022\n\n\006SHARED"
-      "\020\005\022\010\n\004DATA\020\006\022\014\n\010CAN_SEND\020\007b\006proto3"
+      "Param\022\014\n\004list\030\003 \003(\t\022\014\n\004data\030\004 \001(\014\"c\n\013Com"
+      "mandType\022\010\n\004NULL\020\000\022\t\n\005LOGIN\020\001\022\013\n\007RELOGIN"
+      "\020\002\022\n\n\006LOGOUT\020\003\022\014\n\010REGISTER\020\004\022\010\n\004STAT\020\005\022\016"
+      "\n\nLIST_FILES\020\006\">\n\016EncodedMessage\022\020\n\010data"
+      "Size\030\001 \001(\003\022\014\n\004hash\030\002 \001(\014\022\014\n\004data\030\003 \001(\014\"I"
+      "\n\004File\022\014\n\004name\030\001 \001(\t\022\014\n\004size\030\002 \001(\003\022%\n\010me"
+      "tadata\030\003 \003(\0132\023.StorageCloud.Param\"\242\002\n\016Se"
+      "rverResponse\0227\n\004type\030\001 \001(\0162).StorageClou"
+      "d.ServerResponse.ResponseType\022#\n\006params\030"
+      "\002 \003(\0132\023.StorageCloud.Param\022\014\n\004list\030\003 \003(\t"
+      "\022$\n\010fileList\030\004 \003(\0132\022.StorageCloud.File\022\014"
+      "\n\004data\030\005 \001(\014\"p\n\014ResponseType\022\010\n\004NULL\020\000\022\006"
+      "\n\002OK\020\001\022\t\n\005ERROR\020\002\022\n\n\006LOGGED\020\003\022\010\n\004STAT\020\004\022"
+      "\t\n\005FILES\020\005\022\n\n\006SHARED\020\006\022\010\n\004DATA\020\007\022\014\n\010CAN_"
+      "SEND\020\010b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 754);
+      descriptor, 774);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "messages.proto", &protobuf_RegisterTypes);
 }
@@ -295,6 +296,7 @@ bool Command_CommandType_IsValid(int value) {
     case 3:
     case 4:
     case 5:
+    case 6:
       return true;
     default:
       return false;
@@ -302,6 +304,7 @@ bool Command_CommandType_IsValid(int value) {
 }
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
+const Command_CommandType Command::NULL_;
 const Command_CommandType Command::LOGIN;
 const Command_CommandType Command::RELOGIN;
 const Command_CommandType Command::LOGOUT;
@@ -326,6 +329,7 @@ bool ServerResponse_ResponseType_IsValid(int value) {
     case 5:
     case 6:
     case 7:
+    case 8:
       return true;
     default:
       return false;
@@ -333,6 +337,7 @@ bool ServerResponse_ResponseType_IsValid(int value) {
 }
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
+const ServerResponse_ResponseType ServerResponse::NULL_;
 const ServerResponse_ResponseType ServerResponse::OK;
 const ServerResponse_ResponseType ServerResponse::ERROR;
 const ServerResponse_ResponseType ServerResponse::LOGGED;
