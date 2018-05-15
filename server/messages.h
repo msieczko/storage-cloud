@@ -10,6 +10,6 @@ const uint8_t HASH_SIZE[StorageCloud::EncodedMessage::HashAlgorithm_ARRAYSIZE] =
         MD5_DIGEST_LENGTH,
 };
 
-void parseMessage(uint8_t*, int, int);
+void parseMessage(uint8_t*, int, int, uint8_t*);
 
 #endif //SERVER_MESSAGES_H

@@ -43,6 +43,8 @@ void process(int sock, int server_pid) {
     struct timeval timeout;
     int rv;
 
+    uint8_t encryption_algorithm = Handshake::NOENCRYPTION;
+
     while(!should_exit) {
         FD_ZERO(&set); /* clear the set */
         FD_SET(sock, &set); /* add our file descriptor to the set */
@@ -80,7 +82,7 @@ void process(int sock, int server_pid) {
             if (n == size - 4) {
                 cout<<"got all data ("<<n<<")"<<endl;
 
-                parseMessage(buffer, size, sock);
+                parseMessage(buffer, size, sock, &encryption_algorithm);
             }
 
 //            for(int i = 0; i < n; i++) {

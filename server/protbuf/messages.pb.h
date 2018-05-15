@@ -711,9 +711,9 @@ class EncodedMessage : public ::google::protobuf::Message /* @@protoc_insertion_
   ::std::string* release_hash();
   void set_allocated_hash(::std::string* hash);
 
-  // bytes data = 4;
+  // bytes data = 5;
   void clear_data();
-  static const int kDataFieldNumber = 4;
+  static const int kDataFieldNumber = 5;
   const ::std::string& data() const;
   void set_data(const ::std::string& value);
   #if LANG_CXX11
@@ -737,6 +737,12 @@ class EncodedMessage : public ::google::protobuf::Message /* @@protoc_insertion_
   ::StorageCloud::EncodedMessage_HashAlgorithm hashalgorithm() const;
   void set_hashalgorithm(::StorageCloud::EncodedMessage_HashAlgorithm value);
 
+  // .StorageCloud.EncodedMessage.MessageType type = 4;
+  void clear_type();
+  static const int kTypeFieldNumber = 4;
+  ::StorageCloud::EncodedMessage_MessageType type() const;
+  void set_type(::StorageCloud::EncodedMessage_MessageType value);
+
   // @@protoc_insertion_point(class_scope:StorageCloud.EncodedMessage)
  private:
 
@@ -745,6 +751,7 @@ class EncodedMessage : public ::google::protobuf::Message /* @@protoc_insertion_
   ::google::protobuf::internal::ArenaStringPtr data_;
   ::google::protobuf::uint64 datasize_;
   int hashalgorithm_;
+  int type_;
   mutable int _cached_size_;
   friend struct ::protobuf_messages_2eproto::TableStruct;
   friend void ::protobuf_messages_2eproto::InitDefaultsEncodedMessageImpl();
@@ -1658,7 +1665,21 @@ inline void EncodedMessage::set_allocated_hash(::std::string* hash) {
   // @@protoc_insertion_point(field_set_allocated:StorageCloud.EncodedMessage.hash)
 }
 
-// bytes data = 4;
+// .StorageCloud.EncodedMessage.MessageType type = 4;
+inline void EncodedMessage::clear_type() {
+  type_ = 0;
+}
+inline ::StorageCloud::EncodedMessage_MessageType EncodedMessage::type() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.EncodedMessage.type)
+  return static_cast< ::StorageCloud::EncodedMessage_MessageType >(type_);
+}
+inline void EncodedMessage::set_type(::StorageCloud::EncodedMessage_MessageType value) {
+  
+  type_ = value;
+  // @@protoc_insertion_point(field_set:StorageCloud.EncodedMessage.type)
+}
+
+// bytes data = 5;
 inline void EncodedMessage::clear_data() {
   data_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }

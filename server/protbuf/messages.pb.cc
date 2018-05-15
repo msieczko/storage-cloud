@@ -214,6 +214,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::EncodedMessage, datasize_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::EncodedMessage, hashalgorithm_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::EncodedMessage, hash_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::EncodedMessage, type_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::EncodedMessage, data_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::Handshake, _internal_metadata_),
@@ -244,9 +245,9 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROT
   { 0, -1, sizeof(::StorageCloud::Param)},
   { 9, -1, sizeof(::StorageCloud::Command)},
   { 18, -1, sizeof(::StorageCloud::EncodedMessage)},
-  { 27, -1, sizeof(::StorageCloud::Handshake)},
-  { 33, -1, sizeof(::StorageCloud::File)},
-  { 41, -1, sizeof(::StorageCloud::ServerResponse)},
+  { 28, -1, sizeof(::StorageCloud::Handshake)},
+  { 34, -1, sizeof(::StorageCloud::File)},
+  { 42, -1, sizeof(::StorageCloud::ServerResponse)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -288,30 +289,32 @@ void AddDescriptorsImpl() {
       "Param\022\014\n\004list\030\003 \003(\t\022\014\n\004data\030\004 \001(\014\"c\n\013Com"
       "mandType\022\010\n\004NULL\020\000\022\t\n\005LOGIN\020\001\022\013\n\007RELOGIN"
       "\020\002\022\n\n\006LOGOUT\020\003\022\014\n\010REGISTER\020\004\022\010\n\004STAT\020\005\022\016"
-      "\n\nLIST_FILES\020\006\"\236\002\n\016EncodedMessage\022\020\n\010dat"
+      "\n\nLIST_FILES\020\006\"\326\002\n\016EncodedMessage\022\020\n\010dat"
       "aSize\030\001 \001(\004\022A\n\rhashAlgorithm\030\002 \001(\0162*.Sto"
       "rageCloud.EncodedMessage.HashAlgorithm\022\014"
-      "\n\004hash\030\003 \001(\014\022\014\n\004data\030\004 \001(\014\"P\n\rHashAlgori"
-      "thm\022\010\n\004NULL\020\000\022\n\n\006NOHASH\020\001\022\n\n\006SHA256\020\002\022\n\n"
-      "\006SHA512\020\003\022\010\n\004SHA1\020\004\022\007\n\003MD5\020\005\"I\n\013MessageT"
-      "ype\022\t\n\005NULL2\020\000\022\013\n\007COMMAND\020\001\022\023\n\017SERVER_RE"
-      "SPONSE\020\002\022\r\n\tHANDSHAKE\020\003\"\224\001\n\tHandshake\022H\n"
-      "\023encryptionAlgorithm\030\001 \001(\0162+.StorageClou"
-      "d.Handshake.EncryptionAlgorithm\"=\n\023Encry"
-      "ptionAlgorithm\022\010\n\004NULL\020\000\022\020\n\014NOENCRYPTION"
-      "\020\001\022\n\n\006CAESAR\020\002\"I\n\004File\022\014\n\004name\030\001 \001(\t\022\014\n\004"
-      "size\030\002 \001(\003\022%\n\010metadata\030\003 \003(\0132\023.StorageCl"
-      "oud.Param\"\242\002\n\016ServerResponse\0227\n\004type\030\001 \001"
-      "(\0162).StorageCloud.ServerResponse.Respons"
-      "eType\022#\n\006params\030\002 \003(\0132\023.StorageCloud.Par"
-      "am\022\014\n\004list\030\003 \003(\t\022$\n\010fileList\030\004 \003(\0132\022.Sto"
-      "rageCloud.File\022\014\n\004data\030\005 \001(\014\"p\n\014Response"
-      "Type\022\010\n\004NULL\020\000\022\006\n\002OK\020\001\022\t\n\005ERROR\020\002\022\n\n\006LOG"
-      "GED\020\003\022\010\n\004STAT\020\004\022\t\n\005FILES\020\005\022\n\n\006SHARED\020\006\022\010"
-      "\n\004DATA\020\007\022\014\n\010CAN_SEND\020\010b\006proto3"
+      "\n\004hash\030\003 \001(\014\0226\n\004type\030\004 \001(\0162(.StorageClou"
+      "d.EncodedMessage.MessageType\022\014\n\004data\030\005 \001"
+      "(\014\"P\n\rHashAlgorithm\022\010\n\004NULL\020\000\022\n\n\006NOHASH\020"
+      "\001\022\n\n\006SHA256\020\002\022\n\n\006SHA512\020\003\022\010\n\004SHA1\020\004\022\007\n\003M"
+      "D5\020\005\"I\n\013MessageType\022\t\n\005NULL2\020\000\022\013\n\007COMMAN"
+      "D\020\001\022\023\n\017SERVER_RESPONSE\020\002\022\r\n\tHANDSHAKE\020\003\""
+      "\224\001\n\tHandshake\022H\n\023encryptionAlgorithm\030\001 \001"
+      "(\0162+.StorageCloud.Handshake.EncryptionAl"
+      "gorithm\"=\n\023EncryptionAlgorithm\022\010\n\004NULL\020\000"
+      "\022\020\n\014NOENCRYPTION\020\001\022\n\n\006CAESAR\020\002\"I\n\004File\022\014"
+      "\n\004name\030\001 \001(\t\022\014\n\004size\030\002 \001(\003\022%\n\010metadata\030\003"
+      " \003(\0132\023.StorageCloud.Param\"\242\002\n\016ServerResp"
+      "onse\0227\n\004type\030\001 \001(\0162).StorageCloud.Server"
+      "Response.ResponseType\022#\n\006params\030\002 \003(\0132\023."
+      "StorageCloud.Param\022\014\n\004list\030\003 \003(\t\022$\n\010file"
+      "List\030\004 \003(\0132\022.StorageCloud.File\022\014\n\004data\030\005"
+      " \001(\014\"p\n\014ResponseType\022\010\n\004NULL\020\000\022\006\n\002OK\020\001\022\t"
+      "\n\005ERROR\020\002\022\n\n\006LOGGED\020\003\022\010\n\004STAT\020\004\022\t\n\005FILES"
+      "\020\005\022\n\n\006SHARED\020\006\022\010\n\004DATA\020\007\022\014\n\010CAN_SEND\020\010b\006"
+      "proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1150);
+      descriptor, 1206);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "messages.proto", &protobuf_RegisterTypes);
 }
@@ -1252,6 +1255,7 @@ void EncodedMessage::InitAsDefaultInstance() {
 const int EncodedMessage::kDataSizeFieldNumber;
 const int EncodedMessage::kHashAlgorithmFieldNumber;
 const int EncodedMessage::kHashFieldNumber;
+const int EncodedMessage::kTypeFieldNumber;
 const int EncodedMessage::kDataFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -1277,8 +1281,8 @@ EncodedMessage::EncodedMessage(const EncodedMessage& from)
     data_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.data_);
   }
   ::memcpy(&datasize_, &from.datasize_,
-    static_cast<size_t>(reinterpret_cast<char*>(&hashalgorithm_) -
-    reinterpret_cast<char*>(&datasize_)) + sizeof(hashalgorithm_));
+    static_cast<size_t>(reinterpret_cast<char*>(&type_) -
+    reinterpret_cast<char*>(&datasize_)) + sizeof(type_));
   // @@protoc_insertion_point(copy_constructor:StorageCloud.EncodedMessage)
 }
 
@@ -1286,8 +1290,8 @@ void EncodedMessage::SharedCtor() {
   hash_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   data_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&datasize_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&hashalgorithm_) -
-      reinterpret_cast<char*>(&datasize_)) + sizeof(hashalgorithm_));
+      reinterpret_cast<char*>(&type_) -
+      reinterpret_cast<char*>(&datasize_)) + sizeof(type_));
   _cached_size_ = 0;
 }
 
@@ -1333,8 +1337,8 @@ void EncodedMessage::Clear() {
   hash_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   data_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&datasize_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&hashalgorithm_) -
-      reinterpret_cast<char*>(&datasize_)) + sizeof(hashalgorithm_));
+      reinterpret_cast<char*>(&type_) -
+      reinterpret_cast<char*>(&datasize_)) + sizeof(type_));
   _internal_metadata_.Clear();
 }
 
@@ -1389,10 +1393,25 @@ bool EncodedMessage::MergePartialFromCodedStream(
         break;
       }
 
-      // bytes data = 4;
+      // .StorageCloud.EncodedMessage.MessageType type = 4;
       case 4: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
+            static_cast< ::google::protobuf::uint8>(32u /* 32 & 0xFF */)) {
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          set_type(static_cast< ::StorageCloud::EncodedMessage_MessageType >(value));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // bytes data = 5;
+      case 5: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(42u /* 42 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
                 input, this->mutable_data()));
         } else {
@@ -1444,10 +1463,16 @@ void EncodedMessage::SerializeWithCachedSizes(
       3, this->hash(), output);
   }
 
-  // bytes data = 4;
+  // .StorageCloud.EncodedMessage.MessageType type = 4;
+  if (this->type() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      4, this->type(), output);
+  }
+
+  // bytes data = 5;
   if (this->data().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
-      4, this->data(), output);
+      5, this->data(), output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -1482,11 +1507,17 @@ void EncodedMessage::SerializeWithCachedSizes(
         3, this->hash(), target);
   }
 
-  // bytes data = 4;
+  // .StorageCloud.EncodedMessage.MessageType type = 4;
+  if (this->type() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      4, this->type(), target);
+  }
+
+  // bytes data = 5;
   if (this->data().size() > 0) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
-        4, this->data(), target);
+        5, this->data(), target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -1513,7 +1544,7 @@ size_t EncodedMessage::ByteSizeLong() const {
         this->hash());
   }
 
-  // bytes data = 4;
+  // bytes data = 5;
   if (this->data().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::BytesSize(
@@ -1531,6 +1562,12 @@ size_t EncodedMessage::ByteSizeLong() const {
   if (this->hashalgorithm() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->hashalgorithm());
+  }
+
+  // .StorageCloud.EncodedMessage.MessageType type = 4;
+  if (this->type() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -1576,6 +1613,9 @@ void EncodedMessage::MergeFrom(const EncodedMessage& from) {
   if (from.hashalgorithm() != 0) {
     set_hashalgorithm(from.hashalgorithm());
   }
+  if (from.type() != 0) {
+    set_type(from.type());
+  }
 }
 
 void EncodedMessage::CopyFrom(const ::google::protobuf::Message& from) {
@@ -1606,6 +1646,7 @@ void EncodedMessage::InternalSwap(EncodedMessage* other) {
   data_.Swap(&other->data_);
   swap(datasize_, other->datasize_);
   swap(hashalgorithm_, other->hashalgorithm_);
+  swap(type_, other->type_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);
 }

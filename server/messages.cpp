@@ -82,7 +82,7 @@ void decrypt(const uint8_t algo, const uint8_t in[], const uint32_t in_len, uint
     }
 }
 
-void processAndSend(uint8_t buf[], uint32_t len, int sock) {
+void processAndSend(uint8_t buf[], uint32_t len, int sock, uint8_t encryption_algorithm) {
     EncodedMessage msg;
 
     uint8_t* hash;
@@ -95,7 +95,7 @@ void processAndSend(uint8_t buf[], uint32_t len, int sock) {
 
 //    SHA512(buf, 30, hash);
 
-    encrypt(Handshake::CAESAR, buf, len, &data, &size);
+    encrypt(encryption_algorithm, buf, len, &data, &size);
 
     msg.set_hash((char*)hash, hash_len);
     msg.set_datasize(len);
@@ -134,13 +134,13 @@ void processAndSend(uint8_t buf[], uint32_t len, int sock) {
     delete data;
 }
 
-void sendServerResponse(const ServerResponse& res, int sock) {
+void sendServerResponse(const ServerResponse& res, int sock, uint8_t encryption_algorithm) {
     uint8_t* buf = new uint8_t[res.ByteSize()];
     res.SerializeToArray(buf, res.ByteSize());
-    processAndSend(buf, res.ByteSize(), sock);
+    processAndSend(buf, res.ByteSize(), sock, encryption_algorithm);
 }
 
-void parseCommand(uint8_t buf[], uint32_t len, int sock) {
+void parseCommand(uint8_t buf[], uint32_t len, int sock, uint8_t encryption_algorithm) {
     Command cmd;
 
     cmd.ParseFromArray(buf, len);
@@ -150,16 +150,30 @@ void parseCommand(uint8_t buf[], uint32_t len, int sock) {
     if(cmd.type() == Command::LOGIN) {
         ServerResponse res;
         res.set_type(ServerResponse::LOGGED);
-        sendServerResponse(res, sock);
+        sendServerResponse(res, sock, encryption_algorithm);
     }
 }
 
-void parseMessage(uint8_t buf[], int len, int sock) {
+void parseHandshake(uint8_t buf[], uint32_t len, int sock, uint8_t* encryption_algorithm) {
+    Handshake handshake;
+
+    handshake.ParseFromArray(buf, len);
+
+    cout<<"Setting encryption to "<<Handshake::EncryptionAlgorithm_Name(handshake.encryptionalgorithm())<<endl;
+
+    *encryption_algorithm =  handshake.encryptionalgorithm();
+
+    ServerResponse res;
+    res.set_type(ServerResponse::OK);
+    sendServerResponse(res, sock, *encryption_algorithm);
+}
+
+void parseMessage(uint8_t buf[], int len, int sock, uint8_t* encryption_algorithm) {
     EncodedMessage msg;
     msg.ParseFromArray(buf, len);
     cout<<"Parsing message"<<endl;
     cout<<"size: "<<msg.datasize()<<endl;
-    cout<<"hash: "<<printHash(msg.hashalgorithm(), (uint8_t*) msg.hash().c_str())<<"("<<msg.hash().length()<<", "<<HASH_SIZE<<")"<<endl;
+    cout<<"hash: "<<printHash(msg.hashalgorithm(), (uint8_t*) msg.hash().c_str())<<"("<<msg.hash().length()<<", "<<HASH_SIZE[msg.hashalgorithm()]<<")"<<endl;
     cout<<"data: "<<msg.data()<<"("<<msg.data().length()<<")"<<endl;
 
     if(!msg.data().length() || msg.hash().length() != HASH_SIZE[msg.hashalgorithm()]) {
@@ -171,7 +185,12 @@ void parseMessage(uint8_t buf[], int len, int sock) {
 
     uint32_t data_size = 0; //decrypted data size
 
-    decrypt(Handshake::CAESAR, (uint8_t*) msg.data().c_str(), msg.datasize(), &data, &data_size);
+    uint8_t decrypt_alg = *encryption_algorithm;
+    if(msg.type() == EncodedMessage::HANDSHAKE) {
+        decrypt_alg = Handshake::NOENCRYPTION;
+    }
+
+    decrypt(decrypt_alg, (uint8_t*) msg.data().c_str(), msg.datasize(), &data, &data_size);
 
     if(msg.datasize() != data_size) {
         cout<<"wrong data length"<<endl;
@@ -188,18 +207,22 @@ void parseMessage(uint8_t buf[], int len, int sock) {
     uint8_t* hash;
     uint16_t hash_size;
 
-    calculateHash(EncodedMessage::SHA512, data, data_size, &hash, &hash_size);
+    calculateHash(msg.hashalgorithm(), data, data_size, &hash, &hash_size);
 
     bool hash_ok = compareHash(hash, hash_size, (uint8_t*) msg.hash().c_str(), msg.hash().length());
 
     if(!hash_ok) {
         cout<<"wrong hash"<<endl;
-        cout<<"should be "<<printHash(EncodedMessage::SHA512, (uint8_t*) msg.hash().c_str())<<endl;
-        cout<<"got       "<<printHash(EncodedMessage::SHA512, hash)<<endl;
+        cout<<"should be "<<printHash(msg.hashalgorithm(), (uint8_t*) msg.hash().c_str())<<endl;
+        cout<<"got       "<<printHash(msg.hashalgorithm(), hash)<<endl;
         return;
     }
 
-    cout<<"hash ok"<<endl;
+    cout<<"Received message type: "<<EncodedMessage::MessageType_Name(msg.type())<<" ("<<msg.type()<<")"<<endl;
 
-    parseCommand(data, data_size, sock);
+    if(msg.type() == EncodedMessage::COMMAND) {
+        parseCommand(data, data_size, sock, *encryption_algorithm);
+    } else if(msg.type() == EncodedMessage::HANDSHAKE) {
+        parseHandshake(data, data_size, sock, encryption_algorithm);
+    }
 }
