@@ -10,17 +10,18 @@ message Param {
     }
 }
 
+enum CommandType {
+    NULL1 = 0;
+    LOGIN = 1;
+    RELOGIN = 2;
+    LOGOUT = 3;
+    REGISTER = 4;
+    GET_STAT = 5;
+    LIST_FILES = 6;
+}
+
 message Command {
     // TODO uzupelnic wszystkie typy
-    enum CommandType {
-        NULL = 0;
-        LOGIN = 1;
-        RELOGIN = 2;
-        LOGOUT = 3;
-        REGISTER = 4;
-        STAT = 5;
-        LIST_FILES = 6;
-    }
 
     CommandType type = 1;
 
@@ -32,41 +33,41 @@ message Command {
     bytes data = 4;
 }
 
+enum HashAlgorithm {
+    NULL2 = 0;
+    H_NOHASH = 1;
+    H_SHA256 = 2;
+    H_SHA512 = 3;
+    H_SHA1 = 4;
+    H_MD5 = 5;
+}
+
+enum MessageType {
+    NULL3 = 0;
+    COMMAND = 1;
+    SERVER_RESPONSE = 2;
+    HANDSHAKE = 3;
+}
+
 message EncodedMessage {
     uint64 dataSize = 1;
-
-    enum HashAlgorithm {
-        NULL = 0;
-        NOHASH = 1;
-        SHA256 = 2;
-        SHA512 = 3;
-        SHA1 = 4;
-        MD5 = 5;
-    }
 
     HashAlgorithm hashAlgorithm = 2;
 
     bytes hash = 3;
-
-    enum MessageType {
-        NULL2 = 0;
-        COMMAND = 1;
-        SERVER_RESPONSE = 2;
-        HANDSHAKE = 3;
-    }
 
     MessageType type = 4;
 
     bytes data = 5;
 }
 
-message Handshake {
-    enum EncryptionAlgorithm {
-        NULL = 0;
-        NOENCRYPTION = 1;
-        CAESAR = 2;
-    }
+enum EncryptionAlgorithm {
+    NULL4 = 0;
+    NOENCRYPTION = 1;
+    CAESAR = 2;
+}
 
+message Handshake {
     EncryptionAlgorithm encryptionAlgorithm = 1;
 }
 
@@ -76,19 +77,19 @@ message File {
     repeated Param metadata = 3;
 }
 
-message ServerResponse {
-    enum ResponseType {
-        NULL = 0;
-        OK = 1;
-        ERROR = 2;
-        LOGGED = 3;
-        STAT = 4;
-        FILES = 5;
-        SHARED = 6;
-        DATA = 7;
-        CAN_SEND = 8;
-    }
+enum ResponseType {
+    NULL5 = 0;
+    OK = 1;
+    ERROR = 2;
+    LOGGED = 3;
+    STAT = 4;
+    FILES = 5;
+    SHARED = 6;
+    SRV_DATA = 7;
+    CAN_SEND = 8;
+}
 
+message ServerResponse {
     ResponseType type = 1;
 
     repeated Param params = 2;

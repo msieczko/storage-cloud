@@ -44,8 +44,40 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
+    StorageCloud::EncodedMessage msg;
+
+    StorageCloud::Handshake handshake;
+    handshake.set_encryptionalgorithm(StorageCloud::CAESAR);
+    uint8_t* hdata = new uint8_t[handshake.ByteSize()];
+    handshake.SerializeToArray(hdata, handshake.ByteSize());
+    uint8_t hash[HASH_SIZE];
+
+    SHA512(hdata, handshake.ByteSize(), hash);
+
+    msg.set_hash((char*)hash, HASH_SIZE);
+    msg.set_datasize(handshake.ByteSize());
+    msg.set_data((char*)hdata, handshake.ByteSize());
+    msg.set_hashalgorithm(StorageCloud::H_SHA512);
+    msg.set_type(StorageCloud::HANDSHAKE);
+
+    msg.SerializeToArray(buf+4, 1020);
+
+    uint32_t siz = msg.ByteSize() + 4;
+
+    cout<<"handshake size: "<<siz<<" ("<<siz-4<<"+4)"<<endl;
+
+    buf[3] = siz & 0xFF;
+    buf[2] = (siz >> 8) & 0xFF;
+    buf[1] = (siz >> 16) & 0xFF;
+    buf[0] = (siz >> 24) & 0xFF;
+
+    write( sock, buf, siz );
+
+    //-------------------------------------
+
+
     StorageCloud::Command cmd;
-    cmd.set_type(StorageCloud::Command::LOGIN);
+    cmd.set_type(StorageCloud::LOGIN);
     StorageCloud::Param* tmp_param = cmd.add_params();
     tmp_param->set_paramid("param123");
     tmp_param->set_iparamval(1234567);
@@ -53,10 +85,6 @@ int main(int argc, char *argv[])
     cmd.SerializeToArray(data, cmd.ByteSize());
 
     cout<<"cmd size: "<<cmd.ByteSize()<<endl;
-
-    StorageCloud::EncodedMessage msg;
-
-    uint8_t hash[HASH_SIZE];
 
     uint8_t* edata = new uint8_t[cmd.ByteSize()];
 
@@ -67,11 +95,12 @@ int main(int argc, char *argv[])
     msg.set_hash((char*)hash, HASH_SIZE);
     msg.set_datasize(cmd.ByteSize());
     msg.set_data((char*)edata, cmd.ByteSize());
-    msg.set_hashalgorithm(StorageCloud::EncodedMessage::SHA512);
+    msg.set_hashalgorithm(StorageCloud::H_SHA512);
+    msg.set_type(StorageCloud::COMMAND);
 
     msg.SerializeToArray(buf+4, 1020);
 
-    uint32_t siz = msg.ByteSize() + 4;
+    siz = msg.ByteSize() + 4;
 
     cout<<"size: "<<siz<<" ("<<siz-4<<"+4)"<<endl;
 

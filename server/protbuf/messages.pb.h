@@ -86,129 +86,129 @@ extern ServerResponseDefaultTypeInternal _ServerResponse_default_instance_;
 }  // namespace StorageCloud
 namespace StorageCloud {
 
-enum Command_CommandType {
-  Command_CommandType_NULL_ = 0,
-  Command_CommandType_LOGIN = 1,
-  Command_CommandType_RELOGIN = 2,
-  Command_CommandType_LOGOUT = 3,
-  Command_CommandType_REGISTER = 4,
-  Command_CommandType_STAT = 5,
-  Command_CommandType_LIST_FILES = 6,
-  Command_CommandType_Command_CommandType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
-  Command_CommandType_Command_CommandType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+enum CommandType {
+  NULL1 = 0,
+  LOGIN = 1,
+  RELOGIN = 2,
+  LOGOUT = 3,
+  REGISTER = 4,
+  GET_STAT = 5,
+  LIST_FILES = 6,
+  CommandType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
+  CommandType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
-bool Command_CommandType_IsValid(int value);
-const Command_CommandType Command_CommandType_CommandType_MIN = Command_CommandType_NULL_;
-const Command_CommandType Command_CommandType_CommandType_MAX = Command_CommandType_LIST_FILES;
-const int Command_CommandType_CommandType_ARRAYSIZE = Command_CommandType_CommandType_MAX + 1;
+bool CommandType_IsValid(int value);
+const CommandType CommandType_MIN = NULL1;
+const CommandType CommandType_MAX = LIST_FILES;
+const int CommandType_ARRAYSIZE = CommandType_MAX + 1;
 
-const ::google::protobuf::EnumDescriptor* Command_CommandType_descriptor();
-inline const ::std::string& Command_CommandType_Name(Command_CommandType value) {
+const ::google::protobuf::EnumDescriptor* CommandType_descriptor();
+inline const ::std::string& CommandType_Name(CommandType value) {
   return ::google::protobuf::internal::NameOfEnum(
-    Command_CommandType_descriptor(), value);
+    CommandType_descriptor(), value);
 }
-inline bool Command_CommandType_Parse(
-    const ::std::string& name, Command_CommandType* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<Command_CommandType>(
-    Command_CommandType_descriptor(), name, value);
+inline bool CommandType_Parse(
+    const ::std::string& name, CommandType* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<CommandType>(
+    CommandType_descriptor(), name, value);
 }
-enum EncodedMessage_HashAlgorithm {
-  EncodedMessage_HashAlgorithm_NULL_ = 0,
-  EncodedMessage_HashAlgorithm_NOHASH = 1,
-  EncodedMessage_HashAlgorithm_SHA256 = 2,
-  EncodedMessage_HashAlgorithm_SHA512 = 3,
-  EncodedMessage_HashAlgorithm_SHA1 = 4,
-  EncodedMessage_HashAlgorithm_MD5 = 5,
-  EncodedMessage_HashAlgorithm_EncodedMessage_HashAlgorithm_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
-  EncodedMessage_HashAlgorithm_EncodedMessage_HashAlgorithm_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+enum HashAlgorithm {
+  NULL2 = 0,
+  H_NOHASH = 1,
+  H_SHA256 = 2,
+  H_SHA512 = 3,
+  H_SHA1 = 4,
+  H_MD5 = 5,
+  HashAlgorithm_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
+  HashAlgorithm_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
-bool EncodedMessage_HashAlgorithm_IsValid(int value);
-const EncodedMessage_HashAlgorithm EncodedMessage_HashAlgorithm_HashAlgorithm_MIN = EncodedMessage_HashAlgorithm_NULL_;
-const EncodedMessage_HashAlgorithm EncodedMessage_HashAlgorithm_HashAlgorithm_MAX = EncodedMessage_HashAlgorithm_MD5;
-const int EncodedMessage_HashAlgorithm_HashAlgorithm_ARRAYSIZE = EncodedMessage_HashAlgorithm_HashAlgorithm_MAX + 1;
+bool HashAlgorithm_IsValid(int value);
+const HashAlgorithm HashAlgorithm_MIN = NULL2;
+const HashAlgorithm HashAlgorithm_MAX = H_MD5;
+const int HashAlgorithm_ARRAYSIZE = HashAlgorithm_MAX + 1;
 
-const ::google::protobuf::EnumDescriptor* EncodedMessage_HashAlgorithm_descriptor();
-inline const ::std::string& EncodedMessage_HashAlgorithm_Name(EncodedMessage_HashAlgorithm value) {
+const ::google::protobuf::EnumDescriptor* HashAlgorithm_descriptor();
+inline const ::std::string& HashAlgorithm_Name(HashAlgorithm value) {
   return ::google::protobuf::internal::NameOfEnum(
-    EncodedMessage_HashAlgorithm_descriptor(), value);
+    HashAlgorithm_descriptor(), value);
 }
-inline bool EncodedMessage_HashAlgorithm_Parse(
-    const ::std::string& name, EncodedMessage_HashAlgorithm* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<EncodedMessage_HashAlgorithm>(
-    EncodedMessage_HashAlgorithm_descriptor(), name, value);
+inline bool HashAlgorithm_Parse(
+    const ::std::string& name, HashAlgorithm* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<HashAlgorithm>(
+    HashAlgorithm_descriptor(), name, value);
 }
-enum EncodedMessage_MessageType {
-  EncodedMessage_MessageType_NULL2 = 0,
-  EncodedMessage_MessageType_COMMAND = 1,
-  EncodedMessage_MessageType_SERVER_RESPONSE = 2,
-  EncodedMessage_MessageType_HANDSHAKE = 3,
-  EncodedMessage_MessageType_EncodedMessage_MessageType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
-  EncodedMessage_MessageType_EncodedMessage_MessageType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+enum MessageType {
+  NULL3 = 0,
+  COMMAND = 1,
+  SERVER_RESPONSE = 2,
+  HANDSHAKE = 3,
+  MessageType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
+  MessageType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
-bool EncodedMessage_MessageType_IsValid(int value);
-const EncodedMessage_MessageType EncodedMessage_MessageType_MessageType_MIN = EncodedMessage_MessageType_NULL2;
-const EncodedMessage_MessageType EncodedMessage_MessageType_MessageType_MAX = EncodedMessage_MessageType_HANDSHAKE;
-const int EncodedMessage_MessageType_MessageType_ARRAYSIZE = EncodedMessage_MessageType_MessageType_MAX + 1;
+bool MessageType_IsValid(int value);
+const MessageType MessageType_MIN = NULL3;
+const MessageType MessageType_MAX = HANDSHAKE;
+const int MessageType_ARRAYSIZE = MessageType_MAX + 1;
 
-const ::google::protobuf::EnumDescriptor* EncodedMessage_MessageType_descriptor();
-inline const ::std::string& EncodedMessage_MessageType_Name(EncodedMessage_MessageType value) {
+const ::google::protobuf::EnumDescriptor* MessageType_descriptor();
+inline const ::std::string& MessageType_Name(MessageType value) {
   return ::google::protobuf::internal::NameOfEnum(
-    EncodedMessage_MessageType_descriptor(), value);
+    MessageType_descriptor(), value);
 }
-inline bool EncodedMessage_MessageType_Parse(
-    const ::std::string& name, EncodedMessage_MessageType* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<EncodedMessage_MessageType>(
-    EncodedMessage_MessageType_descriptor(), name, value);
+inline bool MessageType_Parse(
+    const ::std::string& name, MessageType* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<MessageType>(
+    MessageType_descriptor(), name, value);
 }
-enum Handshake_EncryptionAlgorithm {
-  Handshake_EncryptionAlgorithm_NULL_ = 0,
-  Handshake_EncryptionAlgorithm_NOENCRYPTION = 1,
-  Handshake_EncryptionAlgorithm_CAESAR = 2,
-  Handshake_EncryptionAlgorithm_Handshake_EncryptionAlgorithm_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
-  Handshake_EncryptionAlgorithm_Handshake_EncryptionAlgorithm_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+enum EncryptionAlgorithm {
+  NULL4 = 0,
+  NOENCRYPTION = 1,
+  CAESAR = 2,
+  EncryptionAlgorithm_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
+  EncryptionAlgorithm_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
-bool Handshake_EncryptionAlgorithm_IsValid(int value);
-const Handshake_EncryptionAlgorithm Handshake_EncryptionAlgorithm_EncryptionAlgorithm_MIN = Handshake_EncryptionAlgorithm_NULL_;
-const Handshake_EncryptionAlgorithm Handshake_EncryptionAlgorithm_EncryptionAlgorithm_MAX = Handshake_EncryptionAlgorithm_CAESAR;
-const int Handshake_EncryptionAlgorithm_EncryptionAlgorithm_ARRAYSIZE = Handshake_EncryptionAlgorithm_EncryptionAlgorithm_MAX + 1;
+bool EncryptionAlgorithm_IsValid(int value);
+const EncryptionAlgorithm EncryptionAlgorithm_MIN = NULL4;
+const EncryptionAlgorithm EncryptionAlgorithm_MAX = CAESAR;
+const int EncryptionAlgorithm_ARRAYSIZE = EncryptionAlgorithm_MAX + 1;
 
-const ::google::protobuf::EnumDescriptor* Handshake_EncryptionAlgorithm_descriptor();
-inline const ::std::string& Handshake_EncryptionAlgorithm_Name(Handshake_EncryptionAlgorithm value) {
+const ::google::protobuf::EnumDescriptor* EncryptionAlgorithm_descriptor();
+inline const ::std::string& EncryptionAlgorithm_Name(EncryptionAlgorithm value) {
   return ::google::protobuf::internal::NameOfEnum(
-    Handshake_EncryptionAlgorithm_descriptor(), value);
+    EncryptionAlgorithm_descriptor(), value);
 }
-inline bool Handshake_EncryptionAlgorithm_Parse(
-    const ::std::string& name, Handshake_EncryptionAlgorithm* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<Handshake_EncryptionAlgorithm>(
-    Handshake_EncryptionAlgorithm_descriptor(), name, value);
+inline bool EncryptionAlgorithm_Parse(
+    const ::std::string& name, EncryptionAlgorithm* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<EncryptionAlgorithm>(
+    EncryptionAlgorithm_descriptor(), name, value);
 }
-enum ServerResponse_ResponseType {
-  ServerResponse_ResponseType_NULL_ = 0,
-  ServerResponse_ResponseType_OK = 1,
-  ServerResponse_ResponseType_ERROR = 2,
-  ServerResponse_ResponseType_LOGGED = 3,
-  ServerResponse_ResponseType_STAT = 4,
-  ServerResponse_ResponseType_FILES = 5,
-  ServerResponse_ResponseType_SHARED = 6,
-  ServerResponse_ResponseType_DATA = 7,
-  ServerResponse_ResponseType_CAN_SEND = 8,
-  ServerResponse_ResponseType_ServerResponse_ResponseType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
-  ServerResponse_ResponseType_ServerResponse_ResponseType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+enum ResponseType {
+  NULL5 = 0,
+  OK = 1,
+  ERROR = 2,
+  LOGGED = 3,
+  STAT = 4,
+  FILES = 5,
+  SHARED = 6,
+  SRV_DATA = 7,
+  CAN_SEND = 8,
+  ResponseType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
+  ResponseType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
-bool ServerResponse_ResponseType_IsValid(int value);
-const ServerResponse_ResponseType ServerResponse_ResponseType_ResponseType_MIN = ServerResponse_ResponseType_NULL_;
-const ServerResponse_ResponseType ServerResponse_ResponseType_ResponseType_MAX = ServerResponse_ResponseType_CAN_SEND;
-const int ServerResponse_ResponseType_ResponseType_ARRAYSIZE = ServerResponse_ResponseType_ResponseType_MAX + 1;
+bool ResponseType_IsValid(int value);
+const ResponseType ResponseType_MIN = NULL5;
+const ResponseType ResponseType_MAX = CAN_SEND;
+const int ResponseType_ARRAYSIZE = ResponseType_MAX + 1;
 
-const ::google::protobuf::EnumDescriptor* ServerResponse_ResponseType_descriptor();
-inline const ::std::string& ServerResponse_ResponseType_Name(ServerResponse_ResponseType value) {
+const ::google::protobuf::EnumDescriptor* ResponseType_descriptor();
+inline const ::std::string& ResponseType_Name(ResponseType value) {
   return ::google::protobuf::internal::NameOfEnum(
-    ServerResponse_ResponseType_descriptor(), value);
+    ResponseType_descriptor(), value);
 }
-inline bool ServerResponse_ResponseType_Parse(
-    const ::std::string& name, ServerResponse_ResponseType* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<ServerResponse_ResponseType>(
-    ServerResponse_ResponseType_descriptor(), name, value);
+inline bool ResponseType_Parse(
+    const ::std::string& name, ResponseType* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<ResponseType>(
+    ResponseType_descriptor(), name, value);
 }
 // ===================================================================
 
@@ -445,42 +445,6 @@ class Command : public ::google::protobuf::Message /* @@protoc_insertion_point(c
 
   // nested types ----------------------------------------------------
 
-  typedef Command_CommandType CommandType;
-  static const CommandType NULL_ =
-    Command_CommandType_NULL_;
-  static const CommandType LOGIN =
-    Command_CommandType_LOGIN;
-  static const CommandType RELOGIN =
-    Command_CommandType_RELOGIN;
-  static const CommandType LOGOUT =
-    Command_CommandType_LOGOUT;
-  static const CommandType REGISTER =
-    Command_CommandType_REGISTER;
-  static const CommandType STAT =
-    Command_CommandType_STAT;
-  static const CommandType LIST_FILES =
-    Command_CommandType_LIST_FILES;
-  static inline bool CommandType_IsValid(int value) {
-    return Command_CommandType_IsValid(value);
-  }
-  static const CommandType CommandType_MIN =
-    Command_CommandType_CommandType_MIN;
-  static const CommandType CommandType_MAX =
-    Command_CommandType_CommandType_MAX;
-  static const int CommandType_ARRAYSIZE =
-    Command_CommandType_CommandType_ARRAYSIZE;
-  static inline const ::google::protobuf::EnumDescriptor*
-  CommandType_descriptor() {
-    return Command_CommandType_descriptor();
-  }
-  static inline const ::std::string& CommandType_Name(CommandType value) {
-    return Command_CommandType_Name(value);
-  }
-  static inline bool CommandType_Parse(const ::std::string& name,
-      CommandType* value) {
-    return Command_CommandType_Parse(name, value);
-  }
-
   // accessors -------------------------------------------------------
 
   // repeated .StorageCloud.Param params = 2;
@@ -531,11 +495,11 @@ class Command : public ::google::protobuf::Message /* @@protoc_insertion_point(c
   ::std::string* release_data();
   void set_allocated_data(::std::string* data);
 
-  // .StorageCloud.Command.CommandType type = 1;
+  // .StorageCloud.CommandType type = 1;
   void clear_type();
   static const int kTypeFieldNumber = 1;
-  ::StorageCloud::Command_CommandType type() const;
-  void set_type(::StorageCloud::Command_CommandType value);
+  ::StorageCloud::CommandType type() const;
+  void set_type(::StorageCloud::CommandType value);
 
   // @@protoc_insertion_point(class_scope:StorageCloud.Command)
  private:
@@ -631,70 +595,6 @@ class EncodedMessage : public ::google::protobuf::Message /* @@protoc_insertion_
 
   // nested types ----------------------------------------------------
 
-  typedef EncodedMessage_HashAlgorithm HashAlgorithm;
-  static const HashAlgorithm NULL_ =
-    EncodedMessage_HashAlgorithm_NULL_;
-  static const HashAlgorithm NOHASH =
-    EncodedMessage_HashAlgorithm_NOHASH;
-  static const HashAlgorithm SHA256 =
-    EncodedMessage_HashAlgorithm_SHA256;
-  static const HashAlgorithm SHA512 =
-    EncodedMessage_HashAlgorithm_SHA512;
-  static const HashAlgorithm SHA1 =
-    EncodedMessage_HashAlgorithm_SHA1;
-  static const HashAlgorithm MD5 =
-    EncodedMessage_HashAlgorithm_MD5;
-  static inline bool HashAlgorithm_IsValid(int value) {
-    return EncodedMessage_HashAlgorithm_IsValid(value);
-  }
-  static const HashAlgorithm HashAlgorithm_MIN =
-    EncodedMessage_HashAlgorithm_HashAlgorithm_MIN;
-  static const HashAlgorithm HashAlgorithm_MAX =
-    EncodedMessage_HashAlgorithm_HashAlgorithm_MAX;
-  static const int HashAlgorithm_ARRAYSIZE =
-    EncodedMessage_HashAlgorithm_HashAlgorithm_ARRAYSIZE;
-  static inline const ::google::protobuf::EnumDescriptor*
-  HashAlgorithm_descriptor() {
-    return EncodedMessage_HashAlgorithm_descriptor();
-  }
-  static inline const ::std::string& HashAlgorithm_Name(HashAlgorithm value) {
-    return EncodedMessage_HashAlgorithm_Name(value);
-  }
-  static inline bool HashAlgorithm_Parse(const ::std::string& name,
-      HashAlgorithm* value) {
-    return EncodedMessage_HashAlgorithm_Parse(name, value);
-  }
-
-  typedef EncodedMessage_MessageType MessageType;
-  static const MessageType NULL2 =
-    EncodedMessage_MessageType_NULL2;
-  static const MessageType COMMAND =
-    EncodedMessage_MessageType_COMMAND;
-  static const MessageType SERVER_RESPONSE =
-    EncodedMessage_MessageType_SERVER_RESPONSE;
-  static const MessageType HANDSHAKE =
-    EncodedMessage_MessageType_HANDSHAKE;
-  static inline bool MessageType_IsValid(int value) {
-    return EncodedMessage_MessageType_IsValid(value);
-  }
-  static const MessageType MessageType_MIN =
-    EncodedMessage_MessageType_MessageType_MIN;
-  static const MessageType MessageType_MAX =
-    EncodedMessage_MessageType_MessageType_MAX;
-  static const int MessageType_ARRAYSIZE =
-    EncodedMessage_MessageType_MessageType_ARRAYSIZE;
-  static inline const ::google::protobuf::EnumDescriptor*
-  MessageType_descriptor() {
-    return EncodedMessage_MessageType_descriptor();
-  }
-  static inline const ::std::string& MessageType_Name(MessageType value) {
-    return EncodedMessage_MessageType_Name(value);
-  }
-  static inline bool MessageType_Parse(const ::std::string& name,
-      MessageType* value) {
-    return EncodedMessage_MessageType_Parse(name, value);
-  }
-
   // accessors -------------------------------------------------------
 
   // bytes hash = 3;
@@ -731,17 +631,17 @@ class EncodedMessage : public ::google::protobuf::Message /* @@protoc_insertion_
   ::google::protobuf::uint64 datasize() const;
   void set_datasize(::google::protobuf::uint64 value);
 
-  // .StorageCloud.EncodedMessage.HashAlgorithm hashAlgorithm = 2;
+  // .StorageCloud.HashAlgorithm hashAlgorithm = 2;
   void clear_hashalgorithm();
   static const int kHashAlgorithmFieldNumber = 2;
-  ::StorageCloud::EncodedMessage_HashAlgorithm hashalgorithm() const;
-  void set_hashalgorithm(::StorageCloud::EncodedMessage_HashAlgorithm value);
+  ::StorageCloud::HashAlgorithm hashalgorithm() const;
+  void set_hashalgorithm(::StorageCloud::HashAlgorithm value);
 
-  // .StorageCloud.EncodedMessage.MessageType type = 4;
+  // .StorageCloud.MessageType type = 4;
   void clear_type();
   static const int kTypeFieldNumber = 4;
-  ::StorageCloud::EncodedMessage_MessageType type() const;
-  void set_type(::StorageCloud::EncodedMessage_MessageType value);
+  ::StorageCloud::MessageType type() const;
+  void set_type(::StorageCloud::MessageType value);
 
   // @@protoc_insertion_point(class_scope:StorageCloud.EncodedMessage)
  private:
@@ -838,41 +738,13 @@ class Handshake : public ::google::protobuf::Message /* @@protoc_insertion_point
 
   // nested types ----------------------------------------------------
 
-  typedef Handshake_EncryptionAlgorithm EncryptionAlgorithm;
-  static const EncryptionAlgorithm NULL_ =
-    Handshake_EncryptionAlgorithm_NULL_;
-  static const EncryptionAlgorithm NOENCRYPTION =
-    Handshake_EncryptionAlgorithm_NOENCRYPTION;
-  static const EncryptionAlgorithm CAESAR =
-    Handshake_EncryptionAlgorithm_CAESAR;
-  static inline bool EncryptionAlgorithm_IsValid(int value) {
-    return Handshake_EncryptionAlgorithm_IsValid(value);
-  }
-  static const EncryptionAlgorithm EncryptionAlgorithm_MIN =
-    Handshake_EncryptionAlgorithm_EncryptionAlgorithm_MIN;
-  static const EncryptionAlgorithm EncryptionAlgorithm_MAX =
-    Handshake_EncryptionAlgorithm_EncryptionAlgorithm_MAX;
-  static const int EncryptionAlgorithm_ARRAYSIZE =
-    Handshake_EncryptionAlgorithm_EncryptionAlgorithm_ARRAYSIZE;
-  static inline const ::google::protobuf::EnumDescriptor*
-  EncryptionAlgorithm_descriptor() {
-    return Handshake_EncryptionAlgorithm_descriptor();
-  }
-  static inline const ::std::string& EncryptionAlgorithm_Name(EncryptionAlgorithm value) {
-    return Handshake_EncryptionAlgorithm_Name(value);
-  }
-  static inline bool EncryptionAlgorithm_Parse(const ::std::string& name,
-      EncryptionAlgorithm* value) {
-    return Handshake_EncryptionAlgorithm_Parse(name, value);
-  }
-
   // accessors -------------------------------------------------------
 
-  // .StorageCloud.Handshake.EncryptionAlgorithm encryptionAlgorithm = 1;
+  // .StorageCloud.EncryptionAlgorithm encryptionAlgorithm = 1;
   void clear_encryptionalgorithm();
   static const int kEncryptionAlgorithmFieldNumber = 1;
-  ::StorageCloud::Handshake_EncryptionAlgorithm encryptionalgorithm() const;
-  void set_encryptionalgorithm(::StorageCloud::Handshake_EncryptionAlgorithm value);
+  ::StorageCloud::EncryptionAlgorithm encryptionalgorithm() const;
+  void set_encryptionalgorithm(::StorageCloud::EncryptionAlgorithm value);
 
   // @@protoc_insertion_point(class_scope:StorageCloud.Handshake)
  private:
@@ -1092,46 +964,6 @@ class ServerResponse : public ::google::protobuf::Message /* @@protoc_insertion_
 
   // nested types ----------------------------------------------------
 
-  typedef ServerResponse_ResponseType ResponseType;
-  static const ResponseType NULL_ =
-    ServerResponse_ResponseType_NULL_;
-  static const ResponseType OK =
-    ServerResponse_ResponseType_OK;
-  static const ResponseType ERROR =
-    ServerResponse_ResponseType_ERROR;
-  static const ResponseType LOGGED =
-    ServerResponse_ResponseType_LOGGED;
-  static const ResponseType STAT =
-    ServerResponse_ResponseType_STAT;
-  static const ResponseType FILES =
-    ServerResponse_ResponseType_FILES;
-  static const ResponseType SHARED =
-    ServerResponse_ResponseType_SHARED;
-  static const ResponseType DATA =
-    ServerResponse_ResponseType_DATA;
-  static const ResponseType CAN_SEND =
-    ServerResponse_ResponseType_CAN_SEND;
-  static inline bool ResponseType_IsValid(int value) {
-    return ServerResponse_ResponseType_IsValid(value);
-  }
-  static const ResponseType ResponseType_MIN =
-    ServerResponse_ResponseType_ResponseType_MIN;
-  static const ResponseType ResponseType_MAX =
-    ServerResponse_ResponseType_ResponseType_MAX;
-  static const int ResponseType_ARRAYSIZE =
-    ServerResponse_ResponseType_ResponseType_ARRAYSIZE;
-  static inline const ::google::protobuf::EnumDescriptor*
-  ResponseType_descriptor() {
-    return ServerResponse_ResponseType_descriptor();
-  }
-  static inline const ::std::string& ResponseType_Name(ResponseType value) {
-    return ServerResponse_ResponseType_Name(value);
-  }
-  static inline bool ResponseType_Parse(const ::std::string& name,
-      ResponseType* value) {
-    return ServerResponse_ResponseType_Parse(name, value);
-  }
-
   // accessors -------------------------------------------------------
 
   // repeated .StorageCloud.Param params = 2;
@@ -1194,11 +1026,11 @@ class ServerResponse : public ::google::protobuf::Message /* @@protoc_insertion_
   ::std::string* release_data();
   void set_allocated_data(::std::string* data);
 
-  // .StorageCloud.ServerResponse.ResponseType type = 1;
+  // .StorageCloud.ResponseType type = 1;
   void clear_type();
   static const int kTypeFieldNumber = 1;
-  ::StorageCloud::ServerResponse_ResponseType type() const;
-  void set_type(::StorageCloud::ServerResponse_ResponseType value);
+  ::StorageCloud::ResponseType type() const;
+  void set_type(::StorageCloud::ResponseType value);
 
   // @@protoc_insertion_point(class_scope:StorageCloud.ServerResponse)
  private:
@@ -1414,15 +1246,15 @@ inline Param::ValueCase Param::value_case() const {
 
 // Command
 
-// .StorageCloud.Command.CommandType type = 1;
+// .StorageCloud.CommandType type = 1;
 inline void Command::clear_type() {
   type_ = 0;
 }
-inline ::StorageCloud::Command_CommandType Command::type() const {
+inline ::StorageCloud::CommandType Command::type() const {
   // @@protoc_insertion_point(field_get:StorageCloud.Command.type)
-  return static_cast< ::StorageCloud::Command_CommandType >(type_);
+  return static_cast< ::StorageCloud::CommandType >(type_);
 }
-inline void Command::set_type(::StorageCloud::Command_CommandType value) {
+inline void Command::set_type(::StorageCloud::CommandType value) {
   
   type_ = value;
   // @@protoc_insertion_point(field_set:StorageCloud.Command.type)
@@ -1598,15 +1430,15 @@ inline void EncodedMessage::set_datasize(::google::protobuf::uint64 value) {
   // @@protoc_insertion_point(field_set:StorageCloud.EncodedMessage.dataSize)
 }
 
-// .StorageCloud.EncodedMessage.HashAlgorithm hashAlgorithm = 2;
+// .StorageCloud.HashAlgorithm hashAlgorithm = 2;
 inline void EncodedMessage::clear_hashalgorithm() {
   hashalgorithm_ = 0;
 }
-inline ::StorageCloud::EncodedMessage_HashAlgorithm EncodedMessage::hashalgorithm() const {
+inline ::StorageCloud::HashAlgorithm EncodedMessage::hashalgorithm() const {
   // @@protoc_insertion_point(field_get:StorageCloud.EncodedMessage.hashAlgorithm)
-  return static_cast< ::StorageCloud::EncodedMessage_HashAlgorithm >(hashalgorithm_);
+  return static_cast< ::StorageCloud::HashAlgorithm >(hashalgorithm_);
 }
-inline void EncodedMessage::set_hashalgorithm(::StorageCloud::EncodedMessage_HashAlgorithm value) {
+inline void EncodedMessage::set_hashalgorithm(::StorageCloud::HashAlgorithm value) {
   
   hashalgorithm_ = value;
   // @@protoc_insertion_point(field_set:StorageCloud.EncodedMessage.hashAlgorithm)
@@ -1665,15 +1497,15 @@ inline void EncodedMessage::set_allocated_hash(::std::string* hash) {
   // @@protoc_insertion_point(field_set_allocated:StorageCloud.EncodedMessage.hash)
 }
 
-// .StorageCloud.EncodedMessage.MessageType type = 4;
+// .StorageCloud.MessageType type = 4;
 inline void EncodedMessage::clear_type() {
   type_ = 0;
 }
-inline ::StorageCloud::EncodedMessage_MessageType EncodedMessage::type() const {
+inline ::StorageCloud::MessageType EncodedMessage::type() const {
   // @@protoc_insertion_point(field_get:StorageCloud.EncodedMessage.type)
-  return static_cast< ::StorageCloud::EncodedMessage_MessageType >(type_);
+  return static_cast< ::StorageCloud::MessageType >(type_);
 }
-inline void EncodedMessage::set_type(::StorageCloud::EncodedMessage_MessageType value) {
+inline void EncodedMessage::set_type(::StorageCloud::MessageType value) {
   
   type_ = value;
   // @@protoc_insertion_point(field_set:StorageCloud.EncodedMessage.type)
@@ -1736,15 +1568,15 @@ inline void EncodedMessage::set_allocated_data(::std::string* data) {
 
 // Handshake
 
-// .StorageCloud.Handshake.EncryptionAlgorithm encryptionAlgorithm = 1;
+// .StorageCloud.EncryptionAlgorithm encryptionAlgorithm = 1;
 inline void Handshake::clear_encryptionalgorithm() {
   encryptionalgorithm_ = 0;
 }
-inline ::StorageCloud::Handshake_EncryptionAlgorithm Handshake::encryptionalgorithm() const {
+inline ::StorageCloud::EncryptionAlgorithm Handshake::encryptionalgorithm() const {
   // @@protoc_insertion_point(field_get:StorageCloud.Handshake.encryptionAlgorithm)
-  return static_cast< ::StorageCloud::Handshake_EncryptionAlgorithm >(encryptionalgorithm_);
+  return static_cast< ::StorageCloud::EncryptionAlgorithm >(encryptionalgorithm_);
 }
-inline void Handshake::set_encryptionalgorithm(::StorageCloud::Handshake_EncryptionAlgorithm value) {
+inline void Handshake::set_encryptionalgorithm(::StorageCloud::EncryptionAlgorithm value) {
   
   encryptionalgorithm_ = value;
   // @@protoc_insertion_point(field_set:StorageCloud.Handshake.encryptionAlgorithm)
@@ -1855,15 +1687,15 @@ File::metadata() const {
 
 // ServerResponse
 
-// .StorageCloud.ServerResponse.ResponseType type = 1;
+// .StorageCloud.ResponseType type = 1;
 inline void ServerResponse::clear_type() {
   type_ = 0;
 }
-inline ::StorageCloud::ServerResponse_ResponseType ServerResponse::type() const {
+inline ::StorageCloud::ResponseType ServerResponse::type() const {
   // @@protoc_insertion_point(field_get:StorageCloud.ServerResponse.type)
-  return static_cast< ::StorageCloud::ServerResponse_ResponseType >(type_);
+  return static_cast< ::StorageCloud::ResponseType >(type_);
 }
-inline void ServerResponse::set_type(::StorageCloud::ServerResponse_ResponseType value) {
+inline void ServerResponse::set_type(::StorageCloud::ResponseType value) {
   
   type_ = value;
   // @@protoc_insertion_point(field_set:StorageCloud.ServerResponse.type)
@@ -2072,30 +1904,30 @@ inline void ServerResponse::set_allocated_data(::std::string* data) {
 namespace google {
 namespace protobuf {
 
-template <> struct is_proto_enum< ::StorageCloud::Command_CommandType> : ::google::protobuf::internal::true_type {};
+template <> struct is_proto_enum< ::StorageCloud::CommandType> : ::google::protobuf::internal::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::Command_CommandType>() {
-  return ::StorageCloud::Command_CommandType_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::CommandType>() {
+  return ::StorageCloud::CommandType_descriptor();
 }
-template <> struct is_proto_enum< ::StorageCloud::EncodedMessage_HashAlgorithm> : ::google::protobuf::internal::true_type {};
+template <> struct is_proto_enum< ::StorageCloud::HashAlgorithm> : ::google::protobuf::internal::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::EncodedMessage_HashAlgorithm>() {
-  return ::StorageCloud::EncodedMessage_HashAlgorithm_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::HashAlgorithm>() {
+  return ::StorageCloud::HashAlgorithm_descriptor();
 }
-template <> struct is_proto_enum< ::StorageCloud::EncodedMessage_MessageType> : ::google::protobuf::internal::true_type {};
+template <> struct is_proto_enum< ::StorageCloud::MessageType> : ::google::protobuf::internal::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::EncodedMessage_MessageType>() {
-  return ::StorageCloud::EncodedMessage_MessageType_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::MessageType>() {
+  return ::StorageCloud::MessageType_descriptor();
 }
-template <> struct is_proto_enum< ::StorageCloud::Handshake_EncryptionAlgorithm> : ::google::protobuf::internal::true_type {};
+template <> struct is_proto_enum< ::StorageCloud::EncryptionAlgorithm> : ::google::protobuf::internal::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::Handshake_EncryptionAlgorithm>() {
-  return ::StorageCloud::Handshake_EncryptionAlgorithm_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::EncryptionAlgorithm>() {
+  return ::StorageCloud::EncryptionAlgorithm_descriptor();
 }
-template <> struct is_proto_enum< ::StorageCloud::ServerResponse_ResponseType> : ::google::protobuf::internal::true_type {};
+template <> struct is_proto_enum< ::StorageCloud::ResponseType> : ::google::protobuf::internal::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::ServerResponse_ResponseType>() {
-  return ::StorageCloud::ServerResponse_ResponseType_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::ResponseType>() {
+  return ::StorageCloud::ResponseType_descriptor();
 }
 
 }  // namespace protobuf

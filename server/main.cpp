@@ -43,7 +43,9 @@ void process(int sock, int server_pid) {
     struct timeval timeout;
     int rv;
 
-    uint8_t encryption_algorithm = Handshake::NOENCRYPTION;
+    UserCtx user_ctx;
+    user_ctx.encryption_algorithm = EncryptionAlgorithm::NOENCRYPTION;
+    user_ctx.username = "";
 
     while(!should_exit) {
         FD_ZERO(&set); /* clear the set */
@@ -82,22 +84,19 @@ void process(int sock, int server_pid) {
             if (n == size - 4) {
                 cout<<"got all data ("<<n<<")"<<endl;
 
-                parseMessage(buffer, size, sock, &encryption_algorithm);
+                uint8_t* out_data = nullptr;
+                uint32_t out_data_len;
+                bool response = processMessage(buffer, size, &user_ctx, &out_data, &out_data_len);
+                if(response) {
+                    n = write(sock, out_data, out_data_len);
+                    cout<<"sent "<<n<<" bytes"<<endl;
+                    if (n != out_data_len) {
+                        cout<<"Error: not all data has been send"<<endl;
+                    }
+                }
+
+                delete out_data;
             }
-
-//            for(int i = 0; i < n; i++) {
-//                if (buffer[i] >= 'a' && buffer[i] <= 'z') {
-//                    buffer[i] -= 32;
-//                } else if (buffer[i] >= 'A' && buffer[i] <= 'Z') {
-//                    buffer[i] += 32;
-//                }
-//            }
-
-
-
-//            cout<<"Sending: "<<buffer<<endl;
-//            n = write(sock, buffer, n);
-//            cout<<"Sent "<<n<<" bytes"<<endl;
         }
     }
 
