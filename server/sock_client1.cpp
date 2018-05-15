@@ -1,5 +1,7 @@
 #include "main.h"
 
+#define HASH_SIZE SHA512_DIGEST_LENGTH
+
 using namespace google::protobuf::io;
 
 using namespace std;
@@ -65,6 +67,7 @@ int main(int argc, char *argv[])
     msg.set_hash((char*)hash, HASH_SIZE);
     msg.set_datasize(cmd.ByteSize());
     msg.set_data((char*)edata, cmd.ByteSize());
+    msg.set_hashalgorithm(StorageCloud::EncodedMessage::SHA512);
 
     msg.SerializeToArray(buf+4, 1020);
 

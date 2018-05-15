@@ -33,9 +33,41 @@ message Command {
 }
 
 message EncodedMessage {
-    int64 dataSize = 1;
-    bytes hash = 2;
-    bytes data = 3;
+    uint64 dataSize = 1;
+
+    enum HashAlgorithm {
+        NULL = 0;
+        NOHASH = 1;
+        SHA256 = 2;
+        SHA512 = 3;
+        SHA1 = 4;
+        MD5 = 5;
+    }
+
+    HashAlgorithm hashAlgorithm = 2;
+
+    bytes hash = 3;
+
+    enum MessageType {
+        NULL2 = 0;
+        COMMAND = 1;
+        SERVER_RESPONSE = 2;
+        HANDSHAKE = 3;
+    }
+
+    MessageType type = 4;
+
+    bytes data = 5;
+}
+
+message Handshake {
+    enum EncryptionAlgorithm {
+        NULL = 0;
+        NOENCRYPTION = 1;
+        CAESAR = 2;
+    }
+
+    EncryptionAlgorithm encryptionAlgorithm = 1;
 }
 
 message File {

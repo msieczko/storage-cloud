@@ -37,6 +37,11 @@ class EncodedMessageDefaultTypeInternal {
   ::google::protobuf::internal::ExplicitlyConstructed<EncodedMessage>
       _instance;
 } _EncodedMessage_default_instance_;
+class HandshakeDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<Handshake>
+      _instance;
+} _Handshake_default_instance_;
 class FileDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<File>
@@ -113,6 +118,27 @@ void InitDefaultsEncodedMessage() {
   ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsEncodedMessageImpl);
 }
 
+void InitDefaultsHandshakeImpl() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
+#else
+  ::google::protobuf::internal::InitProtobufDefaults();
+#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  {
+    void* ptr = &::StorageCloud::_Handshake_default_instance_;
+    new (ptr) ::StorageCloud::Handshake();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::StorageCloud::Handshake::InitAsDefaultInstance();
+}
+
+void InitDefaultsHandshake() {
+  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
+  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsHandshakeImpl);
+}
+
 void InitDefaultsFileImpl() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -158,8 +184,8 @@ void InitDefaultsServerResponse() {
   ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsServerResponseImpl);
 }
 
-::google::protobuf::Metadata file_level_metadata[5];
-const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[2];
+::google::protobuf::Metadata file_level_metadata[6];
+const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[5];
 
 const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
@@ -186,8 +212,15 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::EncodedMessage, datasize_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::EncodedMessage, hashalgorithm_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::EncodedMessage, hash_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::EncodedMessage, data_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::Handshake, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::Handshake, encryptionalgorithm_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -211,14 +244,16 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROT
   { 0, -1, sizeof(::StorageCloud::Param)},
   { 9, -1, sizeof(::StorageCloud::Command)},
   { 18, -1, sizeof(::StorageCloud::EncodedMessage)},
-  { 26, -1, sizeof(::StorageCloud::File)},
-  { 34, -1, sizeof(::StorageCloud::ServerResponse)},
+  { 27, -1, sizeof(::StorageCloud::Handshake)},
+  { 33, -1, sizeof(::StorageCloud::File)},
+  { 41, -1, sizeof(::StorageCloud::ServerResponse)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&::StorageCloud::_Param_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::StorageCloud::_Command_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::StorageCloud::_EncodedMessage_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::StorageCloud::_Handshake_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::StorageCloud::_File_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::StorageCloud::_ServerResponse_default_instance_),
 };
@@ -239,7 +274,7 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 5);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 6);
 }
 
 void AddDescriptorsImpl() {
@@ -253,21 +288,30 @@ void AddDescriptorsImpl() {
       "Param\022\014\n\004list\030\003 \003(\t\022\014\n\004data\030\004 \001(\014\"c\n\013Com"
       "mandType\022\010\n\004NULL\020\000\022\t\n\005LOGIN\020\001\022\013\n\007RELOGIN"
       "\020\002\022\n\n\006LOGOUT\020\003\022\014\n\010REGISTER\020\004\022\010\n\004STAT\020\005\022\016"
-      "\n\nLIST_FILES\020\006\">\n\016EncodedMessage\022\020\n\010data"
-      "Size\030\001 \001(\003\022\014\n\004hash\030\002 \001(\014\022\014\n\004data\030\003 \001(\014\"I"
-      "\n\004File\022\014\n\004name\030\001 \001(\t\022\014\n\004size\030\002 \001(\003\022%\n\010me"
-      "tadata\030\003 \003(\0132\023.StorageCloud.Param\"\242\002\n\016Se"
-      "rverResponse\0227\n\004type\030\001 \001(\0162).StorageClou"
-      "d.ServerResponse.ResponseType\022#\n\006params\030"
-      "\002 \003(\0132\023.StorageCloud.Param\022\014\n\004list\030\003 \003(\t"
-      "\022$\n\010fileList\030\004 \003(\0132\022.StorageCloud.File\022\014"
-      "\n\004data\030\005 \001(\014\"p\n\014ResponseType\022\010\n\004NULL\020\000\022\006"
-      "\n\002OK\020\001\022\t\n\005ERROR\020\002\022\n\n\006LOGGED\020\003\022\010\n\004STAT\020\004\022"
-      "\t\n\005FILES\020\005\022\n\n\006SHARED\020\006\022\010\n\004DATA\020\007\022\014\n\010CAN_"
-      "SEND\020\010b\006proto3"
+      "\n\nLIST_FILES\020\006\"\236\002\n\016EncodedMessage\022\020\n\010dat"
+      "aSize\030\001 \001(\004\022A\n\rhashAlgorithm\030\002 \001(\0162*.Sto"
+      "rageCloud.EncodedMessage.HashAlgorithm\022\014"
+      "\n\004hash\030\003 \001(\014\022\014\n\004data\030\004 \001(\014\"P\n\rHashAlgori"
+      "thm\022\010\n\004NULL\020\000\022\n\n\006NOHASH\020\001\022\n\n\006SHA256\020\002\022\n\n"
+      "\006SHA512\020\003\022\010\n\004SHA1\020\004\022\007\n\003MD5\020\005\"I\n\013MessageT"
+      "ype\022\t\n\005NULL2\020\000\022\013\n\007COMMAND\020\001\022\023\n\017SERVER_RE"
+      "SPONSE\020\002\022\r\n\tHANDSHAKE\020\003\"\224\001\n\tHandshake\022H\n"
+      "\023encryptionAlgorithm\030\001 \001(\0162+.StorageClou"
+      "d.Handshake.EncryptionAlgorithm\"=\n\023Encry"
+      "ptionAlgorithm\022\010\n\004NULL\020\000\022\020\n\014NOENCRYPTION"
+      "\020\001\022\n\n\006CAESAR\020\002\"I\n\004File\022\014\n\004name\030\001 \001(\t\022\014\n\004"
+      "size\030\002 \001(\003\022%\n\010metadata\030\003 \003(\0132\023.StorageCl"
+      "oud.Param\"\242\002\n\016ServerResponse\0227\n\004type\030\001 \001"
+      "(\0162).StorageCloud.ServerResponse.Respons"
+      "eType\022#\n\006params\030\002 \003(\0132\023.StorageCloud.Par"
+      "am\022\014\n\004list\030\003 \003(\t\022$\n\010fileList\030\004 \003(\0132\022.Sto"
+      "rageCloud.File\022\014\n\004data\030\005 \001(\014\"p\n\014Response"
+      "Type\022\010\n\004NULL\020\000\022\006\n\002OK\020\001\022\t\n\005ERROR\020\002\022\n\n\006LOG"
+      "GED\020\003\022\010\n\004STAT\020\004\022\t\n\005FILES\020\005\022\n\n\006SHARED\020\006\022\010"
+      "\n\004DATA\020\007\022\014\n\010CAN_SEND\020\010b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 774);
+      descriptor, 1150);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "messages.proto", &protobuf_RegisterTypes);
 }
@@ -315,9 +359,86 @@ const Command_CommandType Command::CommandType_MIN;
 const Command_CommandType Command::CommandType_MAX;
 const int Command::CommandType_ARRAYSIZE;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
-const ::google::protobuf::EnumDescriptor* ServerResponse_ResponseType_descriptor() {
+const ::google::protobuf::EnumDescriptor* EncodedMessage_HashAlgorithm_descriptor() {
   protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
   return protobuf_messages_2eproto::file_level_enum_descriptors[1];
+}
+bool EncodedMessage_HashAlgorithm_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const EncodedMessage_HashAlgorithm EncodedMessage::NULL_;
+const EncodedMessage_HashAlgorithm EncodedMessage::NOHASH;
+const EncodedMessage_HashAlgorithm EncodedMessage::SHA256;
+const EncodedMessage_HashAlgorithm EncodedMessage::SHA512;
+const EncodedMessage_HashAlgorithm EncodedMessage::SHA1;
+const EncodedMessage_HashAlgorithm EncodedMessage::MD5;
+const EncodedMessage_HashAlgorithm EncodedMessage::HashAlgorithm_MIN;
+const EncodedMessage_HashAlgorithm EncodedMessage::HashAlgorithm_MAX;
+const int EncodedMessage::HashAlgorithm_ARRAYSIZE;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+const ::google::protobuf::EnumDescriptor* EncodedMessage_MessageType_descriptor() {
+  protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_messages_2eproto::file_level_enum_descriptors[2];
+}
+bool EncodedMessage_MessageType_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const EncodedMessage_MessageType EncodedMessage::NULL2;
+const EncodedMessage_MessageType EncodedMessage::COMMAND;
+const EncodedMessage_MessageType EncodedMessage::SERVER_RESPONSE;
+const EncodedMessage_MessageType EncodedMessage::HANDSHAKE;
+const EncodedMessage_MessageType EncodedMessage::MessageType_MIN;
+const EncodedMessage_MessageType EncodedMessage::MessageType_MAX;
+const int EncodedMessage::MessageType_ARRAYSIZE;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+const ::google::protobuf::EnumDescriptor* Handshake_EncryptionAlgorithm_descriptor() {
+  protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_messages_2eproto::file_level_enum_descriptors[3];
+}
+bool Handshake_EncryptionAlgorithm_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const Handshake_EncryptionAlgorithm Handshake::NULL_;
+const Handshake_EncryptionAlgorithm Handshake::NOENCRYPTION;
+const Handshake_EncryptionAlgorithm Handshake::CAESAR;
+const Handshake_EncryptionAlgorithm Handshake::EncryptionAlgorithm_MIN;
+const Handshake_EncryptionAlgorithm Handshake::EncryptionAlgorithm_MAX;
+const int Handshake::EncryptionAlgorithm_ARRAYSIZE;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+const ::google::protobuf::EnumDescriptor* ServerResponse_ResponseType_descriptor() {
+  protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_messages_2eproto::file_level_enum_descriptors[4];
 }
 bool ServerResponse_ResponseType_IsValid(int value) {
   switch (value) {
@@ -1129,6 +1250,7 @@ void EncodedMessage::InitAsDefaultInstance() {
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int EncodedMessage::kDataSizeFieldNumber;
+const int EncodedMessage::kHashAlgorithmFieldNumber;
 const int EncodedMessage::kHashFieldNumber;
 const int EncodedMessage::kDataFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
@@ -1154,14 +1276,18 @@ EncodedMessage::EncodedMessage(const EncodedMessage& from)
   if (from.data().size() > 0) {
     data_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.data_);
   }
-  datasize_ = from.datasize_;
+  ::memcpy(&datasize_, &from.datasize_,
+    static_cast<size_t>(reinterpret_cast<char*>(&hashalgorithm_) -
+    reinterpret_cast<char*>(&datasize_)) + sizeof(hashalgorithm_));
   // @@protoc_insertion_point(copy_constructor:StorageCloud.EncodedMessage)
 }
 
 void EncodedMessage::SharedCtor() {
   hash_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   data_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  datasize_ = GOOGLE_LONGLONG(0);
+  ::memset(&datasize_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&hashalgorithm_) -
+      reinterpret_cast<char*>(&datasize_)) + sizeof(hashalgorithm_));
   _cached_size_ = 0;
 }
 
@@ -1206,7 +1332,9 @@ void EncodedMessage::Clear() {
 
   hash_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   data_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  datasize_ = GOOGLE_LONGLONG(0);
+  ::memset(&datasize_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&hashalgorithm_) -
+      reinterpret_cast<char*>(&datasize_)) + sizeof(hashalgorithm_));
   _internal_metadata_.Clear();
 }
 
@@ -1220,13 +1348,13 @@ bool EncodedMessage::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // int64 dataSize = 1;
+      // uint64 dataSize = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
                  input, &datasize_)));
         } else {
           goto handle_unusual;
@@ -1234,10 +1362,25 @@ bool EncodedMessage::MergePartialFromCodedStream(
         break;
       }
 
-      // bytes hash = 2;
+      // .StorageCloud.EncodedMessage.HashAlgorithm hashAlgorithm = 2;
       case 2: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
+            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          set_hashalgorithm(static_cast< ::StorageCloud::EncodedMessage_HashAlgorithm >(value));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // bytes hash = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
                 input, this->mutable_hash()));
         } else {
@@ -1246,10 +1389,10 @@ bool EncodedMessage::MergePartialFromCodedStream(
         break;
       }
 
-      // bytes data = 3;
-      case 3: {
+      // bytes data = 4;
+      case 4: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
+            static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
                 input, this->mutable_data()));
         } else {
@@ -1284,21 +1427,27 @@ void EncodedMessage::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // int64 dataSize = 1;
+  // uint64 dataSize = 1;
   if (this->datasize() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->datasize(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(1, this->datasize(), output);
   }
 
-  // bytes hash = 2;
+  // .StorageCloud.EncodedMessage.HashAlgorithm hashAlgorithm = 2;
+  if (this->hashalgorithm() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      2, this->hashalgorithm(), output);
+  }
+
+  // bytes hash = 3;
   if (this->hash().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
-      2, this->hash(), output);
+      3, this->hash(), output);
   }
 
-  // bytes data = 3;
+  // bytes data = 4;
   if (this->data().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
-      3, this->data(), output);
+      4, this->data(), output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -1315,23 +1464,29 @@ void EncodedMessage::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // int64 dataSize = 1;
+  // uint64 dataSize = 1;
   if (this->datasize() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(1, this->datasize(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(1, this->datasize(), target);
   }
 
-  // bytes hash = 2;
+  // .StorageCloud.EncodedMessage.HashAlgorithm hashAlgorithm = 2;
+  if (this->hashalgorithm() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      2, this->hashalgorithm(), target);
+  }
+
+  // bytes hash = 3;
   if (this->hash().size() > 0) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
-        2, this->hash(), target);
+        3, this->hash(), target);
   }
 
-  // bytes data = 3;
+  // bytes data = 4;
   if (this->data().size() > 0) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
-        3, this->data(), target);
+        4, this->data(), target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -1351,25 +1506,31 @@ size_t EncodedMessage::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  // bytes hash = 2;
+  // bytes hash = 3;
   if (this->hash().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::BytesSize(
         this->hash());
   }
 
-  // bytes data = 3;
+  // bytes data = 4;
   if (this->data().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::BytesSize(
         this->data());
   }
 
-  // int64 dataSize = 1;
+  // uint64 dataSize = 1;
   if (this->datasize() != 0) {
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
+      ::google::protobuf::internal::WireFormatLite::UInt64Size(
         this->datasize());
+  }
+
+  // .StorageCloud.EncodedMessage.HashAlgorithm hashAlgorithm = 2;
+  if (this->hashalgorithm() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::EnumSize(this->hashalgorithm());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -1412,6 +1573,9 @@ void EncodedMessage::MergeFrom(const EncodedMessage& from) {
   if (from.datasize() != 0) {
     set_datasize(from.datasize());
   }
+  if (from.hashalgorithm() != 0) {
+    set_hashalgorithm(from.hashalgorithm());
+  }
 }
 
 void EncodedMessage::CopyFrom(const ::google::protobuf::Message& from) {
@@ -1441,11 +1605,252 @@ void EncodedMessage::InternalSwap(EncodedMessage* other) {
   hash_.Swap(&other->hash_);
   data_.Swap(&other->data_);
   swap(datasize_, other->datasize_);
+  swap(hashalgorithm_, other->hashalgorithm_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata EncodedMessage::GetMetadata() const {
+  protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_messages_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
+void Handshake::InitAsDefaultInstance() {
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Handshake::kEncryptionAlgorithmFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Handshake::Handshake()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    ::protobuf_messages_2eproto::InitDefaultsHandshake();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:StorageCloud.Handshake)
+}
+Handshake::Handshake(const Handshake& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  encryptionalgorithm_ = from.encryptionalgorithm_;
+  // @@protoc_insertion_point(copy_constructor:StorageCloud.Handshake)
+}
+
+void Handshake::SharedCtor() {
+  encryptionalgorithm_ = 0;
+  _cached_size_ = 0;
+}
+
+Handshake::~Handshake() {
+  // @@protoc_insertion_point(destructor:StorageCloud.Handshake)
+  SharedDtor();
+}
+
+void Handshake::SharedDtor() {
+}
+
+void Handshake::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* Handshake::descriptor() {
+  ::protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_messages_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const Handshake& Handshake::default_instance() {
+  ::protobuf_messages_2eproto::InitDefaultsHandshake();
+  return *internal_default_instance();
+}
+
+Handshake* Handshake::New(::google::protobuf::Arena* arena) const {
+  Handshake* n = new Handshake;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Handshake::Clear() {
+// @@protoc_insertion_point(message_clear_start:StorageCloud.Handshake)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  encryptionalgorithm_ = 0;
+  _internal_metadata_.Clear();
+}
+
+bool Handshake::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:StorageCloud.Handshake)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // .StorageCloud.Handshake.EncryptionAlgorithm encryptionAlgorithm = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          set_encryptionalgorithm(static_cast< ::StorageCloud::Handshake_EncryptionAlgorithm >(value));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:StorageCloud.Handshake)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:StorageCloud.Handshake)
+  return false;
+#undef DO_
+}
+
+void Handshake::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:StorageCloud.Handshake)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .StorageCloud.Handshake.EncryptionAlgorithm encryptionAlgorithm = 1;
+  if (this->encryptionalgorithm() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      1, this->encryptionalgorithm(), output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:StorageCloud.Handshake)
+}
+
+::google::protobuf::uint8* Handshake::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:StorageCloud.Handshake)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .StorageCloud.Handshake.EncryptionAlgorithm encryptionAlgorithm = 1;
+  if (this->encryptionalgorithm() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      1, this->encryptionalgorithm(), target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:StorageCloud.Handshake)
+  return target;
+}
+
+size_t Handshake::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:StorageCloud.Handshake)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // .StorageCloud.Handshake.EncryptionAlgorithm encryptionAlgorithm = 1;
+  if (this->encryptionalgorithm() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::EnumSize(this->encryptionalgorithm());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Handshake::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:StorageCloud.Handshake)
+  GOOGLE_DCHECK_NE(&from, this);
+  const Handshake* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const Handshake>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:StorageCloud.Handshake)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:StorageCloud.Handshake)
+    MergeFrom(*source);
+  }
+}
+
+void Handshake::MergeFrom(const Handshake& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:StorageCloud.Handshake)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.encryptionalgorithm() != 0) {
+    set_encryptionalgorithm(from.encryptionalgorithm());
+  }
+}
+
+void Handshake::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:StorageCloud.Handshake)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Handshake::CopyFrom(const Handshake& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:StorageCloud.Handshake)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Handshake::IsInitialized() const {
+  return true;
+}
+
+void Handshake::Swap(Handshake* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Handshake::InternalSwap(Handshake* other) {
+  using std::swap;
+  swap(encryptionalgorithm_, other->encryptionalgorithm_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata Handshake::GetMetadata() const {
   protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
   return ::protobuf_messages_2eproto::file_level_metadata[kIndexInFileMessages];
 }

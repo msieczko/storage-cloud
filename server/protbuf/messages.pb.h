@@ -37,7 +37,7 @@ namespace protobuf_messages_2eproto {
 struct TableStruct {
   static const ::google::protobuf::internal::ParseTableField entries[];
   static const ::google::protobuf::internal::AuxillaryParseTableField aux[];
-  static const ::google::protobuf::internal::ParseTable schema[5];
+  static const ::google::protobuf::internal::ParseTable schema[6];
   static const ::google::protobuf::internal::FieldMetadata field_metadata[];
   static const ::google::protobuf::internal::SerializationTable serialization_table[];
   static const ::google::protobuf::uint32 offsets[];
@@ -49,6 +49,8 @@ void InitDefaultsCommandImpl();
 void InitDefaultsCommand();
 void InitDefaultsEncodedMessageImpl();
 void InitDefaultsEncodedMessage();
+void InitDefaultsHandshakeImpl();
+void InitDefaultsHandshake();
 void InitDefaultsFileImpl();
 void InitDefaultsFile();
 void InitDefaultsServerResponseImpl();
@@ -57,6 +59,7 @@ inline void InitDefaults() {
   InitDefaultsParam();
   InitDefaultsCommand();
   InitDefaultsEncodedMessage();
+  InitDefaultsHandshake();
   InitDefaultsFile();
   InitDefaultsServerResponse();
 }
@@ -71,6 +74,9 @@ extern EncodedMessageDefaultTypeInternal _EncodedMessage_default_instance_;
 class File;
 class FileDefaultTypeInternal;
 extern FileDefaultTypeInternal _File_default_instance_;
+class Handshake;
+class HandshakeDefaultTypeInternal;
+extern HandshakeDefaultTypeInternal _Handshake_default_instance_;
 class Param;
 class ParamDefaultTypeInternal;
 extern ParamDefaultTypeInternal _Param_default_instance_;
@@ -105,6 +111,76 @@ inline bool Command_CommandType_Parse(
     const ::std::string& name, Command_CommandType* value) {
   return ::google::protobuf::internal::ParseNamedEnum<Command_CommandType>(
     Command_CommandType_descriptor(), name, value);
+}
+enum EncodedMessage_HashAlgorithm {
+  EncodedMessage_HashAlgorithm_NULL_ = 0,
+  EncodedMessage_HashAlgorithm_NOHASH = 1,
+  EncodedMessage_HashAlgorithm_SHA256 = 2,
+  EncodedMessage_HashAlgorithm_SHA512 = 3,
+  EncodedMessage_HashAlgorithm_SHA1 = 4,
+  EncodedMessage_HashAlgorithm_MD5 = 5,
+  EncodedMessage_HashAlgorithm_EncodedMessage_HashAlgorithm_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
+  EncodedMessage_HashAlgorithm_EncodedMessage_HashAlgorithm_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+};
+bool EncodedMessage_HashAlgorithm_IsValid(int value);
+const EncodedMessage_HashAlgorithm EncodedMessage_HashAlgorithm_HashAlgorithm_MIN = EncodedMessage_HashAlgorithm_NULL_;
+const EncodedMessage_HashAlgorithm EncodedMessage_HashAlgorithm_HashAlgorithm_MAX = EncodedMessage_HashAlgorithm_MD5;
+const int EncodedMessage_HashAlgorithm_HashAlgorithm_ARRAYSIZE = EncodedMessage_HashAlgorithm_HashAlgorithm_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* EncodedMessage_HashAlgorithm_descriptor();
+inline const ::std::string& EncodedMessage_HashAlgorithm_Name(EncodedMessage_HashAlgorithm value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    EncodedMessage_HashAlgorithm_descriptor(), value);
+}
+inline bool EncodedMessage_HashAlgorithm_Parse(
+    const ::std::string& name, EncodedMessage_HashAlgorithm* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<EncodedMessage_HashAlgorithm>(
+    EncodedMessage_HashAlgorithm_descriptor(), name, value);
+}
+enum EncodedMessage_MessageType {
+  EncodedMessage_MessageType_NULL2 = 0,
+  EncodedMessage_MessageType_COMMAND = 1,
+  EncodedMessage_MessageType_SERVER_RESPONSE = 2,
+  EncodedMessage_MessageType_HANDSHAKE = 3,
+  EncodedMessage_MessageType_EncodedMessage_MessageType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
+  EncodedMessage_MessageType_EncodedMessage_MessageType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+};
+bool EncodedMessage_MessageType_IsValid(int value);
+const EncodedMessage_MessageType EncodedMessage_MessageType_MessageType_MIN = EncodedMessage_MessageType_NULL2;
+const EncodedMessage_MessageType EncodedMessage_MessageType_MessageType_MAX = EncodedMessage_MessageType_HANDSHAKE;
+const int EncodedMessage_MessageType_MessageType_ARRAYSIZE = EncodedMessage_MessageType_MessageType_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* EncodedMessage_MessageType_descriptor();
+inline const ::std::string& EncodedMessage_MessageType_Name(EncodedMessage_MessageType value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    EncodedMessage_MessageType_descriptor(), value);
+}
+inline bool EncodedMessage_MessageType_Parse(
+    const ::std::string& name, EncodedMessage_MessageType* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<EncodedMessage_MessageType>(
+    EncodedMessage_MessageType_descriptor(), name, value);
+}
+enum Handshake_EncryptionAlgorithm {
+  Handshake_EncryptionAlgorithm_NULL_ = 0,
+  Handshake_EncryptionAlgorithm_NOENCRYPTION = 1,
+  Handshake_EncryptionAlgorithm_CAESAR = 2,
+  Handshake_EncryptionAlgorithm_Handshake_EncryptionAlgorithm_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
+  Handshake_EncryptionAlgorithm_Handshake_EncryptionAlgorithm_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+};
+bool Handshake_EncryptionAlgorithm_IsValid(int value);
+const Handshake_EncryptionAlgorithm Handshake_EncryptionAlgorithm_EncryptionAlgorithm_MIN = Handshake_EncryptionAlgorithm_NULL_;
+const Handshake_EncryptionAlgorithm Handshake_EncryptionAlgorithm_EncryptionAlgorithm_MAX = Handshake_EncryptionAlgorithm_CAESAR;
+const int Handshake_EncryptionAlgorithm_EncryptionAlgorithm_ARRAYSIZE = Handshake_EncryptionAlgorithm_EncryptionAlgorithm_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* Handshake_EncryptionAlgorithm_descriptor();
+inline const ::std::string& Handshake_EncryptionAlgorithm_Name(Handshake_EncryptionAlgorithm value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    Handshake_EncryptionAlgorithm_descriptor(), value);
+}
+inline bool Handshake_EncryptionAlgorithm_Parse(
+    const ::std::string& name, Handshake_EncryptionAlgorithm* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<Handshake_EncryptionAlgorithm>(
+    Handshake_EncryptionAlgorithm_descriptor(), name, value);
 }
 enum ServerResponse_ResponseType {
   ServerResponse_ResponseType_NULL_ = 0,
@@ -555,11 +631,75 @@ class EncodedMessage : public ::google::protobuf::Message /* @@protoc_insertion_
 
   // nested types ----------------------------------------------------
 
+  typedef EncodedMessage_HashAlgorithm HashAlgorithm;
+  static const HashAlgorithm NULL_ =
+    EncodedMessage_HashAlgorithm_NULL_;
+  static const HashAlgorithm NOHASH =
+    EncodedMessage_HashAlgorithm_NOHASH;
+  static const HashAlgorithm SHA256 =
+    EncodedMessage_HashAlgorithm_SHA256;
+  static const HashAlgorithm SHA512 =
+    EncodedMessage_HashAlgorithm_SHA512;
+  static const HashAlgorithm SHA1 =
+    EncodedMessage_HashAlgorithm_SHA1;
+  static const HashAlgorithm MD5 =
+    EncodedMessage_HashAlgorithm_MD5;
+  static inline bool HashAlgorithm_IsValid(int value) {
+    return EncodedMessage_HashAlgorithm_IsValid(value);
+  }
+  static const HashAlgorithm HashAlgorithm_MIN =
+    EncodedMessage_HashAlgorithm_HashAlgorithm_MIN;
+  static const HashAlgorithm HashAlgorithm_MAX =
+    EncodedMessage_HashAlgorithm_HashAlgorithm_MAX;
+  static const int HashAlgorithm_ARRAYSIZE =
+    EncodedMessage_HashAlgorithm_HashAlgorithm_ARRAYSIZE;
+  static inline const ::google::protobuf::EnumDescriptor*
+  HashAlgorithm_descriptor() {
+    return EncodedMessage_HashAlgorithm_descriptor();
+  }
+  static inline const ::std::string& HashAlgorithm_Name(HashAlgorithm value) {
+    return EncodedMessage_HashAlgorithm_Name(value);
+  }
+  static inline bool HashAlgorithm_Parse(const ::std::string& name,
+      HashAlgorithm* value) {
+    return EncodedMessage_HashAlgorithm_Parse(name, value);
+  }
+
+  typedef EncodedMessage_MessageType MessageType;
+  static const MessageType NULL2 =
+    EncodedMessage_MessageType_NULL2;
+  static const MessageType COMMAND =
+    EncodedMessage_MessageType_COMMAND;
+  static const MessageType SERVER_RESPONSE =
+    EncodedMessage_MessageType_SERVER_RESPONSE;
+  static const MessageType HANDSHAKE =
+    EncodedMessage_MessageType_HANDSHAKE;
+  static inline bool MessageType_IsValid(int value) {
+    return EncodedMessage_MessageType_IsValid(value);
+  }
+  static const MessageType MessageType_MIN =
+    EncodedMessage_MessageType_MessageType_MIN;
+  static const MessageType MessageType_MAX =
+    EncodedMessage_MessageType_MessageType_MAX;
+  static const int MessageType_ARRAYSIZE =
+    EncodedMessage_MessageType_MessageType_ARRAYSIZE;
+  static inline const ::google::protobuf::EnumDescriptor*
+  MessageType_descriptor() {
+    return EncodedMessage_MessageType_descriptor();
+  }
+  static inline const ::std::string& MessageType_Name(MessageType value) {
+    return EncodedMessage_MessageType_Name(value);
+  }
+  static inline bool MessageType_Parse(const ::std::string& name,
+      MessageType* value) {
+    return EncodedMessage_MessageType_Parse(name, value);
+  }
+
   // accessors -------------------------------------------------------
 
-  // bytes hash = 2;
+  // bytes hash = 3;
   void clear_hash();
-  static const int kHashFieldNumber = 2;
+  static const int kHashFieldNumber = 3;
   const ::std::string& hash() const;
   void set_hash(const ::std::string& value);
   #if LANG_CXX11
@@ -571,9 +711,9 @@ class EncodedMessage : public ::google::protobuf::Message /* @@protoc_insertion_
   ::std::string* release_hash();
   void set_allocated_hash(::std::string* hash);
 
-  // bytes data = 3;
+  // bytes data = 4;
   void clear_data();
-  static const int kDataFieldNumber = 3;
+  static const int kDataFieldNumber = 4;
   const ::std::string& data() const;
   void set_data(const ::std::string& value);
   #if LANG_CXX11
@@ -585,11 +725,17 @@ class EncodedMessage : public ::google::protobuf::Message /* @@protoc_insertion_
   ::std::string* release_data();
   void set_allocated_data(::std::string* data);
 
-  // int64 dataSize = 1;
+  // uint64 dataSize = 1;
   void clear_datasize();
   static const int kDataSizeFieldNumber = 1;
-  ::google::protobuf::int64 datasize() const;
-  void set_datasize(::google::protobuf::int64 value);
+  ::google::protobuf::uint64 datasize() const;
+  void set_datasize(::google::protobuf::uint64 value);
+
+  // .StorageCloud.EncodedMessage.HashAlgorithm hashAlgorithm = 2;
+  void clear_hashalgorithm();
+  static const int kHashAlgorithmFieldNumber = 2;
+  ::StorageCloud::EncodedMessage_HashAlgorithm hashalgorithm() const;
+  void set_hashalgorithm(::StorageCloud::EncodedMessage_HashAlgorithm value);
 
   // @@protoc_insertion_point(class_scope:StorageCloud.EncodedMessage)
  private:
@@ -597,10 +743,138 @@ class EncodedMessage : public ::google::protobuf::Message /* @@protoc_insertion_
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::internal::ArenaStringPtr hash_;
   ::google::protobuf::internal::ArenaStringPtr data_;
-  ::google::protobuf::int64 datasize_;
+  ::google::protobuf::uint64 datasize_;
+  int hashalgorithm_;
   mutable int _cached_size_;
   friend struct ::protobuf_messages_2eproto::TableStruct;
   friend void ::protobuf_messages_2eproto::InitDefaultsEncodedMessageImpl();
+};
+// -------------------------------------------------------------------
+
+class Handshake : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:StorageCloud.Handshake) */ {
+ public:
+  Handshake();
+  virtual ~Handshake();
+
+  Handshake(const Handshake& from);
+
+  inline Handshake& operator=(const Handshake& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  Handshake(Handshake&& from) noexcept
+    : Handshake() {
+    *this = ::std::move(from);
+  }
+
+  inline Handshake& operator=(Handshake&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Handshake& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const Handshake* internal_default_instance() {
+    return reinterpret_cast<const Handshake*>(
+               &_Handshake_default_instance_);
+  }
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    3;
+
+  void Swap(Handshake* other);
+  friend void swap(Handshake& a, Handshake& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline Handshake* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  Handshake* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const Handshake& from);
+  void MergeFrom(const Handshake& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(Handshake* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  typedef Handshake_EncryptionAlgorithm EncryptionAlgorithm;
+  static const EncryptionAlgorithm NULL_ =
+    Handshake_EncryptionAlgorithm_NULL_;
+  static const EncryptionAlgorithm NOENCRYPTION =
+    Handshake_EncryptionAlgorithm_NOENCRYPTION;
+  static const EncryptionAlgorithm CAESAR =
+    Handshake_EncryptionAlgorithm_CAESAR;
+  static inline bool EncryptionAlgorithm_IsValid(int value) {
+    return Handshake_EncryptionAlgorithm_IsValid(value);
+  }
+  static const EncryptionAlgorithm EncryptionAlgorithm_MIN =
+    Handshake_EncryptionAlgorithm_EncryptionAlgorithm_MIN;
+  static const EncryptionAlgorithm EncryptionAlgorithm_MAX =
+    Handshake_EncryptionAlgorithm_EncryptionAlgorithm_MAX;
+  static const int EncryptionAlgorithm_ARRAYSIZE =
+    Handshake_EncryptionAlgorithm_EncryptionAlgorithm_ARRAYSIZE;
+  static inline const ::google::protobuf::EnumDescriptor*
+  EncryptionAlgorithm_descriptor() {
+    return Handshake_EncryptionAlgorithm_descriptor();
+  }
+  static inline const ::std::string& EncryptionAlgorithm_Name(EncryptionAlgorithm value) {
+    return Handshake_EncryptionAlgorithm_Name(value);
+  }
+  static inline bool EncryptionAlgorithm_Parse(const ::std::string& name,
+      EncryptionAlgorithm* value) {
+    return Handshake_EncryptionAlgorithm_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  // .StorageCloud.Handshake.EncryptionAlgorithm encryptionAlgorithm = 1;
+  void clear_encryptionalgorithm();
+  static const int kEncryptionAlgorithmFieldNumber = 1;
+  ::StorageCloud::Handshake_EncryptionAlgorithm encryptionalgorithm() const;
+  void set_encryptionalgorithm(::StorageCloud::Handshake_EncryptionAlgorithm value);
+
+  // @@protoc_insertion_point(class_scope:StorageCloud.Handshake)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  int encryptionalgorithm_;
+  mutable int _cached_size_;
+  friend struct ::protobuf_messages_2eproto::TableStruct;
+  friend void ::protobuf_messages_2eproto::InitDefaultsHandshakeImpl();
 };
 // -------------------------------------------------------------------
 
@@ -639,7 +913,7 @@ class File : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
                &_File_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    3;
+    4;
 
   void Swap(File* other);
   friend void swap(File& a, File& b) {
@@ -766,7 +1040,7 @@ class ServerResponse : public ::google::protobuf::Message /* @@protoc_insertion_
                &_ServerResponse_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    4;
+    5;
 
   void Swap(ServerResponse* other);
   friend void swap(ServerResponse& a, ServerResponse& b) {
@@ -1303,21 +1577,35 @@ inline void Command::set_allocated_data(::std::string* data) {
 
 // EncodedMessage
 
-// int64 dataSize = 1;
+// uint64 dataSize = 1;
 inline void EncodedMessage::clear_datasize() {
-  datasize_ = GOOGLE_LONGLONG(0);
+  datasize_ = GOOGLE_ULONGLONG(0);
 }
-inline ::google::protobuf::int64 EncodedMessage::datasize() const {
+inline ::google::protobuf::uint64 EncodedMessage::datasize() const {
   // @@protoc_insertion_point(field_get:StorageCloud.EncodedMessage.dataSize)
   return datasize_;
 }
-inline void EncodedMessage::set_datasize(::google::protobuf::int64 value) {
+inline void EncodedMessage::set_datasize(::google::protobuf::uint64 value) {
   
   datasize_ = value;
   // @@protoc_insertion_point(field_set:StorageCloud.EncodedMessage.dataSize)
 }
 
-// bytes hash = 2;
+// .StorageCloud.EncodedMessage.HashAlgorithm hashAlgorithm = 2;
+inline void EncodedMessage::clear_hashalgorithm() {
+  hashalgorithm_ = 0;
+}
+inline ::StorageCloud::EncodedMessage_HashAlgorithm EncodedMessage::hashalgorithm() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.EncodedMessage.hashAlgorithm)
+  return static_cast< ::StorageCloud::EncodedMessage_HashAlgorithm >(hashalgorithm_);
+}
+inline void EncodedMessage::set_hashalgorithm(::StorageCloud::EncodedMessage_HashAlgorithm value) {
+  
+  hashalgorithm_ = value;
+  // @@protoc_insertion_point(field_set:StorageCloud.EncodedMessage.hashAlgorithm)
+}
+
+// bytes hash = 3;
 inline void EncodedMessage::clear_hash() {
   hash_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -1370,7 +1658,7 @@ inline void EncodedMessage::set_allocated_hash(::std::string* hash) {
   // @@protoc_insertion_point(field_set_allocated:StorageCloud.EncodedMessage.hash)
 }
 
-// bytes data = 3;
+// bytes data = 4;
 inline void EncodedMessage::clear_data() {
   data_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -1421,6 +1709,24 @@ inline void EncodedMessage::set_allocated_data(::std::string* data) {
   }
   data_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), data);
   // @@protoc_insertion_point(field_set_allocated:StorageCloud.EncodedMessage.data)
+}
+
+// -------------------------------------------------------------------
+
+// Handshake
+
+// .StorageCloud.Handshake.EncryptionAlgorithm encryptionAlgorithm = 1;
+inline void Handshake::clear_encryptionalgorithm() {
+  encryptionalgorithm_ = 0;
+}
+inline ::StorageCloud::Handshake_EncryptionAlgorithm Handshake::encryptionalgorithm() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.Handshake.encryptionAlgorithm)
+  return static_cast< ::StorageCloud::Handshake_EncryptionAlgorithm >(encryptionalgorithm_);
+}
+inline void Handshake::set_encryptionalgorithm(::StorageCloud::Handshake_EncryptionAlgorithm value) {
+  
+  encryptionalgorithm_ = value;
+  // @@protoc_insertion_point(field_set:StorageCloud.Handshake.encryptionAlgorithm)
 }
 
 // -------------------------------------------------------------------
@@ -1735,6 +2041,8 @@ inline void ServerResponse::set_allocated_data(::std::string* data) {
 
 // -------------------------------------------------------------------
 
+// -------------------------------------------------------------------
+
 
 // @@protoc_insertion_point(namespace_scope)
 
@@ -1747,6 +2055,21 @@ template <> struct is_proto_enum< ::StorageCloud::Command_CommandType> : ::googl
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::Command_CommandType>() {
   return ::StorageCloud::Command_CommandType_descriptor();
+}
+template <> struct is_proto_enum< ::StorageCloud::EncodedMessage_HashAlgorithm> : ::google::protobuf::internal::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::EncodedMessage_HashAlgorithm>() {
+  return ::StorageCloud::EncodedMessage_HashAlgorithm_descriptor();
+}
+template <> struct is_proto_enum< ::StorageCloud::EncodedMessage_MessageType> : ::google::protobuf::internal::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::EncodedMessage_MessageType>() {
+  return ::StorageCloud::EncodedMessage_MessageType_descriptor();
+}
+template <> struct is_proto_enum< ::StorageCloud::Handshake_EncryptionAlgorithm> : ::google::protobuf::internal::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::Handshake_EncryptionAlgorithm>() {
+  return ::StorageCloud::Handshake_EncryptionAlgorithm_descriptor();
 }
 template <> struct is_proto_enum< ::StorageCloud::ServerResponse_ResponseType> : ::google::protobuf::internal::true_type {};
 template <>

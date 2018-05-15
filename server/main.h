@@ -17,6 +17,7 @@
 #include <sys/types.h>
 
 #include <openssl/sha.h>
+#include <openssl/md5.h>
 
 #include <google/protobuf/message.h>
 #include <google/protobuf/descriptor.h>
@@ -29,6 +30,6 @@
 
 #define MAX_PACKET_SIZE 4096
 
-#define HASH_SIZE SHA512_DIGEST_LENGTH
+//#define HASH_SIZE SHA512_DIGEST_LENGTH
 
 #endif //SERVER_MAIN_H
