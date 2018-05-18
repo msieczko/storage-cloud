@@ -10,12 +10,28 @@ const uint8_t HASH_SIZE[StorageCloud::HashAlgorithm_ARRAYSIZE] = {
         MD5_DIGEST_LENGTH,
 };
 
-struct UserCtx {
-    StorageCloud::EncryptionAlgorithm encryption_algorithm;
-    std::string username;
-    StorageCloud::HashAlgorithm hashing_algorithm = StorageCloud::HashAlgorithm::H_SHA512;
-};
+using namespace std;
+using namespace StorageCloud;
 
-bool processMessage(uint8_t*, int, UserCtx* userCtx, uint8_t**, uint32_t*);
+class Client {
+private:
+    int socket;
+    EncryptionAlgorithm encryption_algorithm = EncryptionAlgorithm::NOENCRYPTION;
+    string username = "";
+    HashAlgorithm hashing_algorithm = HashAlgorithm::H_SHA512;
+
+    bool getNBytes(int, uint8_t*);
+    uint32_t parseSize(const uint8_t*);
+    bool processMessage(uint8_t*, int);
+    bool parseMessage(uint8_t*, int, uint8_t*, uint8_t**, uint32_t*);
+    bool processCommand(Command*);
+    bool processHandshake(Handshake*);
+    bool sendServerResponse(const ServerResponse*);
+    bool prepareDataToSend(uint8_t*, uint32_t);
+
+public:
+    Client(int);
+    void loop(volatile bool*);
+};
 
 #endif //SERVER_MESSAGES_H

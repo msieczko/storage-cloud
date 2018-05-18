@@ -35,70 +35,10 @@ void sig_handler(int signo)
 }
 
 void process(int sock, int server_pid) {
-    ssize_t n;
-    uint8_t buffer[MAX_PACKET_SIZE];
-    uint8_t size_buf[4];
 
-    fd_set set;
-    struct timeval timeout;
-    int rv;
+    Client client(sock);
 
-    UserCtx user_ctx;
-    user_ctx.encryption_algorithm = EncryptionAlgorithm::NOENCRYPTION;
-    user_ctx.username = "";
-
-    while(!should_exit) {
-        FD_ZERO(&set); /* clear the set */
-        FD_SET(sock, &set); /* add our file descriptor to the set */
-        timeout.tv_sec = 2;
-        timeout.tv_usec = 0;
-        rv = select(sock + 1, &set, nullptr, nullptr, &timeout);
-
-        if (rv == -1) {
-            break;
-        } else if (rv != 0) {
-
-            n = read(sock, size_buf, 4);
-
-            if (n == 0) {
-                printf("no new data, closing\n");
-                break;
-            }
-
-            if (n < 0) {
-                perror("ERROR reading from socket");
-                break;
-            }
-
-            uint32_t size = ((size_buf[0]<<24u)|(size_buf[1]<<16u)|(size_buf[2]<<8u)|(size_buf[3]));
-
-            cout<<"Size: "<<size<<endl;
-
-            if(size > MAX_PACKET_SIZE - 4) {
-                cout<<"message too big"<<endl;
-                break;
-            }
-
-            n = recv(sock, buffer, size - 4, MSG_WAITALL);
-
-            if (n == size - 4) {
-                cout<<"got all data ("<<n<<")"<<endl;
-
-                uint8_t* out_data = nullptr;
-                uint32_t out_data_len;
-                bool response = processMessage(buffer, size, &user_ctx, &out_data, &out_data_len);
-                if(response) {
-                    n = write(sock, out_data, out_data_len);
-                    cout<<"sent "<<n<<" bytes"<<endl;
-                    if (n != out_data_len) {
-                        cout<<"Error: not all data has been send"<<endl;
-                    }
-                }
-
-                delete out_data;
-            }
-        }
-    }
+    client.loop(&should_exit);
 
     cout<<"closed connection process"<<endl;
 
