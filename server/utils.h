@@ -10,7 +10,7 @@ const uint8_t HASH_SIZE[StorageCloud::HashAlgorithm_ARRAYSIZE] = {
         MD5_DIGEST_LENGTH,
 };
 
-void calculateHash(uint8_t, const uint8_t*, int, uint8_t**, uint16_t*);
+void calculateHash(StorageCloud::HashAlgorithm, const uint8_t*, int, uint8_t**, uint16_t*);
 bool compareHash(const uint8_t*, uint16_t, const uint8_t*, uint16_t);
 uint32_t parseSize(const uint8_t*);
 std::string printHash(const uint8_t, const uint8_t*);

@@ -1,10 +1,10 @@
 #include "main.h"
-#include "messages.h"
+#include "utils.h"
 
 using namespace std;
 using namespace StorageCloud;
 
-void calculateHash(uint8_t algo, const uint8_t buf[], int len, uint8_t** digest, uint16_t* digest_len) {
+void calculateHash(HashAlgorithm algo, const uint8_t buf[], int len, uint8_t** digest, uint16_t* digest_len) {
     if(algo == HashAlgorithm::H_SHA512) {
         *digest_len = SHA512_DIGEST_LENGTH;
         *digest = new uint8_t[*digest_len];
@@ -14,7 +14,7 @@ void calculateHash(uint8_t algo, const uint8_t buf[], int len, uint8_t** digest,
         *digest = nullptr;
     } else {
         *digest_len = 0;
-        cout<<"Error: unknown hashing algorithm"<<endl;
+        cout<<"Error: unknown hashing algorithm ("<<HashAlgorithm_Name(algo)<<")"<<endl;
     }
 }
 
@@ -37,7 +37,6 @@ uint32_t parseSize(const uint8_t size_buf[]) {
 }
 
 string printHash(const uint8_t hash_type, const uint8_t hash[]) {
-
     string wyn;
     char buf[3];
     for(int i=0; i<HASH_SIZE[hash_type]; i++) {

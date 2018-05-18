@@ -1,33 +1,64 @@
-//
-// Created by milosz on 18.05.18.
-//
-
 #include "Client.h"
 
 using namespace std;
 using namespace StorageCloud;
 
-Client::Client(int sock) {
+Client::Client(int sock, connection* conn) {
     socket = sock;
+    this_connection = conn;
+}
+
+HashAlgorithm Client::getHashAlgorithm() {
+    return this_connection->hash_algorithm;
+}
+
+EncryptionAlgorithm Client::getEncryptionAlgorithm() {
+    return this_connection->encryption;
+}
+
+void Client::setEncryptionAlgorithm(EncryptionAlgorithm newAlgorithm) {
+    this_connection->encryption = newAlgorithm;
 }
 
 bool Client::getNBytes(const int n, uint8_t buf[]) {
+    struct epoll_event ev, events[1];
+    int epfd = epoll_create1(0), nfds;
+    ev.events = EPOLLIN;
+    ev.data.fd = socket;
+
+    if (epoll_ctl(epfd, EPOLL_CTL_ADD, socket, &ev) == -1) {
+        perror("epoll_ctl: listen_sock");
+        return false;
+    }
+
     int received = 0;
     int last_received = 0;
 
     while (received != n) {
-        last_received = (int) recv(socket, buf, (size_t) (n - received), MSG_WAITALL);
-        if (last_received == 0) {
-            printf("no new data, closing\n");
+        nfds = epoll_wait(epfd, events, 1, 1000);
+
+        if (nfds == -1) {
+//            perror("epoll_wait");
             break;
         }
 
-        if (last_received < 0) {
-            perror("ERROR reading from socket");
-            break;
-        }
+        if (nfds > 0) {
+            last_received = (int) recv(socket, buf, (size_t) (n - received), MSG_DONTWAIT);
+            if (last_received == 0) {
+                if(errno != EWOULDBLOCK || errno != EAGAIN) {
+                    printf("no new data, closing\n");
+                    break;
+                }
+                cout<<"continuing"<<endl;
+            }
 
-        received += last_received;
+            if (last_received < 0) {
+                perror("ERROR reading from socket");
+                break;
+            }
+
+            received += last_received;
+        }
     }
 
     return (received == n);
@@ -77,7 +108,7 @@ bool Client::parseMessage(uint8_t buf[], int len, uint8_t* msg_type, uint8_t** p
 
     *parsed_len = 0; //decrypted data size
 
-    EncryptionAlgorithm decrypt_alg = encryption_algorithm;
+    EncryptionAlgorithm decrypt_alg = getEncryptionAlgorithm();
     if(msg.type() == MessageType::HANDSHAKE) {
         decrypt_alg = EncryptionAlgorithm::NOENCRYPTION;
     }
@@ -133,7 +164,7 @@ bool Client::processCommand(Command* cmd) {
 bool Client::processHandshake(Handshake* handshake) {
     cout<<"Setting encryption to "<<EncryptionAlgorithm_Name(handshake->encryptionalgorithm())<<endl;
 
-    encryption_algorithm =  handshake->encryptionalgorithm();
+    setEncryptionAlgorithm(handshake->encryptionalgorithm());
 
     ServerResponse res;
     res.set_type(ResponseType::OK);
@@ -158,15 +189,15 @@ bool Client::prepareDataToSend(uint8_t in_buf[], uint32_t len) {
     uint8_t* out_buf = nullptr;
     uint32_t out_len = 0;
 
-    calculateHash(hashing_algorithm, in_buf, len, &hash, &hash_len);
+    calculateHash(getHashAlgorithm(), in_buf, len, &hash, &hash_len);
 
-    encrypt(encryption_algorithm, in_buf, len, &data, &size);
+    encrypt(getEncryptionAlgorithm(), in_buf, len, &data, &size);
 
     msg.set_hash((char*)hash, hash_len);
     msg.set_datasize(len);
     msg.set_data((char*)data, size);
     msg.set_type(MessageType::SERVER_RESPONSE);
-    msg.set_hashalgorithm(hashing_algorithm);
+    msg.set_hashalgorithm(getHashAlgorithm());
 
     out_len = msg.ByteSize() + 4;
 
@@ -188,35 +219,46 @@ bool Client::prepareDataToSend(uint8_t in_buf[], uint32_t len) {
     out_buf[1] = (out_len >> 16) & 0xFF;
     out_buf[0] = (out_len >> 24) & 0xFF;
 
+    // TODO send data
+
     delete hash;
     delete data;
     return true;
 }
 
-void Client::loop(volatile bool* should_exit) {
+bool Client::getMessage() {
     uint8_t msg_buf[MAX_PACKET_SIZE];
     uint8_t size_buf[4];
 
+    if(!getNBytes(4, size_buf)) {
+        cout<<"connection error (size)"<<endl;
+        return false;
+    }
+
+    uint32_t size = parseSize(size_buf);
+
+    if(size > MAX_PACKET_SIZE) {
+        cout<<"message too big"<<endl;
+        return false;
+    }
+
+    if(!getNBytes(size - 4, msg_buf)) {
+        cout<<"connection error (msg)"<<endl;
+        return false;
+    }
+
+    cout<<"got all data ("<<size<<")"<<endl;
+
+    processMessage(msg_buf, size);
+
+    return true;
+}
+
+void Client::loop(volatile bool* should_exit) {
+
     while(!(*should_exit)) {
-        if(!getNBytes(4, size_buf)) {
-            cout<<"connection error (size)"<<endl;
+        if (!getMessage()) {
             break;
         }
-
-        uint32_t size = parseSize(size_buf);
-
-        if(size > MAX_PACKET_SIZE) {
-            cout<<"message too big"<<endl;
-            break;
-        }
-
-        if(!getNBytes(size - 4, msg_buf)) {
-            cout<<"connection error (msg)"<<endl;
-            break;
-        }
-
-        cout<<"got all data ("<<size<<")"<<endl;
-
-        bool response = processMessage(msg_buf, size);
     }
 }
