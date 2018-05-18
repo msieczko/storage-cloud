@@ -1,5 +1,6 @@
 #include "main.h"
 #include "messages.h"
+#include "Client.h"
 
 #define MAX_CONNECTIONS 10
 
