@@ -15,6 +15,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/types.h>
+#include <sys/epoll.h>
 
 #include <openssl/sha.h>
 #include <openssl/md5.h>
@@ -27,9 +28,26 @@
 
 #include "protbuf/messages.pb.h"
 
+#define MAX_CONNECTIONS 10
 
 #define MAX_PACKET_SIZE 4096
 
-//#define HASH_SIZE SHA512_DIGEST_LENGTH
+#define DEFAULT_ENCRYPTION_ALGORITHM StorageCloud::EncryptionAlgorithm::NOENCRYPTION
+#define DEFAULT_HASHING_ALGORITHM StorageCloud::HashAlgorithm::H_SHA512
+
+struct connection {
+    pid_t pid;
+    char addr[25];
+    int port;
+    StorageCloud::EncryptionAlgorithm encryption;
+    StorageCloud::HashAlgorithm hash_algorithm;
+};
+
+struct shm_data {
+    connection connections[MAX_CONNECTIONS];
+    int active_connections;
+};
+
+#define SHMSIZE sizeof(shm_data)
 
 #endif //SERVER_MAIN_H

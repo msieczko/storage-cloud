@@ -75,6 +75,7 @@ int main(int argc, char *argv[])
 
     //-------------------------------------
 
+    sleep(5);
 
     StorageCloud::Command cmd;
     cmd.set_type(StorageCloud::LOGIN);

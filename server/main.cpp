@@ -1,5 +1,6 @@
 #include "main.h"
-#include "messages.h"
+#include "utils.h"
+#include "Client.h"
 
 #define MAX_CONNECTIONS 10
 
@@ -9,23 +10,10 @@ using namespace StorageCloud;
 
 volatile bool should_exit = false;
 
-struct connection {
-    pid_t pid;
-    char addr[25];
-    int port;
-};
-
-struct shm_data {
-    connection connections[MAX_CONNECTIONS];
-    int active_connections;
-};
-
-#define SHMSIZE sizeof(shm_data)
-
 void sig_handler(int signo)
 {
     if (signo == SIGTERM) {
-        printf("received SIGTERM\n");
+        printf("received SIGTERM %d\n", getpid());
         should_exit = true;
     }
     
@@ -34,73 +22,12 @@ void sig_handler(int signo)
     }
 }
 
-void process(int sock, int server_pid) {
-    ssize_t n;
-    uint8_t buffer[MAX_PACKET_SIZE];
-    uint8_t size_buf[4];
+void process(int sock, connection* conn) {
+    Client client(sock, conn);
 
-    fd_set set;
-    struct timeval timeout;
-    int rv;
+    client.loop(&should_exit);
 
-    UserCtx user_ctx;
-    user_ctx.encryption_algorithm = EncryptionAlgorithm::NOENCRYPTION;
-    user_ctx.username = "";
-
-    while(!should_exit) {
-        FD_ZERO(&set); /* clear the set */
-        FD_SET(sock, &set); /* add our file descriptor to the set */
-        timeout.tv_sec = 2;
-        timeout.tv_usec = 0;
-        rv = select(sock + 1, &set, nullptr, nullptr, &timeout);
-
-        if (rv == -1) {
-            break;
-        } else if (rv != 0) {
-
-            n = read(sock, size_buf, 4);
-
-            if (n == 0) {
-                printf("no new data, closing\n");
-                break;
-            }
-
-            if (n < 0) {
-                perror("ERROR reading from socket");
-                break;
-            }
-
-            uint32_t size = ((size_buf[0]<<24u)|(size_buf[1]<<16u)|(size_buf[2]<<8u)|(size_buf[3]));
-
-            cout<<"Size: "<<size<<endl;
-
-            if(size > MAX_PACKET_SIZE - 4) {
-                cout<<"message too big"<<endl;
-                break;
-            }
-
-            n = recv(sock, buffer, size - 4, MSG_WAITALL);
-
-            if (n == size - 4) {
-                cout<<"got all data ("<<n<<")"<<endl;
-
-                uint8_t* out_data = nullptr;
-                uint32_t out_data_len;
-                bool response = processMessage(buffer, size, &user_ctx, &out_data, &out_data_len);
-                if(response) {
-                    n = write(sock, out_data, out_data_len);
-                    cout<<"sent "<<n<<" bytes"<<endl;
-                    if (n != out_data_len) {
-                        cout<<"Error: not all data has been send"<<endl;
-                    }
-                }
-
-                delete out_data;
-            }
-        }
-    }
-
-    cout<<"closed connection process"<<endl;
+    cout<<"closed connection process "<<EncryptionAlgorithm_Name(conn->encryption)<<endl;
 
     close(sock);
 }
@@ -165,17 +92,22 @@ void server(shm_data* shm) {
             else {
                 printf("accepted connection from %s:%d\n", inet_ntoa(clientaddr.sin_addr),
                        (int) ntohs(clientaddr.sin_port));
+
+                connection* new_connection = &shm->connections[shm->active_connections];
+                new_connection->encryption = DEFAULT_ENCRYPTION_ALGORITHM;
+                new_connection->hash_algorithm = DEFAULT_HASHING_ALGORITHM;
+
                 int pid = fork();
 
                 if (pid < 0) {
                     perror("ERROR on fork");
                 } else if (pid == 0) {
                     close(sock);
-                    process(msgsock, server_pid);
+                    //delete new_connection;
+                    process(msgsock, new_connection);
                     exit(0);
                 } else {
                     string tmp_addr;
-                    connection* new_connection = &shm->connections[shm->active_connections];
                     new_connection->pid = pid;
                     tmp_addr = inet_ntoa(clientaddr.sin_addr);
                     tmp_addr.copy(new_connection->addr, tmp_addr.size());
@@ -209,7 +141,7 @@ void server(shm_data* shm) {
         
     } while(!should_exit);
 
-    cout<<"closing all connections "<<should_exit<<endl;
+    cout<<"closing all connections"<<endl;
 
     for(int i = 0; i < shm->active_connections; i++) {
         kill(shm->connections[i].pid, SIGTERM);
