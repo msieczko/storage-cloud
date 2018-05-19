@@ -2,13 +2,13 @@
 #include "utils.h"
 #include "Client.h"
 
-#define MAX_CONNECTIONS 10
+list<connection*> connections;
 
 using namespace std;
 
 using namespace StorageCloud;
 
-volatile bool should_exit = false;
+bool should_exit = false;
 
 void sig_handler(int signo)
 {
@@ -23,17 +23,18 @@ void sig_handler(int signo)
 }
 
 void process(int sock, connection* conn) {
-    Client client(sock, conn);
+    Client client(sock, conn, &should_exit);
 
-    client.loop(&should_exit);
+    client.loop();
 
     cout<<"closed connection process "<<EncryptionAlgorithm_Name(conn->encryption)<<endl;
 
     close(sock);
+
+    conn->running = false;
 }
 
-void server(shm_data* shm) {
-    int server_pid = getpid();
+void server() {
     if (signal(SIGTERM, sig_handler) == SIG_ERR)
         printf("\ncan't catch SIGTERM\n");
     
@@ -93,58 +94,42 @@ void server(shm_data* shm) {
                 printf("accepted connection from %s:%d\n", inet_ntoa(clientaddr.sin_addr),
                        (int) ntohs(clientaddr.sin_port));
 
-                connection* new_connection = &shm->connections[shm->active_connections];
+                connection* new_connection = new connection;
                 new_connection->encryption = DEFAULT_ENCRYPTION_ALGORITHM;
                 new_connection->hash_algorithm = DEFAULT_HASHING_ALGORITHM;
+                string tmp_addr;
+                tmp_addr = inet_ntoa(clientaddr.sin_addr);
+                tmp_addr.copy(new_connection->addr, tmp_addr.size());
+                new_connection->addr[tmp_addr.size()] = 0;
+                new_connection->port = (int) ntohs(clientaddr.sin_port);
+                new_connection->running = true;
 
-                int pid = fork();
+                connections.push_back(new_connection);
 
-                if (pid < 0) {
-                    perror("ERROR on fork");
-                } else if (pid == 0) {
-                    close(sock);
-                    //delete new_connection;
-                    process(msgsock, new_connection);
-                    exit(0);
-                } else {
-                    string tmp_addr;
-                    new_connection->pid = pid;
-                    tmp_addr = inet_ntoa(clientaddr.sin_addr);
-                    tmp_addr.copy(new_connection->addr, tmp_addr.size());
-                    new_connection->addr[tmp_addr.size()] = 0;
-                    new_connection->port = (int) ntohs(clientaddr.sin_port);
-                    shm->active_connections++;
-                    close(msgsock);
-                }
+                new_connection->t = thread(process, msgsock, new_connection);
+//                    close(msgsock); //needed?
             }
         }
-        
-        int waitstatus;
-        
-        int died_pid = waitpid(-1, &waitstatus, WNOHANG);
-        
-        if(died_pid > 0) {
-            bool found = false;
-            for(int i=0; i<shm->active_connections; i++) {
-                if (shm->connections[i].pid == died_pid) {
-                    found = true;
-                    shm->active_connections--;
-                }
-                if (found) {
-                    shm->connections[i] = shm->connections[i+1];
-                }
-            }
-            if(found) {
+
+        for(auto it=connections.begin(); it != connections.end();) {
+            if(!((*it)->running)) {
+                (*it)->t.join();
+                delete (*it);
+                it = connections.erase(it);
                 cout<<"removed connection"<<endl;
+            } else {
+                it++;
             }
         }
-        
+
     } while(!should_exit);
 
     cout<<"closing all connections"<<endl;
 
-    for(int i = 0; i < shm->active_connections; i++) {
-        kill(shm->connections[i].pid, SIGTERM);
+    for(auto it=connections.begin(); it != connections.end();) {
+        (*it)->t.join();
+        delete (*it);
+        it = connections.erase(it);
     }
 
     close(sock);
@@ -153,22 +138,7 @@ void server(shm_data* shm) {
 }
 
 int main(int argc, char **argv) {
-    int shmid;
-    shm_data *shm;
-
-    shmid = shmget(2010, SHMSIZE, 0666 | IPC_CREAT);
-    shm = (shm_data *) shmat(shmid, nullptr, 0);
-
-    shm->active_connections = 0;
-
-    int server_pid = fork();
-
-    if (server_pid < 0) {
-        perror("ERROR starting server");
-    } else if (server_pid == 0) {
-        server(shm);
-        exit(0);
-    }
+    thread server_t = std::thread(server);
 
     string cmd;
 
@@ -178,15 +148,14 @@ int main(int argc, char **argv) {
 
         if (cmd == "exit") {
             cout<<"closing server"<<endl;
+            should_exit = true;
             break;
         }
         
         if (cmd == "list") {
-            cout<<"There are "<<shm->active_connections<<" active connections"<<endl;
-            for(int i=0; i<shm->active_connections; i++) {
-                cout<<"["<<shm->connections[i].pid<<"] ";
-                cout<<shm->connections[i].addr<<":";
-                cout<<shm->connections[i].port<<endl;
+            cout<<"There are "<<connections.size()<<" active connections"<<endl;
+            for(auto it=connections.begin(); it != connections.end(); ++it) {
+                cout<<(*it)->addr<<":"<<(*it)->port<<endl;
             }
         }
         
@@ -195,12 +164,7 @@ int main(int argc, char **argv) {
         }
     }
 
-    kill(server_pid, SIGTERM);
-
-    waitpid(server_pid, nullptr, 0);
-
-    shmdt(shm);
-    shmctl(shmid, IPC_RMID, nullptr);
+    server_t.join();
 
     cout<<"server closed"<<endl;
     return 0;

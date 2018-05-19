@@ -16,6 +16,8 @@
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/epoll.h>
+#include <thread>
+#include <list>
 
 #include <openssl/sha.h>
 #include <openssl/md5.h>
@@ -36,18 +38,12 @@
 #define DEFAULT_HASHING_ALGORITHM StorageCloud::HashAlgorithm::H_SHA512
 
 struct connection {
-    pid_t pid;
+    std::thread t;
     char addr[25];
     int port;
     StorageCloud::EncryptionAlgorithm encryption;
     StorageCloud::HashAlgorithm hash_algorithm;
+    bool running;
 };
-
-struct shm_data {
-    connection connections[MAX_CONNECTIONS];
-    int active_connections;
-};
-
-#define SHMSIZE sizeof(shm_data)
 
 #endif //SERVER_MAIN_H

@@ -3,9 +3,10 @@
 using namespace std;
 using namespace StorageCloud;
 
-Client::Client(int sock, connection* conn) {
+Client::Client(int sock, connection* conn, bool* s_e) {
     socket = sock;
     this_connection = conn;
+    should_exit = s_e;
 }
 
 HashAlgorithm Client::getHashAlgorithm() {
@@ -34,7 +35,7 @@ bool Client::getNBytes(const int n, uint8_t buf[]) {
     int received = 0;
     int last_received = 0;
 
-    while (received != n) {
+    while (received != n && !(*should_exit)) {
         nfds = epoll_wait(epfd, events, 1, 1000);
 
         if (nfds == -1) {
@@ -254,7 +255,7 @@ bool Client::getMessage() {
     return true;
 }
 
-void Client::loop(volatile bool* should_exit) {
+void Client::loop() {
 
     while(!(*should_exit)) {
         if (!getMessage()) {

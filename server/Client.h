@@ -12,6 +12,7 @@ private:
     int socket;
     string username = "";
     connection* this_connection;
+    bool* should_exit;
 
     HashAlgorithm getHashAlgorithm();
     EncryptionAlgorithm getEncryptionAlgorithm();
@@ -26,8 +27,8 @@ private:
     bool getMessage();
 
 public:
-    Client(int, connection*);
-    void loop(volatile bool*);
+    Client(int, connection*, bool*);
+    void loop();
 };
 
 #endif //SERVER_CLIENT_H
