@@ -3,9 +3,13 @@
 using namespace std;
 using namespace StorageCloud;
 
-Client::Client(int sock, connection* conn) {
+Client::Client(int sock, connection* conn, bool* s_e, Logger* logg) {
     socket = sock;
     this_connection = conn;
+    should_exit = s_e;
+    logger = logg;
+    id = conn->addr;
+    id += ":" + to_string(conn->port);
 }
 
 HashAlgorithm Client::getHashAlgorithm() {
@@ -34,7 +38,7 @@ bool Client::getNBytes(const int n, uint8_t buf[]) {
     int received = 0;
     int last_received = 0;
 
-    while (received != n) {
+    while (received != n && !(*should_exit)) {
         nfds = epoll_wait(epfd, events, 1, 1000);
 
         if (nfds == -1) {
@@ -46,7 +50,7 @@ bool Client::getNBytes(const int n, uint8_t buf[]) {
             last_received = (int) recv(socket, buf, (size_t) (n - received), MSG_DONTWAIT);
             if (last_received == 0) {
                 if(errno != EWOULDBLOCK || errno != EAGAIN) {
-                    printf("no new data, closing\n");
+                    logger->info(id, "no new data, closing");
                     break;
                 }
                 cout<<"continuing"<<endl;
@@ -96,13 +100,13 @@ bool Client::processMessage(uint8_t buf[], int len) {
 bool Client::parseMessage(uint8_t buf[], int len, uint8_t* msg_type, uint8_t** parsed_data, uint32_t* parsed_len) {
     EncodedMessage msg;
     msg.ParseFromArray(buf, len);
-    cout<<"Parsing message"<<endl;
-    cout<<"size: "<<msg.datasize()<<endl;
-    cout<<"hash: "<<printHash(msg.hashalgorithm(), (uint8_t*) msg.hash().c_str())<<"("<<msg.hash().length()<<", "<<HASH_SIZE[msg.hashalgorithm()]<<")"<<endl;
-    cout<<"data: "<<msg.data()<<"("<<msg.data().length()<<")"<<endl;
+    logger->log(id, "Parsing message");
+    logger->log(id, "size: " + to_string(msg.datasize()));
+    logger->log(id, "hash: " + printHash(msg.hashalgorithm(), (uint8_t*) msg.hash().c_str()));
+    logger->log(id, "data length: " + to_string(msg.data().length()));
 
     if(!msg.data().length() || msg.hash().length() != HASH_SIZE[msg.hashalgorithm()]) {
-        cout<<"wrong data or hash length"<<endl;
+        logger->log(id, "wrong data or hash length");
         return false;
     }
 
@@ -120,12 +124,12 @@ bool Client::parseMessage(uint8_t buf[], int len, uint8_t* msg_type, uint8_t** p
         return false;
     }
 
-    cout<<"decrypted data: "<<flush;
-
-    for(int i=0; i<*parsed_len; i++) {
-        cout<<(char) (*parsed_data)[i]<<flush;
-    }
-    cout<<endl;
+//    cout<<"decrypted data: "<<flush;
+//
+//    for(int i=0; i<*parsed_len; i++) {
+//        cout<<(char) (*parsed_data)[i]<<flush;
+//    }
+//    cout<<endl;
 
     uint8_t* hash = nullptr;
     uint16_t hash_size;
@@ -142,7 +146,7 @@ bool Client::parseMessage(uint8_t buf[], int len, uint8_t* msg_type, uint8_t** p
         return false;
     }
 
-    cout<<"Received message type: "<<MessageType_Name(msg.type())<<" ("<<msg.type()<<")"<<endl;
+    logger->log(id, "Received message type: " + MessageType_Name(msg.type()) + " (" + to_string(msg.type()) + ")");
 
     *msg_type = msg.type();
 
@@ -151,7 +155,8 @@ bool Client::parseMessage(uint8_t buf[], int len, uint8_t* msg_type, uint8_t** p
 }
 
 bool Client::processCommand(Command* cmd) {
-    cout<<"received command '"<<CommandType_Name(cmd->type())<<"' ("<<cmd->type()<<"), with "<<cmd->params_size()<<" params"<<endl;
+    logger->log(id, "Received command '" + CommandType_Name(cmd->type()) + "' (" + to_string(cmd->type()) +
+                    "), with " + to_string(cmd->params_size()) + "params");
 
     ServerResponse res;
 
@@ -162,7 +167,7 @@ bool Client::processCommand(Command* cmd) {
 }
 
 bool Client::processHandshake(Handshake* handshake) {
-    cout<<"Setting encryption to "<<EncryptionAlgorithm_Name(handshake->encryptionalgorithm())<<endl;
+    logger->info(id, "Setting encryption to " + EncryptionAlgorithm_Name(handshake->encryptionalgorithm()));
 
     setEncryptionAlgorithm(handshake->encryptionalgorithm());
 
@@ -212,7 +217,7 @@ bool Client::prepareDataToSend(uint8_t in_buf[], uint32_t len) {
 
     msg.SerializeToArray(out_buf + 4, out_len - 4);
 
-    cout<<"sending response with size: "<<out_len<<" ("<<out_len-4<<"+4)"<<endl;
+    logger->log(id, "sending response with size: " + to_string(out_len) + " (" + to_string(out_len-4) + "+4)");
 
     out_buf[3] = out_len & 0xFF;
     out_buf[2] = (out_len >> 8) & 0xFF;
@@ -231,7 +236,7 @@ bool Client::getMessage() {
     uint8_t size_buf[4];
 
     if(!getNBytes(4, size_buf)) {
-        cout<<"connection error (size)"<<endl;
+        logger->warn(id, "connection error (size)");
         return false;
     }
 
@@ -247,14 +252,14 @@ bool Client::getMessage() {
         return false;
     }
 
-    cout<<"got all data ("<<size<<")"<<endl;
+    logger->log(id, "got all data (" + to_string(size) + ")");
 
     processMessage(msg_buf, size);
 
     return true;
 }
 
-void Client::loop(volatile bool* should_exit) {
+void Client::loop() {
 
     while(!(*should_exit)) {
         if (!getMessage()) {

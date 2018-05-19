@@ -17,4 +17,6 @@ std::string printHash(const uint8_t, const uint8_t*);
 void encrypt(StorageCloud::EncryptionAlgorithm, const uint8_t*, uint32_t, uint8_t**, uint32_t*);
 void decrypt(StorageCloud::EncryptionAlgorithm, const uint8_t*, uint32_t, uint8_t**, uint32_t*);
 
+char getch();
+
 #endif //SERVER_MESSAGES_H
