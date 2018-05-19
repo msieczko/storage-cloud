@@ -3,6 +3,7 @@
 
 #include "main.h"
 #include "utils.h"
+#include "Logger.h"
 
 using namespace std;
 using namespace StorageCloud;
@@ -13,6 +14,8 @@ private:
     string username = "";
     connection* this_connection;
     bool* should_exit;
+    Logger* logger;
+    std::string id;
 
     HashAlgorithm getHashAlgorithm();
     EncryptionAlgorithm getEncryptionAlgorithm();
@@ -27,7 +30,7 @@ private:
     bool getMessage();
 
 public:
-    Client(int, connection*, bool*);
+    Client(int, connection*, bool*, Logger*);
     void loop();
 };
 

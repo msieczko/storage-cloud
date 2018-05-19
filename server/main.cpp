@@ -1,6 +1,7 @@
 #include "main.h"
 #include "utils.h"
 #include "Client.h"
+#include "Logger.h"
 
 list<connection*> connections;
 
@@ -9,6 +10,8 @@ using namespace std;
 using namespace StorageCloud;
 
 bool should_exit = false;
+
+Logger logger(&should_exit);
 
 void sig_handler(int signo)
 {
@@ -23,11 +26,11 @@ void sig_handler(int signo)
 }
 
 void process(int sock, connection* conn) {
-    Client client(sock, conn, &should_exit);
+    Client client(sock, conn, &should_exit, &logger);
 
     client.loop();
 
-    cout<<"closed connection process "<<EncryptionAlgorithm_Name(conn->encryption)<<endl;
+//    "closed connection process "<<EncryptionAlgorithm_Name(conn->encryption)<<endl;
 
     close(sock);
 
@@ -65,7 +68,7 @@ void server() {
         perror("getting socket name");
         exit(1);
     }
-    printf("Socket port #%d\n", ntohs(server.sin_port));
+    logger.info("server", "Socket port #" + to_string(ntohs(server.sin_port)));
 
     listen(sock, 5);
 
@@ -116,7 +119,7 @@ void server() {
                 (*it)->t.join();
                 delete (*it);
                 it = connections.erase(it);
-                cout<<"removed connection"<<endl;
+                logger.log("server", "connection removed");
             } else {
                 it++;
             }
@@ -124,7 +127,7 @@ void server() {
 
     } while(!should_exit);
 
-    cout<<"closing all connections"<<endl;
+    logger.info("server", "closing all connections");
 
     for(auto it=connections.begin(); it != connections.end();) {
         (*it)->t.join();
@@ -134,38 +137,52 @@ void server() {
 
     close(sock);
 
-    cout<<"closed main server process"<<endl;
+    logger.info("server", "closed main server process");
 }
 
 int main(int argc, char **argv) {
     thread server_t = std::thread(server);
 
     string cmd;
+    char c;
+
+    logger.set_input_string(&cmd);
 
     while(!should_exit) {
-        cout<<"> "<<flush;
-        cin>>cmd;
+        c = getch();
 
-        if (cmd == "exit") {
-            cout<<"closing server"<<endl;
-            should_exit = true;
-            break;
-        }
-        
-        if (cmd == "list") {
-            cout<<"There are "<<connections.size()<<" active connections"<<endl;
-            for(auto it=connections.begin(); it != connections.end(); ++it) {
-                cout<<(*it)->addr<<":"<<(*it)->port<<endl;
+        if(c == 10 || c == 13) {
+            if (cmd == "exit") {
+                cmd = "";
+                logger.info("main", "closing app");
+                should_exit = true;
+                break;
+            } else if (cmd == "list") {
+                logger.info("main", "There are " + to_string(connections.size()) + " active connections");
+                for (auto &connection : connections) {
+                    string conn(connection->addr);
+                    conn += ":" + to_string(connection->port);
+                    logger.info("main", conn);
+                }
+            } else if (cmd == "help") {
+                logger.info("main", "Available commands:\n  exit - closes server\n  list - lists active connections");
+            } else {
+                logger.warn("main", "Unknown command, try help");
             }
+
+            cmd = "";
+        } else if(c == 127) {
+            cmd.pop_back();
+        } else {
+            cmd += c;
         }
-        
-        if (cmd == "help") {
-            cout<<"Available commands:\n  exit - closes server\n  list - lists active connections"<<endl;
-        }
+
+        logger.notify();
     }
 
     server_t.join();
 
-    cout<<"server closed"<<endl;
+//    log"server closed"<<endl;
+    logger.info("main", "bye");
     return 0;
 }

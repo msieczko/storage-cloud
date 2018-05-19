@@ -18,6 +18,11 @@
 #include <sys/epoll.h>
 #include <thread>
 #include <list>
+#include <ctime>
+#include <queue>
+#include <mutex>
+#include <condition_variable>
+#include <termios.h>
 
 #include <openssl/sha.h>
 #include <openssl/md5.h>
