@@ -97,3 +97,24 @@ bool Database::listUsers() {
         }
     }
 }
+
+bool Database::addUser(User& user) {
+    mongocxx::collection collection = db["users"];
+
+    auto doc = bsoncxx::builder::basic::document{};
+    using bsoncxx::builder::basic::kvp;
+
+    vector<pair<string*, string> > stringFields;
+
+    stringFields.emplace_back(make_pair(&user.username, "username"));
+    stringFields.emplace_back(make_pair(&user.password, "password"));
+    stringFields.emplace_back(make_pair(&user.name, "name"));
+    stringFields.emplace_back(make_pair(&user.surname, "surname"));
+    stringFields.emplace_back(make_pair(&user.home_dir, "homeDir"));
+
+    for(auto field: stringFields) {
+        doc.append(kvp(field.second, *(field.first)));
+    }
+
+    collection.insert_one(doc.view());
+}

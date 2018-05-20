@@ -50,6 +50,7 @@ private:
 public:
     Database(Logger*);
     bool listUsers();
+    bool addUser(User&);
 };
 
 #endif //SERVER_DATABASE_H
