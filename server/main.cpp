@@ -2,6 +2,7 @@
 #include "utils.h"
 #include "Client.h"
 #include "Logger.h"
+#include "Database.h"
 
 list<connection*> connections;
 
@@ -12,6 +13,7 @@ using namespace StorageCloud;
 bool should_exit = false;
 
 Logger logger(&should_exit);
+Database db(&logger);
 
 void sig_handler(int signo)
 {
@@ -148,6 +150,9 @@ int main(int argc, char **argv) {
 
     logger.set_input_string(&cmd);
 
+    logger.info("main", "All users:");
+    db.listUsers();
+
     while(!should_exit) {
         c = getch();
 
@@ -166,6 +171,9 @@ int main(int argc, char **argv) {
                 }
             } else if (cmd == "help") {
                 logger.info("main", "Available commands:\n  exit - closes server\n  list - lists active connections");
+            } else if (cmd == "users") {
+                logger.info("main", "All users:");
+                db.listUsers();
             } else {
                 logger.warn("main", "Unknown command, try help");
             }
