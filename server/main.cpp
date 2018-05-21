@@ -143,8 +143,7 @@ int main(int argc, char **argv) {
 
     logger.set_input_string(&cmd);
 
-    logger.info("main", "All users:");
-    db.listUsers();
+    vector<User> allUsers;
 
     while(!should_exit) {
         c = getch();
@@ -152,6 +151,7 @@ int main(int argc, char **argv) {
         if(c == 10 || c == 13) {
             if (cmd == "exit") {
                 cmd = "";
+                // TODO detach cmd string from logger;
                 logger.info("main", "closing app");
                 should_exit = true;
                 break;
@@ -166,7 +166,11 @@ int main(int argc, char **argv) {
                 logger.info("main", "Available commands:\n  exit - closes server\n  list - lists active connections");
             } else if (cmd == "users") {
                 logger.info("main", "All users:");
-                db.listUsers();
+                db.listUsers(allUsers);
+
+                for(auto user: allUsers) {
+                    logger.info("main", user.print());
+                }
             } else {
                 logger.warn("main", "Unknown command, try help");
             }
@@ -183,7 +187,10 @@ int main(int argc, char **argv) {
 
     server_t.join();
 
+    logger.info("main", "closing database connection");
+    db.~Database();
 //    log"server closed"<<endl;
-    logger.info("main", "bye");
+    logger.info("main", "bye!");
+    logger.~Logger();
     return 0;
 }
