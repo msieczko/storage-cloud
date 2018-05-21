@@ -45,6 +45,8 @@ public:
 
     void err(const std::string&, const std::string&);
 
+    void err(const std::string&, const std::string&, int);
+
     void add_message(MessageLevel, const std::string&, const std::string&);
 };
 

@@ -101,6 +101,13 @@ void Logger::err(const string& author, const string& body) {
     add_message(ERR, author, body);
 }
 
+void Logger::err(const string& author, const string& body, int errn) {
+    char err_buf[100];
+    strerror_r(errn, err_buf, 100);
+    string full_body = body + ": " + err_buf;
+    add_message(ERR, author, full_body);
+}
+
 void Logger::add_message(MessageLevel lvl, const string& author, const string& body) {
     Msg msg;
     msg.level = lvl;
