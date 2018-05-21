@@ -53,11 +53,10 @@ bool Client::getNBytes(const int n, uint8_t buf[]) {
                     logger->info(id, "no new data, closing");
                     break;
                 }
-                cout<<"continuing"<<endl;
             }
 
             if (last_received < 0) {
-                perror("ERROR reading from socket");
+                logger->err(id, "error while reading from socket", errno);
                 break;
             }
 
@@ -69,7 +68,7 @@ bool Client::getNBytes(const int n, uint8_t buf[]) {
 }
 
 bool Client::processMessage(uint8_t buf[], int len) {
-    uint8_t msg_type;
+    MessageType msg_type;
 
     uint8_t* parsed_msg = nullptr;
     uint32_t parsed_len;
@@ -77,7 +76,7 @@ bool Client::processMessage(uint8_t buf[], int len) {
     bool parsed = parseMessage(buf, len, &msg_type, &parsed_msg, &parsed_len);
 
     if(!parsed || parsed_len == 0) {
-        cout<<"There was an error during message parsing"<<endl;
+        logger->warn(id, "There was an error during message parsing");
         return false;
     }
 
@@ -91,13 +90,13 @@ bool Client::processMessage(uint8_t buf[], int len) {
         handshake.ParseFromArray(parsed_msg, parsed_len);
         processHandshake(&handshake);
     } else {
-        cout<<"Error: unknown message type!"<<endl;
+        logger->err(id, "Error: unknown message type! (" + MessageType_Name(msg_type) + ")");
     }
 
     delete parsed_msg;
 }
 
-bool Client::parseMessage(uint8_t buf[], int len, uint8_t* msg_type, uint8_t** parsed_data, uint32_t* parsed_len) {
+bool Client::parseMessage(uint8_t buf[], int len, MessageType* msg_type, uint8_t** parsed_data, uint32_t* parsed_len) {
     EncodedMessage msg;
     msg.ParseFromArray(buf, len);
     logger->log(id, "Parsing message");
@@ -120,7 +119,7 @@ bool Client::parseMessage(uint8_t buf[], int len, uint8_t* msg_type, uint8_t** p
     decrypt(decrypt_alg, (uint8_t*) msg.data().c_str(), msg.datasize(), parsed_data, parsed_len);
 
     if(msg.datasize() != *parsed_len) {
-        cout<<"wrong data length"<<endl;
+        logger->warn(id, "wrong data length");
         return false;
     }
 
@@ -139,9 +138,9 @@ bool Client::parseMessage(uint8_t buf[], int len, uint8_t* msg_type, uint8_t** p
     bool hash_ok = compareHash(hash, hash_size, (uint8_t*) msg.hash().c_str(), msg.hash().length());
 
     if(!hash_ok) {
-        cout<<"wrong hash"<<endl;
-        cout<<"should be "<<printHash(msg.hashalgorithm(), (uint8_t*) msg.hash().c_str())<<endl;
-        cout<<"got       "<<printHash(msg.hashalgorithm(), hash)<<endl;
+        logger->warn(id, "wrong hash");
+        logger->warn(id, "should be " + printHash(msg.hashalgorithm(), (uint8_t*) msg.hash().c_str()));
+        logger->warn(id, "got       " + printHash(msg.hashalgorithm(), hash));
         delete hash;
         return false;
     }
@@ -156,7 +155,7 @@ bool Client::parseMessage(uint8_t buf[], int len, uint8_t* msg_type, uint8_t** p
 
 bool Client::processCommand(Command* cmd) {
     logger->log(id, "Received command '" + CommandType_Name(cmd->type()) + "' (" + to_string(cmd->type()) +
-                    "), with " + to_string(cmd->params_size()) + "params");
+                    "), with " + to_string(cmd->params_size()) + " params");
 
     ServerResponse res;
 
@@ -207,7 +206,7 @@ bool Client::prepareDataToSend(uint8_t in_buf[], uint32_t len) {
     out_len = msg.ByteSize() + 4;
 
     if(out_len > MAX_PACKET_SIZE - 4) {
-        cout<<"Error: message too big"<<endl;
+        logger->warn(id, "response message too big (" + to_string(out_len) + ">" + to_string(MAX_PACKET_SIZE + 4) + ")");
         delete hash;
         delete data;
         return false;
@@ -236,19 +235,21 @@ bool Client::getMessage() {
     uint8_t size_buf[4];
 
     if(!getNBytes(4, size_buf)) {
-        logger->warn(id, "connection error (size)");
+        if(!(*should_exit))
+            logger->warn(id, "connection error (size)");
         return false;
     }
 
     uint32_t size = parseSize(size_buf);
 
     if(size > MAX_PACKET_SIZE) {
-        cout<<"message too big"<<endl;
+        logger->err(id, "incoming message too big (" + to_string(size) + ">" + to_string(MAX_PACKET_SIZE) + ")");
         return false;
     }
 
     if(!getNBytes(size - 4, msg_buf)) {
-        cout<<"connection error (msg)"<<endl;
+        if(!(*should_exit))
+            logger->err(id, "connection error while getting message body");
         return false;
     }
 

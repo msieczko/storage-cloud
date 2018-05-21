@@ -16,12 +16,8 @@ Logger logger(&should_exit);
 void sig_handler(int signo)
 {
     if (signo == SIGTERM) {
-        printf("received SIGTERM %d\n", getpid());
+        logger.log("sig_handler", "received SIGTERM " + to_string(getpid()));
         should_exit = true;
-    }
-    
-    if (signo == SIGINT) {
-        printf("received SIGUSR1\n");
     }
 }
 
@@ -38,9 +34,6 @@ void process(int sock, connection* conn) {
 }
 
 void server() {
-    if (signal(SIGTERM, sig_handler) == SIG_ERR)
-        printf("\ncan't catch SIGTERM\n");
-    
     int sock;
     unsigned int length;
     struct sockaddr_in server;
@@ -48,7 +41,7 @@ void server() {
 
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == -1) {
-        perror("opening stream socket");
+        logger.err("server", "error while opening stream socket", errno);
         exit(1);
     }
 
@@ -58,14 +51,14 @@ void server() {
     server.sin_addr.s_addr = INADDR_ANY;
     server.sin_port = htons(52137);
     if (bind(sock, (struct sockaddr *) &server, sizeof server) == -1) {
-        perror("binding stream socket");
+        logger.err("server", "error while binding stream socket", errno);
         exit(1);
     }
 
     /* wydrukuj na konsoli przydzielony port */
     length = sizeof(server);
     if (getsockname(sock,(struct sockaddr *) &server, &length) == -1) {
-        perror("getting socket name");
+        logger.err("server", "getting socket name", errno);
         exit(1);
     }
     logger.info("server", "Socket port #" + to_string(ntohs(server.sin_port)));
@@ -92,10 +85,10 @@ void server() {
             msgsock = accept(sock, (struct sockaddr *) &clientaddr, &len);
 
             if (msgsock == -1)
-                perror("accept");
+                logger.err("server", "error while accepting connection", errno);
             else {
-                printf("accepted connection from %s:%d\n", inet_ntoa(clientaddr.sin_addr),
-                       (int) ntohs(clientaddr.sin_port));
+                string conn(inet_ntoa(clientaddr.sin_addr));
+                logger.info("server", "accepted connection from " + conn + ":" + to_string(ntohs(clientaddr.sin_port)));
 
                 connection* new_connection = new connection;
                 new_connection->encryption = DEFAULT_ENCRYPTION_ALGORITHM;

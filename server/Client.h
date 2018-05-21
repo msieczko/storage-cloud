@@ -22,7 +22,7 @@ private:
     void setEncryptionAlgorithm(EncryptionAlgorithm);
     bool getNBytes(int, uint8_t*);
     bool processMessage(uint8_t*, int);
-    bool parseMessage(uint8_t*, int, uint8_t*, uint8_t**, uint32_t*);
+    bool parseMessage(uint8_t*, int, MessageType*, uint8_t**, uint32_t*);
     bool processCommand(Command*);
     bool processHandshake(Handshake*);
     bool sendServerResponse(const ServerResponse*);
