@@ -115,11 +115,17 @@ private:
     Logger* logger;
     std::string id = "db";
 
+    bool getField(string&, string&, bsoncxx::oid, bsoncxx::document::element&);
+
 public:
     Database(Logger*);
     bool listUsers(std::vector<User>&);
     bool addUser(User&);
-    bool getField(string, string, bsoncxx::oid, string&);
+    bool getField(string&&, string&&, bsoncxx::oid, bsoncxx::document::element&);
+    bool getField(string&&, string&&, bsoncxx::oid, string&);
+    bool getField(string&&, string&&, bsoncxx::oid, int64_t&);
+    bool getId(string&&, string&&, string&&, bsoncxx::oid&);
+    bool getFields(string&&, bsoncxx::oid, std::map<string, bsoncxx::document::element>&);
 };
 
 #endif //SERVER_DATABASE_H

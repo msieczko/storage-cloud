@@ -144,6 +144,19 @@ int main(int argc, char **argv) {
     logger.set_input_string(&cmd);
 
     vector<User> allUsers;
+    db.listUsers(allUsers);
+
+    map<string, bsoncxx::document::element> elM;
+
+    elM.emplace("username", bsoncxx::document::element{});
+    elM.emplace("surname", bsoncxx::document::element{});
+    elM.emplace("name", bsoncxx::document::element{});
+
+    db.getFields("users", allUsers[0].id, elM);
+
+    for(const auto &val: elM) {
+        cout<<val.first<<": "<<bsoncxx::string::to_string(val.second.get_utf8().value)<<endl;
+    }
 
     while(!should_exit) {
         c = getch();
