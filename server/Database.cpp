@@ -27,6 +27,24 @@ Database::Database(Logger* l) {
     l->info(id, "connected to database");
 }
 
+bool Database::getField(string colName, string fieldName, bsoncxx::oid id, string& res) {
+    mongocxx::collection collection = db[colName];
+
+    mongocxx::options::find opts{};
+    opts.projection(make_document(kvp(fieldName, 1)));
+
+    auto cursor = collection.find(make_document(kvp("_id", id)), opts);
+
+    for (auto&& doc : cursor) {
+        User user;
+        std::cout << bsoncxx::to_json(doc) << std::endl;
+
+//        user.fromBSON(doc);
+//        user.print();
+//        users.emplace_back(user);
+    }
+}
+
 bool Database::listUsers(vector<User>& users) {
     mongocxx::collection collection = db["users"];
     auto cursor = collection.find({});

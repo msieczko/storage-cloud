@@ -53,6 +53,10 @@ public:
         stringFields.emplace_back(make_pair(&home_dir, "homeDir"));
     }
 
+//    string getUsername() {
+//        Database::
+//    }
+
     bsoncxx::builder::basic::document toBSON() {
         auto doc = bsoncxx::builder::basic::document{};
         using bsoncxx::builder::basic::kvp;
@@ -115,6 +119,7 @@ public:
     Database(Logger*);
     bool listUsers(std::vector<User>&);
     bool addUser(User&);
+    bool getField(string, string, bsoncxx::oid, string&);
 };
 
 #endif //SERVER_DATABASE_H

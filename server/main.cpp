@@ -151,7 +151,7 @@ int main(int argc, char **argv) {
         if(c == 10 || c == 13) {
             if (cmd == "exit") {
                 cmd = "";
-                // TODO detach cmd string from logger;
+                logger.set_input_string(nullptr);
                 logger.info("main", "closing app");
                 should_exit = true;
                 break;
@@ -164,6 +164,9 @@ int main(int argc, char **argv) {
                 }
             } else if (cmd == "help") {
                 logger.info("main", "Available commands:\n  exit - closes server\n  list - lists active connections");
+                string test;
+                db.getField("users", "password", allUsers[0].id, test);
+                logger.log("main/TEST", test);
             } else if (cmd == "users") {
                 logger.info("main", "All users:");
                 db.listUsers(allUsers);
