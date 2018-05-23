@@ -116,7 +116,7 @@ private:
     std::string id = "db";
 
     bool getField(string&, string&, bsoncxx::oid, bsoncxx::document::element&);
-
+    bool setField(string&, string&, bsoncxx::oid id, bsoncxx::types::value&);
 public:
     Database(Logger*);
     bool listUsers(std::vector<User>&);
@@ -127,6 +127,11 @@ public:
     bool getId(string&&, string&&, string&&, bsoncxx::oid&);
     bool getFields(string&&, bsoncxx::oid, std::map<string, bsoncxx::document::element>&);
     bool getFields(string&&, std::vector<string>&, std::map<bsoncxx::oid, std::map<string, bsoncxx::document::element> >&);
+    bool setField(string&&, string&&, bsoncxx::oid, bsoncxx::types::value&&);
+    bool setField(string&, string&, bsoncxx::oid, bsoncxx::types::value&&);
+    bool setField(string&&, string&&, bsoncxx::oid, string&);
+    bool setField(string&&, string&&, bsoncxx::oid, int64_t&);
+    bool insertDoc(string&&, bsoncxx::oid&, std::map<string, bsoncxx::types::value>&);
 };
 
 #endif //SERVER_DATABASE_H

@@ -158,6 +158,42 @@ int main(int argc, char **argv) {
         cout<<val.first<<": "<<bsoncxx::string::to_string(val.second.get_utf8().value)<<endl;
     }
 
+    map<bsoncxx::oid, map<string, bsoncxx::document::element> > mmap;
+
+    vector<string> fields;
+    fields.emplace_back("username");
+    fields.emplace_back("password");
+
+    cout<<"XD:"<<endl;
+
+    cout<<((db.getFields("users", fields, mmap)) ? "ok" : "not ok")<<endl;
+
+    for(auto &usr: mmap) {
+        cout<<"id:"<<usr.first.to_string()<<endl;
+        for(auto &flds: usr.second) {
+            cout<<flds.first<<": "<<flds.second.get_utf8().value<<endl;
+        }
+    }
+
+    cout<<":XD"<<endl;
+
+    map<string, bsoncxx::types::value> elMi;
+
+    elMi.emplace("username", bsoncxx::types::value{bsoncxx::types::b_utf8{"miloszXD"}});
+    elMi.emplace("name", bsoncxx::types::value{bsoncxx::types::b_utf8{"MiloszTest"}});
+    elMi.emplace("surname", bsoncxx::types::value{bsoncxx::types::b_utf8{"SuRnAmE"}});
+    elMi.emplace("password", bsoncxx::types::value{bsoncxx::types::b_utf8{"safepasswd"}});
+
+    bsoncxx::oid i_id;
+
+    //db.insertFields("users", i_id, elMi);
+
+    cout<<"inserted id: "<<i_id.to_string()<<endl;
+
+    string tmpi = "WELP";
+
+    db.setField("users", "testField", allUsers[0].id, tmpi);
+
     while(!should_exit) {
         c = getch();
 

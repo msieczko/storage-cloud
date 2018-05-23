@@ -150,13 +150,15 @@ bool Database::getFields(string&& colName, vector<string>& fields, map<bsoncxx::
     for(auto doc_v: cursor) {
         notEmpty = true;
 
-        if (distance(doc_v.begin(), doc_v.end()) != fields.size()) {
+        if (distance(doc_v.begin(), doc_v.end()) != fields.size() + 1) {
+            cout<<"err1, "<<distance(doc_v.begin(), doc_v.end())<<endl;
             return false;
         }
 
         bsoncxx::document::element t_id = doc_v["_id"];
 
         if (!t_id || t_id.type() != bsoncxx::type::k_oid) {
+            cout<<"err2"<<endl;
             return false;
         }
 
@@ -172,7 +174,62 @@ bool Database::getFields(string&& colName, vector<string>& fields, map<bsoncxx::
         }
     }
 
+    return notEmpty;
+}
+
+bool Database::setField(string& colName, string& fieldName, bsoncxx::oid id, bsoncxx::types::value& val) {
+    try {
+        db[colName].update_one(make_document(kvp("_id", id)),
+                               make_document(kvp("$set", make_document(kvp(fieldName, val)))));
+    } catch (...) {
+        return false;
+    }
+
     return true;
+}
+
+bool Database::setField(string& colName, string& fieldName, bsoncxx::oid id, bsoncxx::types::value&& val) {
+    return setField(colName, fieldName, id, val);
+}
+
+bool Database::setField(string&& colName, string&& fieldName, bsoncxx::oid id, bsoncxx::types::value&& val) {
+    return setField(colName, fieldName, id, val);
+}
+
+bool Database::setField(string&& colName, string&& fieldName, bsoncxx::oid id, string& newVal) {
+    return setField(colName, fieldName, id, bsoncxx::types::value{bsoncxx::types::b_utf8{newVal}});
+}
+
+bool Database::setField(string&& colName, string&& fieldName, bsoncxx::oid id, int64_t& newVal) {
+    bsoncxx::types::b_int64 tmp{};
+    tmp.value = newVal;
+    return setField(colName, fieldName, id, bsoncxx::types::value{tmp});
+}
+
+bool Database::insertDoc(string&& colName, bsoncxx::oid& id, map<string, bsoncxx::types::value>& elements) {
+    auto doc = bsoncxx::builder::basic::document{};
+
+    for(const auto &elem: elements) {
+        doc.append(kvp(elem.first, elem.second));
+    }
+
+    try {
+        auto res = db[colName].insert_one(doc.view());
+
+        if(!res) {
+            return false;
+        }
+
+        if (res->inserted_id().type() != bsoncxx::type::k_oid) {
+            return false;
+        }
+
+        id = res->inserted_id().get_oid().value;
+        return true;
+
+    } catch (...) {
+        return false;
+    }
 }
 
 bool Database::listUsers(vector<User>& users) {
