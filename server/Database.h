@@ -126,6 +126,7 @@ public:
     bool getField(string&&, string&&, bsoncxx::oid, int64_t&);
     bool getId(string&&, string&&, string&&, bsoncxx::oid&);
     bool getFields(string&&, bsoncxx::oid, std::map<string, bsoncxx::document::element>&);
+    bool getFields(string&&, std::vector<string>&, std::map<bsoncxx::oid, std::map<string, bsoncxx::document::element> >&);
 };
 
 #endif //SERVER_DATABASE_H

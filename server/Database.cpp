@@ -101,14 +101,12 @@ bool Database::getId(string&& colName, string&& fieldName, string&& fieldValue, 
 bool Database::getFields(string&& colName, bsoncxx::oid id, map<string, bsoncxx::document::element>& elements) {
     auto doc = bsoncxx::builder::basic::document{};
     doc.append(kvp("_id", 0));
-//    auto fields = make_document();
 
     for(const auto &name: elements) {
         doc.append(kvp(name.first, 1));
     }
 
     mongocxx::options::find opts{};
-
     opts.projection(doc.view());
 
     auto cursor = db[colName].find(make_document(kvp("_id", id)), opts);
@@ -130,6 +128,48 @@ bool Database::getFields(string&& colName, bsoncxx::oid id, map<string, bsoncxx:
         }
 
         elements[bsoncxx::string::to_string(val.key())] = val;
+    }
+
+    return true;
+}
+
+bool Database::getFields(string&& colName, vector<string>& fields, map<bsoncxx::oid, map<string, bsoncxx::document::element> >& elements) {
+    auto doc = bsoncxx::builder::basic::document{};
+
+    for(const auto &name: fields) {
+        doc.append(kvp(name, 1));
+    }
+
+    mongocxx::options::find opts{};
+    opts.projection(doc.view());
+
+    auto cursor = db[colName].find(make_document(), opts);
+
+    bool notEmpty = false;
+
+    for(auto doc_v: cursor) {
+        notEmpty = true;
+
+        if (distance(doc_v.begin(), doc_v.end()) != fields.size()) {
+            return false;
+        }
+
+        bsoncxx::document::element t_id = doc_v["_id"];
+
+        if (!t_id || t_id.type() != bsoncxx::type::k_oid) {
+            return false;
+        }
+
+        bsoncxx::oid id = t_id.get_oid().value;
+
+        elements.emplace(id, map<string, bsoncxx::document::element>{});
+
+        for(auto val: doc_v) {
+            string key = bsoncxx::string::to_string(val.key());
+            if (key != "_id") {
+                elements[id].emplace(key, val);
+            }
+        }
     }
 
     return true;
