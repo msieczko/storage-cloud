@@ -43,7 +43,10 @@ bool Database::getField(string& colName, string& fieldName, bsoncxx::oid id, bso
 
     if (bsoncxx::string::to_string(val->key()) == fieldName) {
         el = *val;
+        return true;
     }
+
+    return false;
 }
 
 bool Database::getField(string&& colName, string&& fieldName, bsoncxx::oid id, bsoncxx::document::element& el) {
@@ -76,7 +79,7 @@ bool Database::getField(string&& colName, string&& fieldName, bsoncxx::oid id, i
     return false;
 }
 
-bool Database::getId(string&& colName, string&& fieldName, string&& fieldValue, bsoncxx::oid& id) {
+bool Database::getId(string&& colName, string&& fieldName, string& fieldValue, bsoncxx::oid& id) {
     mongocxx::options::find opts{};
     opts.projection(make_document(kvp("_id", 1)));
 
@@ -90,12 +93,12 @@ bool Database::getId(string&& colName, string&& fieldName, string&& fieldValue, 
 
     auto val = doc_i->begin();
 
-    if (bsoncxx::string::to_string(val->key()) == fieldName) {
-        if(val->type() == bsoncxx::type::k_oid) {
-            id = val->get_oid().value;
-            return true;
-        }
+    if(val->type() == bsoncxx::type::k_oid) {
+        id = val->get_oid().value;
+        return true;
     }
+
+    return false;
 }
 
 bool Database::getFields(string&& colName, bsoncxx::oid id, map<string, bsoncxx::document::element>& elements) {
@@ -232,26 +235,26 @@ bool Database::insertDoc(string&& colName, bsoncxx::oid& id, map<string, bsoncxx
     }
 }
 
-bool Database::listUsers(vector<User>& users) {
-    mongocxx::collection collection = db["users"];
-    auto cursor = collection.find({});
-
-//    vector<User> users;
-
-    for (auto&& doc : cursor) {
-        User user;
-//        std::cout << bsoncxx::to_json(doc) << std::endl;
-
-        user.fromBSON(doc);
-        user.print();
-        users.emplace_back(user);
-    }
-}
-
-bool Database::addUser(User& user) {
-    mongocxx::collection collection = db["users"];
-
-    auto doc = user.toBSON();
-
-    collection.insert_one(doc.view());
-}
+//bool Database::listUsers(vector<User>& users) {
+//    mongocxx::collection collection = db["users"];
+//    auto cursor = collection.find({});
+//
+////    vector<User> users;
+//
+//    for (auto&& doc : cursor) {
+//        User user;
+////        std::cout << bsoncxx::to_json(doc) << std::endl;
+//
+//        user.fromBSON(doc);
+//        user.print();
+//        users.emplace_back(user);
+//    }
+//}
+//
+//bool Database::addUser(User& user) {
+//    mongocxx::collection collection = db["users"];
+//
+//    auto doc = user.toBSON();
+//
+//    collection.insert_one(doc.view());
+//}

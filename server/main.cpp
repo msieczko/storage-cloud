@@ -3,6 +3,7 @@
 #include "Client.h"
 #include "Logger.h"
 #include "Database.h"
+#include "User.h"
 
 list<connection*> connections;
 
@@ -143,26 +144,27 @@ int main(int argc, char **argv) {
 
     logger.set_input_string(&cmd);
 
-    vector<User> allUsers;
-    db.listUsers(allUsers);
+//    vector<User> allUsers;
+//    db.listUsers(allUsers);
 
-    map<string, bsoncxx::document::element> elM;
+//    map<string, bsoncxx::document::element> elM;
+//
+//    elM.emplace("username", bsoncxx::document::element{});
+//    elM.emplace("surname", bsoncxx::document::element{});
+//    elM.emplace("name", bsoncxx::document::element{});
+//
+//    db.getFields("users", allUsers[0].id, elM);
 
-    elM.emplace("username", bsoncxx::document::element{});
-    elM.emplace("surname", bsoncxx::document::element{});
-    elM.emplace("name", bsoncxx::document::element{});
-
-    db.getFields("users", allUsers[0].id, elM);
-
-    for(const auto &val: elM) {
-        cout<<val.first<<": "<<bsoncxx::string::to_string(val.second.get_utf8().value)<<endl;
-    }
+//    for(const auto &val: elM) {
+//        cout<<val.first<<": "<<bsoncxx::string::to_string(val.second.get_utf8().value)<<endl;
+//    }
 
     map<bsoncxx::oid, map<string, bsoncxx::document::element> > mmap;
 
     vector<string> fields;
     fields.emplace_back("username");
-    fields.emplace_back("password");
+    fields.emplace_back("surname");
+    fields.emplace_back("name");
 
     cout<<"XD:"<<endl;
 
@@ -186,13 +188,26 @@ int main(int argc, char **argv) {
 
     bsoncxx::oid i_id;
 
-    //db.insertFields("users", i_id, elMi);
+    //db.insertDoc("users", i_id, elMi);
 
-    cout<<"inserted id: "<<i_id.to_string()<<endl;
+    //cout<<"inserted id: "<<i_id.to_string()<<endl;
 
     string tmpi = "WELP";
 
-    db.setField("users", "testField", allUsers[0].id, tmpi);
+//    db.setField("users", "testField", allUsers[0].id, tmpi);
+
+    UserManager u_m = UserManager::getInstance(&db);
+    string u_name = "miloszXD";
+    User u(u_name, u_m);
+    cout<<(u.getName(u_name) ? "got user name" : "error while getting user name")<<endl;
+
+    cout<<"received user name: "<<u_name<<" ("<<u_name.size()<<")"<<endl;
+
+    string passwd = "nicepasswd";
+
+//    u.setPassword(passwd);
+
+    cout<<(u.checkPassword(passwd) ? "passwd ok" : "passwd wrong")<<endl;
 
     while(!should_exit) {
         c = getch();
@@ -214,15 +229,15 @@ int main(int argc, char **argv) {
             } else if (cmd == "help") {
                 logger.info("main", "Available commands:\n  exit - closes server\n  list - lists active connections");
                 string test;
-                db.getField("users", "password", allUsers[0].id, test);
-                logger.log("main/TEST", test);
+//                db.getField("users", "password", allUsers[0].id, test);
+//                logger.log("main/TEST", test);
             } else if (cmd == "users") {
                 logger.info("main", "All users:");
-                db.listUsers(allUsers);
-
-                for(auto user: allUsers) {
-                    logger.info("main", user.print());
-                }
+//                db.listUsers(allUsers);
+//
+//                for(auto user: allUsers) {
+//                    logger.info("main", user.print());
+//                }
             } else {
                 logger.warn("main", "Unknown command, try help");
             }
