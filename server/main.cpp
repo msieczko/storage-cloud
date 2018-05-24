@@ -2,6 +2,8 @@
 #include "utils.h"
 #include "Client.h"
 #include "Logger.h"
+#include "Database.h"
+#include "User.h"
 
 list<connection*> connections;
 
@@ -12,6 +14,7 @@ using namespace StorageCloud;
 bool should_exit = false;
 
 Logger logger(&should_exit);
+Database db(&logger);
 
 void sig_handler(int signo)
 {
@@ -141,12 +144,80 @@ int main(int argc, char **argv) {
 
     logger.set_input_string(&cmd);
 
+//    vector<User> allUsers;
+//    db.listUsers(allUsers);
+
+//    map<string, bsoncxx::document::element> elM;
+//
+//    elM.emplace("username", bsoncxx::document::element{});
+//    elM.emplace("surname", bsoncxx::document::element{});
+//    elM.emplace("name", bsoncxx::document::element{});
+//
+//    db.getFields("users", allUsers[0].id, elM);
+
+//    for(const auto &val: elM) {
+//        cout<<val.first<<": "<<bsoncxx::string::to_string(val.second.get_utf8().value)<<endl;
+//    }
+
+    map<bsoncxx::oid, map<string, bsoncxx::document::element> > mmap;
+
+    vector<string> fields;
+    fields.emplace_back("username");
+    fields.emplace_back("surname");
+    fields.emplace_back("name");
+
+    cout<<"XD:"<<endl;
+
+    cout<<((db.getFields("users", fields, mmap)) ? "ok" : "not ok")<<endl;
+
+    for(auto &usr: mmap) {
+        cout<<"id:"<<usr.first.to_string()<<endl;
+        for(auto &flds: usr.second) {
+            cout<<flds.first<<": "<<flds.second.get_utf8().value<<endl;
+        }
+    }
+
+    cout<<":XD"<<endl;
+
+    map<string, bsoncxx::types::value> elMi;
+
+    elMi.emplace("username", bsoncxx::types::value{bsoncxx::types::b_utf8{"miloszXD"}});
+    elMi.emplace("name", bsoncxx::types::value{bsoncxx::types::b_utf8{"MiloszTest"}});
+    elMi.emplace("surname", bsoncxx::types::value{bsoncxx::types::b_utf8{"SuRnAmE"}});
+    elMi.emplace("password", bsoncxx::types::value{bsoncxx::types::b_utf8{"safepasswd"}});
+
+    bsoncxx::oid i_id;
+
+    //db.insertDoc("users", i_id, elMi);
+
+    //cout<<"inserted id: "<<i_id.to_string()<<endl;
+
+    string tmpi = "WELP";
+
+//    db.setField("users", "testField", allUsers[0].id, tmpi);
+
+    UserManager u_m = UserManager::getInstance(&db);
+    string u_name = "miloszXD";
+    User u(u_name, u_m);
+    cout<<(u.getName(u_name) ? "got user name" : "error while getting user name")<<endl;
+
+    cout<<"received user name: "<<u_name<<" ("<<u_name.size()<<")"<<endl;
+
+    string passwd = "nicepasswd";
+
+    //u.setPassword(passwd);
+
+    string newSid;
+
+    cout<<(u.loginByPassword(passwd, newSid) ? "passwd ok" : "passwd wrong")<<" sid: "<<newSid<<endl;
+
     while(!should_exit) {
         c = getch();
 
         if(c == 10 || c == 13) {
             if (cmd == "exit") {
                 cmd = "";
+                logger.set_input_string(nullptr);
                 logger.info("main", "closing app");
                 should_exit = true;
                 break;
@@ -159,6 +230,16 @@ int main(int argc, char **argv) {
                 }
             } else if (cmd == "help") {
                 logger.info("main", "Available commands:\n  exit - closes server\n  list - lists active connections");
+                string test;
+//                db.getField("users", "password", allUsers[0].id, test);
+//                logger.log("main/TEST", test);
+            } else if (cmd == "users") {
+                logger.info("main", "All users:");
+//                db.listUsers(allUsers);
+//
+//                for(auto user: allUsers) {
+//                    logger.info("main", user.print());
+//                }
             } else {
                 logger.warn("main", "Unknown command, try help");
             }
@@ -175,7 +256,10 @@ int main(int argc, char **argv) {
 
     server_t.join();
 
+    logger.info("main", "closing database connection");
+    db.~Database();
 //    log"server closed"<<endl;
-    logger.info("main", "bye");
+    logger.info("main", "bye!");
+    logger.~Logger();
     return 0;
 }
