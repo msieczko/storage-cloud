@@ -24,6 +24,7 @@
 #include <condition_variable>
 #include <termios.h>
 #include <map>
+#include <chrono>
 
 #include <openssl/sha.h>
 #include <openssl/md5.h>

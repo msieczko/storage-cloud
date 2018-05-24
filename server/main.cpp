@@ -205,9 +205,11 @@ int main(int argc, char **argv) {
 
     string passwd = "nicepasswd";
 
-//    u.setPassword(passwd);
+    //u.setPassword(passwd);
 
-    cout<<(u.checkPassword(passwd) ? "passwd ok" : "passwd wrong")<<endl;
+    string newSid;
+
+    cout<<(u.loginByPassword(passwd, newSid) ? "passwd ok" : "passwd wrong")<<" sid: "<<newSid<<endl;
 
     while(!should_exit) {
         c = getch();

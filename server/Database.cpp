@@ -2,12 +2,6 @@
 
 #include <iostream>
 
-#include <bsoncxx/builder/stream/document.hpp>
-#include <bsoncxx/json.hpp>
-
-#include <mongocxx/client.hpp>
-#include <mongocxx/instance.hpp>
-
 using namespace mongocxx;
 using namespace std;
 
@@ -72,6 +66,20 @@ bool Database::getField(string&& colName, string&& fieldName, bsoncxx::oid id, i
     if(getField(colName, fieldName, id, el)) {
         if(el.type() == bsoncxx::type::k_int64) {
             res = el.get_int64().value;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Database::getField(string&& colName, string&& fieldName, bsoncxx::oid id, const uint8_t*& res, uint32_t& resSize) {
+    bsoncxx::document::element el;
+
+    if(getField(colName, fieldName, id, el)) {
+        if(el.type() == bsoncxx::type::k_binary) {
+            res = el.get_binary().bytes;
+            resSize = el.get_binary().size;
             return true;
         }
     }
@@ -203,10 +211,28 @@ bool Database::setField(string&& colName, string&& fieldName, bsoncxx::oid id, s
     return setField(colName, fieldName, id, bsoncxx::types::value{bsoncxx::types::b_utf8{newVal}});
 }
 
+bool Database::setField(string&& colName, string&& fieldName, bsoncxx::oid id, const uint8_t* newVal, uint32_t newValSize) {
+    bsoncxx::types::b_binary b_val{};
+    b_val.bytes = newVal;
+    b_val.size = newValSize;
+    return setField(colName, fieldName, id, bsoncxx::types::value{b_val});
+}
+
 bool Database::setField(string&& colName, string&& fieldName, bsoncxx::oid id, int64_t& newVal) {
     bsoncxx::types::b_int64 tmp{};
     tmp.value = newVal;
     return setField(colName, fieldName, id, bsoncxx::types::value{tmp});
+}
+
+bool Database::pushValToArr(string&& colName, string&& arrayName, bsoncxx::oid id, bsoncxx::document::value&& val) {
+    try {
+        db[colName].update_one(make_document(kvp("_id", id)),
+                               make_document(kvp("$push", make_document(kvp(arrayName, val)))));
+    } catch (...) {
+        return false;
+    }
+
+    return true;
 }
 
 bool Database::insertDoc(string&& colName, bsoncxx::oid& id, map<string, bsoncxx::types::value>& elements) {
@@ -234,27 +260,3 @@ bool Database::insertDoc(string&& colName, bsoncxx::oid& id, map<string, bsoncxx
         return false;
     }
 }
-
-//bool Database::listUsers(vector<User>& users) {
-//    mongocxx::collection collection = db["users"];
-//    auto cursor = collection.find({});
-//
-////    vector<User> users;
-//
-//    for (auto&& doc : cursor) {
-//        User user;
-////        std::cout << bsoncxx::to_json(doc) << std::endl;
-//
-//        user.fromBSON(doc);
-//        user.print();
-//        users.emplace_back(user);
-//    }
-//}
-//
-//bool Database::addUser(User& user) {
-//    mongocxx::collection collection = db["users"];
-//
-//    auto doc = user.toBSON();
-//
-//    collection.insert_one(doc.view());
-//}

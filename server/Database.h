@@ -20,93 +20,17 @@
 #include <bsoncxx/string/to_string.hpp>
 #include <bsoncxx/types.hpp>
 #include <bsoncxx/types/value.hpp>
+#include <bsoncxx/builder/stream/document.hpp>
+#include <bsoncxx/json.hpp>
+
+#include <mongocxx/client.hpp>
+#include <mongocxx/instance.hpp>
+
 
 #define DB_URI "mongodb://localhost:27017"
 #define DB_NAME "tin"
 
 using std::string;
-
-//class User {
-//private:
-//
-//    std::vector<std::pair<string*, string> > stringFields;
-//public:
-//    string username;
-//    string password;
-//    string name;
-//    string surname;
-//    string home_dir;
-//    bsoncxx::oid id{};
-//    string print() {
-//        string s = "id: " + id.to_string();
-//        s += " username: " + username;
-//        s += " password: " + password;
-//        s += " name: " + name + " " + surname;
-//        return s;
-//    }
-//
-//    User() {
-//        stringFields.emplace_back(make_pair(&username, "username"));
-//        stringFields.emplace_back(make_pair(&password, "password"));
-//        stringFields.emplace_back(make_pair(&name, "name"));
-//        stringFields.emplace_back(make_pair(&surname, "surname"));
-//        stringFields.emplace_back(make_pair(&home_dir, "homeDir"));
-//    }
-//
-////    string getUsername() {
-////        Database::
-////    }
-//
-//    bsoncxx::builder::basic::document toBSON() {
-//        auto doc = bsoncxx::builder::basic::document{};
-//        using bsoncxx::builder::basic::kvp;
-//
-//        for(auto field: stringFields) {
-//            doc.append(kvp(field.second, *(field.first)));
-//        }
-//
-//        doc.append(kvp("_id", id));
-//
-//        return doc;
-//    }
-//
-//    void fromBSON(bsoncxx::document::view doc) {
-//        bool ok = true;
-//
-//        using namespace std;
-//
-//        for(auto field: stringFields) {
-//            auto val = doc[field.second];
-//            if (!val) {
-//                ok = false;
-//            } else {
-//                *(field.first) = bsoncxx::string::to_string(val.get_utf8().value);
-//            }
-//        }
-//
-//        auto files = doc["files"];
-//        if(!files || files.type() != bsoncxx::types::b_array::type_id) {
-//            cout<<"not array"<<endl;
-//        } else {
-//            cout<<"files:"<<endl;
-//            for (auto ele: files.get_array().value) {
-//                auto val = ele["name"];
-//                if(!val) {
-//                    continue;
-//                }
-//                cout<<"name: "<<bsoncxx::string::to_string(val.get_utf8().value)<<endl;
-//            }
-//        }
-//
-//        id = doc["_id"].get_oid().value;
-//
-//        if(ok) {
-////            cout<<print()<<endl;
-//        } else {
-//            cout<<"wrong user"<<endl;
-//        }
-//    }
-//};
 
 class Database {
 private:
@@ -124,6 +48,7 @@ public:
     bool getField(string&&, string&&, bsoncxx::oid, bsoncxx::document::element&);
     bool getField(string&&, string&&, bsoncxx::oid, string&);
     bool getField(string&&, string&&, bsoncxx::oid, int64_t&);
+    bool getField(string&&, string&&, bsoncxx::oid, const uint8_t*&, uint32_t&);
     bool getId(string&&, string&&, string&, bsoncxx::oid&);
     bool getFields(string&&, bsoncxx::oid, std::map<string, bsoncxx::document::element>&);
     bool getFields(string&&, std::vector<string>&, std::map<bsoncxx::oid, std::map<string, bsoncxx::document::element> >&);
@@ -131,6 +56,8 @@ public:
     bool setField(string&, string&, bsoncxx::oid, bsoncxx::types::value&&);
     bool setField(string&&, string&&, bsoncxx::oid, string&);
     bool setField(string&&, string&&, bsoncxx::oid, int64_t&);
+    bool setField(string&&, string&&, bsoncxx::oid, const uint8_t*, uint32_t);
+    bool pushValToArr(string&&, string&&, bsoncxx::oid, bsoncxx::document::value&&);
     bool insertDoc(string&&, bsoncxx::oid&, std::map<string, bsoncxx::types::value>&);
 };
 
