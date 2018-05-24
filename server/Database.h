@@ -49,7 +49,7 @@ public:
     bool getField(string&&, string&&, bsoncxx::oid, string&);
     bool getField(string&&, string&&, bsoncxx::oid, int64_t&);
     bool getField(string&&, string&&, bsoncxx::oid, const uint8_t*&, uint32_t&);
-    bool getId(string&&, string&&, string&, bsoncxx::oid&);
+    bool getId(string&&, string&&, const string&, bsoncxx::oid&);
     bool getFields(string&&, bsoncxx::oid, std::map<string, bsoncxx::document::element>&);
     bool getFields(string&&, std::vector<string>&, std::map<bsoncxx::oid, std::map<string, bsoncxx::document::element> >&);
     bool setField(string&&, string&&, bsoncxx::oid, bsoncxx::types::value&&);

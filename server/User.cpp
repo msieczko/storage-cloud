@@ -6,11 +6,13 @@
 
 using namespace mongocxx;
 
-User::User(oid& id1, UserManager& u_m): id(id1), user_manager(u_m), authorized(false) {}
+User::User(oid& id1, UserManager& u_m): id(id1), user_manager(u_m), authorized(false), valid(true) {}
 
-User::User(string& username, UserManager& u_m): user_manager(u_m), authorized(false) {
+User::User(const string& username, UserManager& u_m): user_manager(u_m), authorized(false), valid(false) {
     if(!user_manager.getUserId(username, id)) {
-        std::cout<<"user not found"<<std::endl;
+//        std::cout<<"user not found"<<std::endl;
+    } else {
+        valid = true;
     }
 }
 
@@ -55,20 +57,21 @@ bool User::checkPassword(string& passwd) {
 }
 
 bool User::loginByPassword(string& password, string& sid) {
+    authorized = false;
     if(checkPassword(password)) {
         uint8_t t_sid_b[48];
         if(RAND_bytes(t_sid_b, 48) != 1) {
             return false;
         }
 
-        string t_sid((char*)t_sid_b);
+        string t_sid((char*)t_sid_b, 48);
 
         if(!user_manager.addSid(id, t_sid)) {
             return false;
         }
 
         sid = t_sid;
-
+        authorized = true;
         return true;
     }
 
@@ -92,7 +95,7 @@ bool UserManager::setName(oid& id, string& res) {
     return db.setField("users", "name", id, res);
 }
 
-bool UserManager::getUserId(string& username, oid& id) {
+bool UserManager::getUserId(const string& username, oid& id) {
     return db.getId("users", "username", username, id);
 }
 

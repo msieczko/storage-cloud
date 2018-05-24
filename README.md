@@ -2,8 +2,8 @@
 
 Funkcja | Komenda klienta | Komenda admina | Odpowiedź serwera
 --- | --- | --- | ---
-Logowanie | LOGIN username pass | - | LOGGED sid [warn_list]
-Logowanie | RELOGIN sid | - | LOGGED sid [warn_list]
+Logowanie | LOGIN username(string) password(string) | - | LOGGED sid(bytes) [warn_list] / ERROR msg(str)
+Logowanie | RELOGIN sid(bytes) | - | LOGGED sid(bytes) [warn_list] / ERROR msg(str)
 Wylogowanie | LOGOUT | - | OK / ERROR code msg
 Stworzenie użytkownika | REGISTER username pass | - | OK / ERROR code msg
 Usunięcie użytkownika | - | DELETE_USER username | OK / ERROR code msg

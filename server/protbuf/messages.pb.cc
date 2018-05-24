@@ -26,6 +26,7 @@ class ParamDefaultTypeInternal {
       _instance;
   ::google::protobuf::internal::ArenaStringPtr sparamval_;
   ::google::protobuf::int64 iparamval_;
+  ::google::protobuf::internal::ArenaStringPtr bparamval_;
 } _Param_default_instance_;
 class CommandDefaultTypeInternal {
  public:
@@ -196,6 +197,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::Param, paramid_),
   offsetof(::StorageCloud::ParamDefaultTypeInternal, sparamval_),
   offsetof(::StorageCloud::ParamDefaultTypeInternal, iparamval_),
+  offsetof(::StorageCloud::ParamDefaultTypeInternal, bparamval_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::Param, value_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::Command, _internal_metadata_),
@@ -243,11 +245,11 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
 };
 static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::StorageCloud::Param)},
-  { 9, -1, sizeof(::StorageCloud::Command)},
-  { 18, -1, sizeof(::StorageCloud::EncodedMessage)},
-  { 28, -1, sizeof(::StorageCloud::Handshake)},
-  { 34, -1, sizeof(::StorageCloud::File)},
-  { 42, -1, sizeof(::StorageCloud::ServerResponse)},
+  { 10, -1, sizeof(::StorageCloud::Command)},
+  { 19, -1, sizeof(::StorageCloud::EncodedMessage)},
+  { 29, -1, sizeof(::StorageCloud::Handshake)},
+  { 35, -1, sizeof(::StorageCloud::File)},
+  { 43, -1, sizeof(::StorageCloud::ServerResponse)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -281,39 +283,39 @@ void protobuf_RegisterTypes(const ::std::string&) {
 void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-      "\n\016messages.proto\022\014StorageCloud\"K\n\005Param\022"
+      "\n\016messages.proto\022\014StorageCloud\"`\n\005Param\022"
       "\017\n\007paramId\030\001 \001(\t\022\023\n\tSParamVal\030\002 \001(\tH\000\022\023\n"
-      "\tIParamVal\030\003 \001(\003H\000B\007\n\005value\"s\n\007Command\022\'"
-      "\n\004type\030\001 \001(\0162\031.StorageCloud.CommandType\022"
-      "#\n\006params\030\002 \003(\0132\023.StorageCloud.Param\022\014\n\004"
-      "list\030\003 \003(\t\022\014\n\004data\030\004 \001(\014\"\233\001\n\016EncodedMess"
-      "age\022\020\n\010dataSize\030\001 \001(\004\0222\n\rhashAlgorithm\030\002"
-      " \001(\0162\033.StorageCloud.HashAlgorithm\022\014\n\004has"
-      "h\030\003 \001(\014\022\'\n\004type\030\004 \001(\0162\031.StorageCloud.Mes"
-      "sageType\022\014\n\004data\030\005 \001(\014\"K\n\tHandshake\022>\n\023e"
-      "ncryptionAlgorithm\030\001 \001(\0162!.StorageCloud."
-      "EncryptionAlgorithm\"I\n\004File\022\014\n\004name\030\001 \001("
-      "\t\022\014\n\004size\030\002 \001(\003\022%\n\010metadata\030\003 \003(\0132\023.Stor"
-      "ageCloud.Param\"\241\001\n\016ServerResponse\022(\n\004typ"
-      "e\030\001 \001(\0162\032.StorageCloud.ResponseType\022#\n\006p"
-      "arams\030\002 \003(\0132\023.StorageCloud.Param\022\014\n\004list"
-      "\030\003 \003(\t\022$\n\010fileList\030\004 \003(\0132\022.StorageCloud."
-      "File\022\014\n\004data\030\005 \001(\014*h\n\013CommandType\022\t\n\005NUL"
-      "L1\020\000\022\t\n\005LOGIN\020\001\022\013\n\007RELOGIN\020\002\022\n\n\006LOGOUT\020\003"
-      "\022\014\n\010REGISTER\020\004\022\014\n\010GET_STAT\020\005\022\016\n\nLIST_FIL"
-      "ES\020\006*[\n\rHashAlgorithm\022\t\n\005NULL2\020\000\022\014\n\010H_NO"
-      "HASH\020\001\022\014\n\010H_SHA256\020\002\022\014\n\010H_SHA512\020\003\022\n\n\006H_"
-      "SHA1\020\004\022\t\n\005H_MD5\020\005*I\n\013MessageType\022\t\n\005NULL"
-      "3\020\000\022\013\n\007COMMAND\020\001\022\023\n\017SERVER_RESPONSE\020\002\022\r\n"
-      "\tHANDSHAKE\020\003*>\n\023EncryptionAlgorithm\022\t\n\005N"
-      "ULL4\020\000\022\020\n\014NOENCRYPTION\020\001\022\n\n\006CAESAR\020\002*u\n\014"
-      "ResponseType\022\t\n\005NULL5\020\000\022\006\n\002OK\020\001\022\t\n\005ERROR"
-      "\020\002\022\n\n\006LOGGED\020\003\022\010\n\004STAT\020\004\022\t\n\005FILES\020\005\022\n\n\006S"
-      "HARED\020\006\022\014\n\010SRV_DATA\020\007\022\014\n\010CAN_SEND\020\010b\006pro"
-      "to3"
+      "\tIParamVal\030\003 \001(\003H\000\022\023\n\tBParamVal\030\004 \001(\014H\000B"
+      "\007\n\005value\"s\n\007Command\022\'\n\004type\030\001 \001(\0162\031.Stor"
+      "ageCloud.CommandType\022#\n\006params\030\002 \003(\0132\023.S"
+      "torageCloud.Param\022\014\n\004list\030\003 \003(\t\022\014\n\004data\030"
+      "\004 \001(\014\"\233\001\n\016EncodedMessage\022\020\n\010dataSize\030\001 \001"
+      "(\004\0222\n\rhashAlgorithm\030\002 \001(\0162\033.StorageCloud"
+      ".HashAlgorithm\022\014\n\004hash\030\003 \001(\014\022\'\n\004type\030\004 \001"
+      "(\0162\031.StorageCloud.MessageType\022\014\n\004data\030\005 "
+      "\001(\014\"K\n\tHandshake\022>\n\023encryptionAlgorithm\030"
+      "\001 \001(\0162!.StorageCloud.EncryptionAlgorithm"
+      "\"I\n\004File\022\014\n\004name\030\001 \001(\t\022\014\n\004size\030\002 \001(\003\022%\n\010"
+      "metadata\030\003 \003(\0132\023.StorageCloud.Param\"\241\001\n\016"
+      "ServerResponse\022(\n\004type\030\001 \001(\0162\032.StorageCl"
+      "oud.ResponseType\022#\n\006params\030\002 \003(\0132\023.Stora"
+      "geCloud.Param\022\014\n\004list\030\003 \003(\t\022$\n\010fileList\030"
+      "\004 \003(\0132\022.StorageCloud.File\022\014\n\004data\030\005 \001(\014*"
+      "h\n\013CommandType\022\t\n\005NULL1\020\000\022\t\n\005LOGIN\020\001\022\013\n\007"
+      "RELOGIN\020\002\022\n\n\006LOGOUT\020\003\022\014\n\010REGISTER\020\004\022\014\n\010G"
+      "ET_STAT\020\005\022\016\n\nLIST_FILES\020\006*[\n\rHashAlgorit"
+      "hm\022\t\n\005NULL2\020\000\022\014\n\010H_NOHASH\020\001\022\014\n\010H_SHA256\020"
+      "\002\022\014\n\010H_SHA512\020\003\022\n\n\006H_SHA1\020\004\022\t\n\005H_MD5\020\005*I"
+      "\n\013MessageType\022\t\n\005NULL3\020\000\022\013\n\007COMMAND\020\001\022\023\n"
+      "\017SERVER_RESPONSE\020\002\022\r\n\tHANDSHAKE\020\003*>\n\023Enc"
+      "ryptionAlgorithm\022\t\n\005NULL4\020\000\022\020\n\014NOENCRYPT"
+      "ION\020\001\022\n\n\006CAESAR\020\002*u\n\014ResponseType\022\t\n\005NUL"
+      "L5\020\000\022\006\n\002OK\020\001\022\t\n\005ERROR\020\002\022\n\n\006LOGGED\020\003\022\010\n\004S"
+      "TAT\020\004\022\t\n\005FILES\020\005\022\n\n\006SHARED\020\006\022\014\n\010SRV_DATA"
+      "\020\007\022\014\n\010CAN_SEND\020\010b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1163);
+      descriptor, 1184);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "messages.proto", &protobuf_RegisterTypes);
 }
@@ -426,11 +428,14 @@ void Param::InitAsDefaultInstance() {
   ::StorageCloud::_Param_default_instance_.sparamval_.UnsafeSetDefault(
       &::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::StorageCloud::_Param_default_instance_.iparamval_ = GOOGLE_LONGLONG(0);
+  ::StorageCloud::_Param_default_instance_.bparamval_.UnsafeSetDefault(
+      &::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int Param::kParamIdFieldNumber;
 const int Param::kSParamValFieldNumber;
 const int Param::kIParamValFieldNumber;
+const int Param::kBParamValFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Param::Param()
@@ -458,6 +463,10 @@ Param::Param(const Param& from)
     }
     case kIParamVal: {
       set_iparamval(from.iparamval());
+      break;
+    }
+    case kBParamVal: {
+      set_bparamval(from.bparamval());
       break;
     }
     case VALUE_NOT_SET: {
@@ -517,6 +526,10 @@ void Param::clear_value() {
     }
     case kIParamVal: {
       // No need to clear
+      break;
+    }
+    case kBParamVal: {
+      value_.bparamval_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
       break;
     }
     case VALUE_NOT_SET: {
@@ -595,6 +608,18 @@ bool Param::MergePartialFromCodedStream(
         break;
       }
 
+      // bytes BParamVal = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_bparamval()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -646,6 +671,12 @@ void Param::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->iparamval(), output);
   }
 
+  // bytes BParamVal = 4;
+  if (has_bparamval()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
+      4, this->bparamval(), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -687,6 +718,13 @@ void Param::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->iparamval(), target);
   }
 
+  // bytes BParamVal = 4;
+  if (has_bparamval()) {
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
+        4, this->bparamval(), target);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
@@ -724,6 +762,13 @@ size_t Param::ByteSizeLong() const {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int64Size(
           this->iparamval());
+      break;
+    }
+    // bytes BParamVal = 4;
+    case kBParamVal: {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::BytesSize(
+          this->bparamval());
       break;
     }
     case VALUE_NOT_SET: {
@@ -770,6 +815,10 @@ void Param::MergeFrom(const Param& from) {
     }
     case kIParamVal: {
       set_iparamval(from.iparamval());
+      break;
+    }
+    case kBParamVal: {
+      set_bparamval(from.bparamval());
       break;
     }
     case VALUE_NOT_SET: {

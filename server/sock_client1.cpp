@@ -73,15 +73,23 @@ int main(int argc, char *argv[])
 
     write( sock, buf, siz );
 
+    uint8_t in_buf[1024];
+    uint32_t rcv_siz = (uint32_t) recv(sock, in_buf, 1024, NULL);
+
+    cout<<"received response size: "<<rcv_siz<<endl;
+
     //-------------------------------------
 
-    sleep(5);
+    sleep(1);
 
     StorageCloud::Command cmd;
     cmd.set_type(StorageCloud::LOGIN);
     StorageCloud::Param* tmp_param = cmd.add_params();
-    tmp_param->set_paramid("param123");
-    tmp_param->set_iparamval(1234567);
+    tmp_param->set_paramid("username");
+    tmp_param->set_sparamval("miloszXD");
+    tmp_param = cmd.add_params();
+    tmp_param->set_paramid("password");
+    tmp_param->set_sparamval("nicepasswd");
     uint8_t* data = new uint8_t[cmd.ByteSize()];
     cmd.SerializeToArray(data, cmd.ByteSize());
 
@@ -122,6 +130,11 @@ int main(int argc, char *argv[])
 //
 //    write( sock, DATA2, sizeof DATA2 );
 //
+
+    rcv_siz = (uint32_t) recv(sock, in_buf, 1024, NULL);
+
+    cout<<"received response size: "<<rcv_siz<<endl;
+
     close(sock);
     exit(0);
 }

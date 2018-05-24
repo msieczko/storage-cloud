@@ -10,6 +10,7 @@ Client::Client(int sock, connection* conn, bool* s_e, Logger* logg) {
     logger = logg;
     id = conn->addr;
     id += ":" + to_string(conn->port);
+    u = nullptr;
 }
 
 HashAlgorithm Client::getHashAlgorithm() {
@@ -65,6 +66,49 @@ bool Client::getNBytes(const int n, uint8_t buf[]) {
     }
 
     return (received == n);
+}
+
+bool Client::sendNBytes(const int n, uint8_t buf[]) {
+    struct epoll_event ev, events[1];
+    int epfd = epoll_create1(0), nfds;
+    ev.events = EPOLLOUT;
+    ev.data.fd = socket;
+
+    if (epoll_ctl(epfd, EPOLL_CTL_ADD, socket, &ev) == -1) {
+        perror("epoll_ctl: listen_sock");
+        return false;
+    }
+
+    int sent = 0;
+    int last_sent = 0;
+
+    while (sent != n && !(*should_exit)) {
+        nfds = epoll_wait(epfd, events, 1, 1000);
+
+        if (nfds == -1) {
+//            perror("epoll_wait");
+            break;
+        }
+
+        if (nfds > 0) {
+            last_sent = (int) send(socket, buf, (size_t) (n - sent), MSG_DONTWAIT);
+            if (last_sent == 0) {
+                if(errno != EWOULDBLOCK || errno != EAGAIN) {
+                    logger->warn(id, "sent 0 bytes");
+                    break;
+                }
+            }
+
+            if (last_sent < 0) {
+                logger->err(id, "error while writing to socket", errno);
+                break;
+            }
+
+            sent += last_sent;
+        }
+    }
+
+    return (sent == n);
 }
 
 bool Client::processMessage(uint8_t buf[], int len) {
@@ -160,7 +204,61 @@ bool Client::processCommand(Command* cmd) {
     ServerResponse res;
 
     if(cmd->type() == CommandType::LOGIN) {
-        res.set_type(ResponseType::LOGGED);
+        bool params_ok = (cmd->params_size() == 2);
+        params_ok = params_ok && (u == nullptr);
+        string sid;
+        string passwd, username;
+
+        if(params_ok) {
+            if(cmd->params(0).paramid() == "username" && cmd->params(1).paramid() == "password") {
+                passwd = cmd->params(1).sparamval();
+                username = cmd->params(0).sparamval();
+            } else if (cmd->params(0).paramid() == "password" && cmd->params(1).paramid() == "username") {
+                passwd = cmd->params(0).sparamval();
+                username = cmd->params(1).sparamval();
+            } else {
+                params_ok = false;
+            }
+
+            if(params_ok) {
+                u = new User(username, UserManager::getInstance());
+                if(u->isValid()) {
+                    u->loginByPassword(passwd, sid);
+                }
+            }
+        }
+
+        if(params_ok && u->isAuthorized()) {
+            res.set_type(ResponseType::LOGGED);
+            Param* tmp_param = res.add_params();
+            tmp_param->set_paramid("sid");
+            tmp_param->set_bparamval(sid);
+            logger->log(id, "user " + username + " logged in");
+        } else {
+            res.set_type(ResponseType::ERROR);
+            Param* tmp_param = res.add_params();
+            tmp_param->set_paramid("msg");
+
+            if(params_ok) {
+                tmp_param->set_sparamval("Invalid username/password");
+                if(!u->isValid()) {
+                    logger->log(id, "client " + username + " tried to log in, but that user doesn't exist");
+                } else if(!u->isAuthorized()) {
+                    logger->log(id, "client " + username + " tried to log in, but provided wrong password");
+                } else {
+                    logger->log(id, "client " + username + " tried to log in, but internal error occurred");
+                }
+            } else {
+                if(u!=nullptr) {
+                    tmp_param->set_sparamval("You have to logout first");
+                    logger->log(id, "client tried to login, but is already logged in");
+                } else {
+                    tmp_param->set_sparamval("Invalid command format");
+                    logger->log(id, "client send login command, but command format was wrong");
+                }
+            }
+        }
+
         sendServerResponse(&res);
     }
 }
@@ -180,6 +278,7 @@ bool Client::sendServerResponse(const ServerResponse* res) {
     uint8_t* data = new uint8_t[data_len];
     res->SerializeToArray(data, data_len);
     prepareDataToSend(data, data_len);
+
     delete data;
 }
 
@@ -223,7 +322,11 @@ bool Client::prepareDataToSend(uint8_t in_buf[], uint32_t len) {
     out_buf[1] = (out_len >> 16) & 0xFF;
     out_buf[0] = (out_len >> 24) & 0xFF;
 
-    // TODO send data
+    if(sendNBytes(out_len, out_buf)) {
+        logger->log(id, "response sent successfully");
+    } else {
+        logger->warn(id, "response not send successfully");
+    }
 
     delete hash;
     delete data;

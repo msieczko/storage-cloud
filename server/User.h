@@ -15,11 +15,12 @@ private:
     oid id;
     UserManager& user_manager;
     bool authorized;
+    bool valid;
 
     bool checkPassword(string&);
 
 public:
-    User(string&, UserManager&);
+    User(const string&, UserManager&);
     User(oid&, UserManager&);
     bool getName(string&);
     bool getSurname(string&);
@@ -27,6 +28,8 @@ public:
     bool setPassword(string&);
     bool loginByPassword(string&, string&);
     bool loginBySid(string&, string&);
+    bool isValid() { return valid; };
+    bool isAuthorized() { return authorized; };
 };
 
 class UserManager {
@@ -50,7 +53,7 @@ public:
         return instance;
     }
 
-    bool getUserId(string& username, oid& id);
+    bool getUserId(const string& username, oid& id);
 };
 
 #endif //SERVER_USER_H

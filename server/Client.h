@@ -4,6 +4,7 @@
 #include "main.h"
 #include "utils.h"
 #include "Logger.h"
+#include "User.h"
 
 using namespace std;
 using namespace StorageCloud;
@@ -16,11 +17,13 @@ private:
     bool* should_exit;
     Logger* logger;
     std::string id;
+    User* u;
 
     HashAlgorithm getHashAlgorithm();
     EncryptionAlgorithm getEncryptionAlgorithm();
     void setEncryptionAlgorithm(EncryptionAlgorithm);
     bool getNBytes(int, uint8_t*);
+    bool sendNBytes(int, uint8_t*);
     bool processMessage(uint8_t*, int);
     bool parseMessage(uint8_t*, int, MessageType*, uint8_t**, uint32_t*);
     bool processCommand(Command*);

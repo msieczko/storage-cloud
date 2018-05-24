@@ -87,7 +87,7 @@ bool Database::getField(string&& colName, string&& fieldName, bsoncxx::oid id, c
     return false;
 }
 
-bool Database::getId(string&& colName, string&& fieldName, string& fieldValue, bsoncxx::oid& id) {
+bool Database::getId(string&& colName, string&& fieldName, const string& fieldValue, bsoncxx::oid& id) {
     mongocxx::options::find opts{};
     opts.projection(make_document(kvp("_id", 1)));
 
