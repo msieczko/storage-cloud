@@ -64,6 +64,7 @@
                 <configuration>
                     <protocExecutable>env/protoc/bin/protoc.exe</protocExecutable>
                     <checkStaleness>true</checkStaleness>
+                    <protoSourceRoot>../proto</protoSourceRoot>
                 </configuration>
                 <executions>
                     <execution>
