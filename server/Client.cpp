@@ -124,7 +124,6 @@ bool Client::processMessage(uint8_t buf[], int len) {
         return false;
     }
 
-
     if(msg_type == MessageType::COMMAND) {
         Command cmd;
         cmd.ParseFromArray(parsed_msg, parsed_len);

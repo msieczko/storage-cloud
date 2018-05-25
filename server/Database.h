@@ -20,7 +20,6 @@
 #include <bsoncxx/string/to_string.hpp>
 #include <bsoncxx/types.hpp>
 #include <bsoncxx/types/value.hpp>
-#include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/json.hpp>
 
 #include <mongocxx/client.hpp>
@@ -37,14 +36,13 @@ private:
     mongocxx::client* client;
     mongocxx::database db;
     Logger* logger;
-    std::string id = "db";
+    std::string l_id = "DB";
+    bool connected;
 
     bool getField(string&, string&, bsoncxx::oid, bsoncxx::document::element&);
     bool setField(string&, string&, bsoncxx::oid id, bsoncxx::types::value&);
 public:
     Database(Logger*);
-//    bool listUsers(std::vector<User>&);
-//    bool addUser(User&);
     bool getField(string&&, string&&, bsoncxx::oid, bsoncxx::document::element&);
     bool getField(string&&, string&&, bsoncxx::oid, string&);
     bool getField(string&&, string&&, bsoncxx::oid, int64_t&);

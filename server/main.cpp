@@ -144,6 +144,8 @@ int main(int argc, char **argv) {
 
     logger.set_input_string(&cmd);
 
+    UserManager u_m = UserManager::getInstance(&db);
+
 //    vector<User> allUsers;
 //    db.listUsers(allUsers);
 
@@ -159,23 +161,25 @@ int main(int argc, char **argv) {
 //        cout<<val.first<<": "<<bsoncxx::string::to_string(val.second.get_utf8().value)<<endl;
 //    }
 
-    map<bsoncxx::oid, map<string, bsoncxx::document::element> > mmap;
-
-    vector<string> fields;
-    fields.emplace_back("username");
-    fields.emplace_back("surname");
-    fields.emplace_back("name");
+//    map<bsoncxx::oid, map<string, bsoncxx::document::element> > mmap;
+//
+//    vector<string> fields;
+//    fields.emplace_back("username");
+//    fields.emplace_back("surname");
+//    fields.emplace_back("name");
 
     cout<<"XD:"<<endl;
 
-    cout<<((db.getFields("users", fields, mmap)) ? "ok" : "not ok")<<endl;
 
-    for(auto &usr: mmap) {
-        cout<<"id:"<<usr.first.to_string()<<endl;
-        for(auto &flds: usr.second) {
-            cout<<flds.first<<": "<<flds.second.get_utf8().value<<endl;
-        }
-    }
+
+//    cout<<((db.getFields("users", fields, mmap)) ? "ok" : "not ok")<<endl;
+//
+//    for(auto &usr: mmap) {
+//        cout<<"id:"<<usr.first.to_string()<<endl;
+//        for(auto &flds: usr.second) {
+//            cout<<flds.first<<": "<<flds.second.get_utf8().value<<endl;
+//        }
+//    }
 
     cout<<":XD"<<endl;
 
@@ -196,7 +200,7 @@ int main(int argc, char **argv) {
 
 //    db.setField("users", "testField", allUsers[0].id, tmpi);
 
-    UserManager u_m = UserManager::getInstance(&db);
+
     string u_name = "miloszXD";
     User u(u_name, u_m);
     cout<<(u.getName(u_name) ? "got user name" : "error while getting user name")<<endl;
@@ -205,7 +209,7 @@ int main(int argc, char **argv) {
 
     string passwd = "nicepasswd";
 
-    //u.setPassword(passwd);
+//    u.setPassword(passwd);
 
     string newSid;
 
@@ -230,16 +234,14 @@ int main(int argc, char **argv) {
                 }
             } else if (cmd == "help") {
                 logger.info("main", "Available commands:\n  exit - closes server\n  list - lists active connections");
-                string test;
-//                db.getField("users", "password", allUsers[0].id, test);
-//                logger.log("main/TEST", test);
             } else if (cmd == "users") {
                 logger.info("main", "All users:");
-//                db.listUsers(allUsers);
-//
-//                for(auto user: allUsers) {
-//                    logger.info("main", user.print());
-//                }
+                vector<string> users;
+                u_m.listAllUsers(users);
+
+                for(auto& usr: users) {
+                    logger.info("main", "> " + usr);
+                }
             } else {
                 logger.warn("main", "Unknown command, try help");
             }

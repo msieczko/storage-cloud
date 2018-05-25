@@ -5,6 +5,8 @@
 #include "User.h"
 
 using namespace mongocxx;
+using std::map;
+using std::vector;
 
 User::User(oid& id1, UserManager& u_m): id(id1), user_manager(u_m), authorized(false), valid(true) {}
 
@@ -122,6 +124,36 @@ bool UserManager::addSid(oid& id, string& sid) {
             kvp("sid", b_sid),
             kvp("time", bsoncxx::types::b_date(std::chrono::system_clock::now()))
     ));
+}
+
+string UserManager::mapToString(map<string, bsoncxx::document::element>& in) {
+    string wyn;
+    for(auto &flds: in) {
+        wyn += flds.first + ": " + bsoncxx::string::to_string(flds.second.get_utf8().value) + " ";
+    }
+
+    wyn.pop_back();
+
+    return wyn;
+}
+
+bool UserManager::listAllUsers(std::vector<string>& res) {
+    map<bsoncxx::oid, map<string, bsoncxx::document::element> > mmap;
+    vector<string> fields;
+    fields.emplace_back("username");
+    fields.emplace_back("surname");
+    fields.emplace_back("name");
+
+    if(!db.getFields("users", fields, mmap)) {
+        return false;
+    }
+
+    for(auto &usr: mmap) {
+//        id: usr.first.to_string()
+        res.emplace_back(mapToString(usr.second));
+    }
+
+    return true;
 }
 /**
 

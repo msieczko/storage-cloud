@@ -37,23 +37,22 @@ private:
     Database& db;
 
     explicit UserManager(Database&);
+    string mapToString(std::map<string, bsoncxx::document::element>&);
 public:
-
     bool getName(oid&, string&);
     bool getSurname(oid&, string&);
     bool getPasswdHash(oid&, string&);
     bool setPasswdHash(oid&, string&);
     bool setName(oid&, string&);
     bool addSid(oid&, string&);
+    bool getUserId(const string& username, oid& id);
+    bool listAllUsers(std::vector<string>&);
 
     static UserManager& getInstance(Database* db = nullptr)
     {
         static UserManager instance(*db);
-
         return instance;
     }
-
-    bool getUserId(const string& username, oid& id);
 };
 
 #endif //SERVER_USER_H
