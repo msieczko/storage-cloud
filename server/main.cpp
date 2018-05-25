@@ -259,7 +259,7 @@ int main(int argc, char **argv) {
     server_t.join();
 
     logger.info("main", "closing database connection");
-    db.~Database();
+//    db.~Database();
 //    log"server closed"<<endl;
     logger.info("main", "bye!");
     logger.~Logger();

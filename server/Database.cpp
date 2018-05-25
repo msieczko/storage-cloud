@@ -8,7 +8,7 @@ using namespace std;
 using bsoncxx::builder::basic::sub_array;
 
 Database::Database(Logger* l) {
-    mongocxx::instance inst{};
+    inst = new mongocxx::instance{};
     client = new mongocxx::client{mongocxx::uri{DB_URI}};
     logger = l;
     db = (*client)[DB_NAME];
@@ -23,6 +23,14 @@ Database::Database(Logger* l) {
     } catch (...) {
         l->err(l_id, "error while connecting to database: unknown error");
     }
+}
+
+Database::~Database() {
+    logger->info(l_id, "closing database connection 0");
+    delete client;
+    logger->info(l_id, "closing database connection 1");
+    delete inst;
+    logger->info(l_id, "closing database connection 2");
 }
 
 bool Database::getField(string& colName, string& fieldName, bsoncxx::oid id, bsoncxx::document::element& el) {

@@ -38,11 +38,13 @@ private:
     Logger* logger;
     std::string l_id = "DB";
     bool connected;
+    mongocxx::instance* inst;
 
     bool getField(string&, string&, bsoncxx::oid, bsoncxx::document::element&);
     bool setField(string&, string&, bsoncxx::oid id, bsoncxx::types::value&);
 public:
     Database(Logger*);
+    ~Database();
     bool getField(string&&, string&&, bsoncxx::oid, bsoncxx::document::element&);
     bool getField(string&&, string&&, bsoncxx::oid, string&);
     bool getField(string&&, string&&, bsoncxx::oid, int64_t&);

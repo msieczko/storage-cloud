@@ -49,7 +49,7 @@ void Logger::print_msg() {
 
             printed = true;
 
-            if (msg.body == "bye" && *should_exit) {
+            if (msg.body == "bye!" && *should_exit) {
                 break;
             }
         }
@@ -74,7 +74,8 @@ Logger::Logger(bool* s_e) {
 }
 
 Logger::~Logger() {
-    printer.join();
+    if(printer.joinable())
+        printer.join();
 }
 
 void Logger::notify() {
