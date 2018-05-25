@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">TINBox</string>
+    <string name="message_hint">Message</string>
+    <string name="message_button">Send</string>
+    <string name="socket_connected">Connected</string>
+    <string name="socket_disconnected">Disconnected</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
+</resources>
