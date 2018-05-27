@@ -20,7 +20,8 @@ private:
     bool* should_exit;
     Logger* logger;
     std::string id;
-    User* u;
+    User u = User(UserManager::getInstance());
+    string sessionId;
 
     HashAlgorithm getHashAlgorithm();
     EncryptionAlgorithm getEncryptionAlgorithm();

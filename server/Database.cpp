@@ -289,6 +289,38 @@ bool Database::setField(string&& colName, string&& fieldName, bsoncxx::oid id, i
     return setField(colName, fieldName, id, bsoncxx::types::value{tmp});
 }
 
+bool Database::countField(string&& colName, string&& fieldName, bsoncxx::oid id, const uint8_t* valToCheck, uint32_t valSize, uint64_t& res) {
+    bsoncxx::types::b_binary b_val{};
+    b_val.bytes = valToCheck;
+    b_val.size = valSize;
+
+    try {
+        res = (uint64_t) db[colName].count(make_document(kvp("_id", id), kvp(fieldName, b_val)));
+        return true;
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while counting binary fields: " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while counting binary fields: unknown error");
+        return false;
+    }
+}
+
+bool Database::removeFieldFromArray(string&& colName, string&& arrayName, bsoncxx::oid id, bsoncxx::document::value&& val) {
+    try {
+        db[colName].update_one(make_document(kvp("_id", id)),
+                               make_document(kvp("$pull", make_document(kvp(arrayName, val)))));
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while removing field from array: " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while removing field from array: unknown error");
+        return false;
+    }
+
+    return true;
+}
+
 bool Database::pushValToArr(string&& colName, string&& arrayName, bsoncxx::oid id, bsoncxx::document::value&& val) {
     try {
         db[colName].update_one(make_document(kvp("_id", id)),
@@ -333,4 +365,11 @@ bool Database::insertDoc(string&& colName, bsoncxx::oid& id, map<string, bsoncxx
         logger->err(l_id, "error while inserting doc: unknown error");
         return false;
     }
+}
+
+bsoncxx::types::b_binary Database::stringToBinary(string& str) {
+    bsoncxx::types::b_binary b_sid{};
+    b_sid.bytes = (const uint8_t*) str.c_str();
+    b_sid.size = (uint32_t) str.size();
+    return b_sid;
 }

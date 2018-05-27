@@ -57,8 +57,11 @@ public:
     bool setField(string&&, string&&, bsoncxx::oid, string&);
     bool setField(string&&, string&&, bsoncxx::oid, int64_t&);
     bool setField(string&&, string&&, bsoncxx::oid, const uint8_t*, uint32_t);
+    bool countField(string&&, string&&, bsoncxx::oid, const uint8_t*, uint32_t, uint64_t&);
+    bool removeFieldFromArray(string&&, string&&, bsoncxx::oid, bsoncxx::document::value&&);
     bool pushValToArr(string&&, string&&, bsoncxx::oid, bsoncxx::document::value&&);
     bool insertDoc(string&&, bsoncxx::oid&, std::map<string, bsoncxx::types::value>&);
+    static bsoncxx::types::b_binary stringToBinary(string&);
 };
 
 #endif //SERVER_DATABASE_H

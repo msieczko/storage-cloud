@@ -10,7 +10,6 @@ Client::Client(int sock, connection* conn, bool* s_e, Logger* logg) {
     logger = logg;
     id = conn->addr;
     id += ":" + to_string(conn->port);
-    u = nullptr;
 }
 
 HashAlgorithm Client::getHashAlgorithm() {
@@ -195,77 +194,6 @@ bool Client::parseMessage(uint8_t buf[], int len, MessageType* msg_type, uint8_t
 
     delete hash;
     return true;
-}
-
-bool Client::processCommand(Command* cmd) {
-    logger->log(id, "Received command '" + CommandType_Name(cmd->type()) + "' (" + to_string(cmd->type()) +
-                    "), with " + to_string(cmd->params_size()) + " params");
-
-    ServerResponse res;
-
-    if(cmd->type() == CommandType::LOGIN) {
-        bool params_ok = (cmd->params_size() == 2);
-        params_ok = params_ok && (u == nullptr);
-        string sid;
-        string passwd, username;
-
-        if(params_ok) {
-            if(cmd->params(0).paramid() == "username" && cmd->params(1).paramid() == "password") {
-                passwd = cmd->params(1).sparamval();
-                username = cmd->params(0).sparamval();
-            } else if (cmd->params(0).paramid() == "password" && cmd->params(1).paramid() == "username") {
-                passwd = cmd->params(0).sparamval();
-                username = cmd->params(1).sparamval();
-            } else {
-                params_ok = false;
-            }
-
-            if(params_ok) {
-                u = new User(username, UserManager::getInstance());
-                if(u->isValid()) {
-                    u->loginByPassword(passwd, sid);
-                }
-            }
-        }
-
-        if(params_ok && u->isAuthorized()) {
-            res.set_type(ResponseType::LOGGED);
-            Param* tmp_param = res.add_params();
-            tmp_param->set_paramid("sid");
-            tmp_param->set_bparamval(sid);
-            logger->log(id, "user " + username + " logged in");
-        } else {
-            res.set_type(ResponseType::ERROR);
-            Param* tmp_param = res.add_params();
-            tmp_param->set_paramid("msg");
-
-            if(params_ok) {
-                tmp_param->set_sparamval("Invalid username/password");
-                if(!u->isValid()) {
-                    logger->log(id, "client " + username + " tried to log in, but that user doesn't exist");
-                } else if(!u->isAuthorized()) {
-                    logger->log(id, "client " + username + " tried to log in, but provided wrong password");
-                } else {
-                    logger->log(id, "client " + username + " tried to log in, but internal error occurred");
-                }
-            } else {
-                if(u!=nullptr) {
-                    tmp_param->set_sparamval("You have to logout first");
-                    logger->log(id, "client tried to login, but is already logged in");
-                } else {
-                    tmp_param->set_sparamval("Invalid command format");
-                    logger->log(id, "client send login command, but command format was wrong");
-                }
-            }
-        }
-
-        if(!u->isValid() || !u->isAuthorized()) {
-            delete u;
-            u = nullptr;
-        }
-
-        sendServerResponse(&res);
-    }
 }
 
 bool Client::processHandshake(Handshake* handshake) {

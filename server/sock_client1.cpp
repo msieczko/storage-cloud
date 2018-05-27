@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
     tmp_param->set_sparamval("miloszXD");
     tmp_param = cmd.add_params();
     tmp_param->set_paramid("password");
-    tmp_param->set_sparamval("nicepsasswd");
+    tmp_param->set_sparamval("nicepasswd");
     uint8_t* data = new uint8_t[cmd.ByteSize()];
     cmd.SerializeToArray(data, cmd.ByteSize());
 
