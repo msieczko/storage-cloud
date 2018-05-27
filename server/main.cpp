@@ -1,115 +1,42 @@
 #include "main.h"
-#include "messages.h"
+#include "utils.h"
+#include "Client.h"
+#include "Logger.h"
+#include "Database.h"
+#include "User.h"
 
-#define MAX_CONNECTIONS 10
+list<connection*> connections;
 
 using namespace std;
 
 using namespace StorageCloud;
 
-volatile bool should_exit = false;
+bool should_exit = false;
 
-struct connection {
-    pid_t pid;
-    char addr[25];
-    int port;
-};
-
-struct shm_data {
-    connection connections[MAX_CONNECTIONS];
-    int active_connections;
-};
-
-#define SHMSIZE sizeof(shm_data)
+Logger logger(&should_exit);
+Database db(&logger);
 
 void sig_handler(int signo)
 {
     if (signo == SIGTERM) {
-        printf("received SIGTERM\n");
+        logger.log("sig_handler", "received SIGTERM " + to_string(getpid()));
         should_exit = true;
     }
-    
-    if (signo == SIGINT) {
-        printf("received SIGUSR1\n");
-    }
 }
 
-void process(int sock, int server_pid) {
-    ssize_t n;
-    uint8_t buffer[MAX_PACKET_SIZE];
-    uint8_t size_buf[4];
+void process(int sock, connection* conn) {
+    Client client(sock, conn, &should_exit, &logger);
 
-    fd_set set;
-    struct timeval timeout;
-    int rv;
+    client.loop();
 
-    UserCtx user_ctx;
-    user_ctx.encryption_algorithm = EncryptionAlgorithm::NOENCRYPTION;
-    user_ctx.username = "";
-
-    while(!should_exit) {
-        FD_ZERO(&set); /* clear the set */
-        FD_SET(sock, &set); /* add our file descriptor to the set */
-        timeout.tv_sec = 2;
-        timeout.tv_usec = 0;
-        rv = select(sock + 1, &set, nullptr, nullptr, &timeout);
-
-        if (rv == -1) {
-            break;
-        } else if (rv != 0) {
-
-            n = read(sock, size_buf, 4);
-
-            if (n == 0) {
-                printf("no new data, closing\n");
-                break;
-            }
-
-            if (n < 0) {
-                perror("ERROR reading from socket");
-                break;
-            }
-
-            uint32_t size = ((size_buf[0]<<24u)|(size_buf[1]<<16u)|(size_buf[2]<<8u)|(size_buf[3]));
-
-            cout<<"Size: "<<size<<endl;
-
-            if(size > MAX_PACKET_SIZE - 4) {
-                cout<<"message too big"<<endl;
-                break;
-            }
-
-            n = recv(sock, buffer, size - 4, MSG_WAITALL);
-
-            if (n == size - 4) {
-                cout<<"got all data ("<<n<<")"<<endl;
-
-                uint8_t* out_data = nullptr;
-                uint32_t out_data_len;
-                bool response = processMessage(buffer, size, &user_ctx, &out_data, &out_data_len);
-                if(response) {
-                    n = write(sock, out_data, out_data_len);
-                    cout<<"sent "<<n<<" bytes"<<endl;
-                    if (n != out_data_len) {
-                        cout<<"Error: not all data has been send"<<endl;
-                    }
-                }
-
-                delete out_data;
-            }
-        }
-    }
-
-    cout<<"closed connection process"<<endl;
+//    "closed connection process "<<EncryptionAlgorithm_Name(conn->encryption)<<endl;
 
     close(sock);
+
+    conn->running = false;
 }
 
-void server(shm_data* shm) {
-    int server_pid = getpid();
-    if (signal(SIGTERM, sig_handler) == SIG_ERR)
-        printf("\ncan't catch SIGTERM\n");
-    
+void server() {
     int sock;
     unsigned int length;
     struct sockaddr_in server;
@@ -117,7 +44,7 @@ void server(shm_data* shm) {
 
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == -1) {
-        perror("opening stream socket");
+        logger.err("server", "error while opening stream socket", errno);
         exit(1);
     }
 
@@ -127,17 +54,17 @@ void server(shm_data* shm) {
     server.sin_addr.s_addr = INADDR_ANY;
     server.sin_port = htons(52137);
     if (bind(sock, (struct sockaddr *) &server, sizeof server) == -1) {
-        perror("binding stream socket");
+        logger.err("server", "error while binding stream socket", errno);
         exit(1);
     }
 
     /* wydrukuj na konsoli przydzielony port */
     length = sizeof(server);
     if (getsockname(sock,(struct sockaddr *) &server, &length) == -1) {
-        perror("getting socket name");
+        logger.err("server", "getting socket name", errno);
         exit(1);
     }
-    printf("Socket port #%d\n", ntohs(server.sin_port));
+    logger.info("server", "Socket port #" + to_string(ntohs(server.sin_port)));
 
     listen(sock, 5);
 
@@ -161,115 +88,180 @@ void server(shm_data* shm) {
             msgsock = accept(sock, (struct sockaddr *) &clientaddr, &len);
 
             if (msgsock == -1)
-                perror("accept");
+                logger.err("server", "error while accepting connection", errno);
             else {
-                printf("accepted connection from %s:%d\n", inet_ntoa(clientaddr.sin_addr),
-                       (int) ntohs(clientaddr.sin_port));
-                int pid = fork();
+                string conn(inet_ntoa(clientaddr.sin_addr));
+                logger.info("server", "accepted connection from " + conn + ":" + to_string(ntohs(clientaddr.sin_port)));
 
-                if (pid < 0) {
-                    perror("ERROR on fork");
-                } else if (pid == 0) {
-                    close(sock);
-                    process(msgsock, server_pid);
-                    exit(0);
-                } else {
-                    string tmp_addr;
-                    connection* new_connection = &shm->connections[shm->active_connections];
-                    new_connection->pid = pid;
-                    tmp_addr = inet_ntoa(clientaddr.sin_addr);
-                    tmp_addr.copy(new_connection->addr, tmp_addr.size());
-                    new_connection->addr[tmp_addr.size()] = 0;
-                    new_connection->port = (int) ntohs(clientaddr.sin_port);
-                    shm->active_connections++;
-                    close(msgsock);
-                }
+                connection* new_connection = new connection;
+                new_connection->encryption = DEFAULT_ENCRYPTION_ALGORITHM;
+                new_connection->hash_algorithm = DEFAULT_HASHING_ALGORITHM;
+                string tmp_addr;
+                tmp_addr = inet_ntoa(clientaddr.sin_addr);
+                tmp_addr.copy(new_connection->addr, tmp_addr.size());
+                new_connection->addr[tmp_addr.size()] = 0;
+                new_connection->port = (int) ntohs(clientaddr.sin_port);
+                new_connection->running = true;
+
+                connections.push_back(new_connection);
+
+                new_connection->t = thread(process, msgsock, new_connection);
+//                    close(msgsock); //needed?
             }
         }
-        
-        int waitstatus;
-        
-        int died_pid = waitpid(-1, &waitstatus, WNOHANG);
-        
-        if(died_pid > 0) {
-            bool found = false;
-            for(int i=0; i<shm->active_connections; i++) {
-                if (shm->connections[i].pid == died_pid) {
-                    found = true;
-                    shm->active_connections--;
-                }
-                if (found) {
-                    shm->connections[i] = shm->connections[i+1];
-                }
-            }
-            if(found) {
-                cout<<"removed connection"<<endl;
+
+        for(auto it=connections.begin(); it != connections.end();) {
+            if(!((*it)->running)) {
+                (*it)->t.join();
+                delete (*it);
+                it = connections.erase(it);
+                logger.log("server", "connection removed");
+            } else {
+                it++;
             }
         }
-        
+
     } while(!should_exit);
 
-    cout<<"closing all connections "<<should_exit<<endl;
+    logger.info("server", "closing all connections");
 
-    for(int i = 0; i < shm->active_connections; i++) {
-        kill(shm->connections[i].pid, SIGTERM);
+    for(auto it=connections.begin(); it != connections.end();) {
+        (*it)->t.join();
+        delete (*it);
+        it = connections.erase(it);
     }
 
     close(sock);
 
-    cout<<"closed main server process"<<endl;
+    logger.info("server", "closed main server process");
 }
 
 int main(int argc, char **argv) {
-    int shmid;
-    shm_data *shm;
-
-    shmid = shmget(2010, SHMSIZE, 0666 | IPC_CREAT);
-    shm = (shm_data *) shmat(shmid, nullptr, 0);
-
-    shm->active_connections = 0;
-
-    int server_pid = fork();
-
-    if (server_pid < 0) {
-        perror("ERROR starting server");
-    } else if (server_pid == 0) {
-        server(shm);
-        exit(0);
-    }
+    thread server_t = std::thread(server);
 
     string cmd;
+    char c;
+
+    logger.set_input_string(&cmd);
+
+    UserManager u_m = UserManager::getInstance(&db);
+
+//    vector<User> allUsers;
+//    db.listUsers(allUsers);
+
+//    map<string, bsoncxx::document::element> elM;
+//
+//    elM.emplace("username", bsoncxx::document::element{});
+//    elM.emplace("surname", bsoncxx::document::element{});
+//    elM.emplace("name", bsoncxx::document::element{});
+//
+//    db.getFields("users", allUsers[0].id, elM);
+
+//    for(const auto &val: elM) {
+//        cout<<val.first<<": "<<bsoncxx::string::to_string(val.second.get_utf8().value)<<endl;
+//    }
+
+//    map<bsoncxx::oid, map<string, bsoncxx::document::element> > mmap;
+//
+//    vector<string> fields;
+//    fields.emplace_back("username");
+//    fields.emplace_back("surname");
+//    fields.emplace_back("name");
+
+    cout<<"XD:"<<endl;
+
+
+
+//    cout<<((db.getFields("users", fields, mmap)) ? "ok" : "not ok")<<endl;
+//
+//    for(auto &usr: mmap) {
+//        cout<<"id:"<<usr.first.to_string()<<endl;
+//        for(auto &flds: usr.second) {
+//            cout<<flds.first<<": "<<flds.second.get_utf8().value<<endl;
+//        }
+//    }
+
+    cout<<":XD"<<endl;
+
+    map<string, bsoncxx::types::value> elMi;
+
+    elMi.emplace("username", bsoncxx::types::value{bsoncxx::types::b_utf8{"miloszXD"}});
+    elMi.emplace("name", bsoncxx::types::value{bsoncxx::types::b_utf8{"MiloszTest"}});
+    elMi.emplace("surname", bsoncxx::types::value{bsoncxx::types::b_utf8{"SuRnAmE"}});
+    elMi.emplace("password", bsoncxx::types::value{bsoncxx::types::b_utf8{"safepasswd"}});
+
+    bsoncxx::oid i_id;
+
+    //db.insertDoc("users", i_id, elMi);
+
+    //cout<<"inserted id: "<<i_id.to_string()<<endl;
+
+    string tmpi = "WELP";
+
+//    db.setField("users", "testField", allUsers[0].id, tmpi);
+
+
+    string u_name = "miloszXD";
+    User u(u_name, u_m);
+    cout<<(u.getName(u_name) ? "got user name" : "error while getting user name")<<endl;
+
+    cout<<"received user name: "<<u_name<<" ("<<u_name.size()<<")"<<endl;
+
+    string passwd = "nicepasswd";
+
+//    u.setPassword(passwd);
+
+    string newSid;
+
+    cout<<(u.loginByPassword(passwd, newSid) ? "passwd ok" : "passwd wrong")<<" sid: "<<newSid<<endl;
 
     while(!should_exit) {
-        cout<<"> "<<flush;
-        cin>>cmd;
+        c = getch();
 
-        if (cmd == "exit") {
-            cout<<"closing server"<<endl;
-            break;
-        }
-        
-        if (cmd == "list") {
-            cout<<"There are "<<shm->active_connections<<" active connections"<<endl;
-            for(int i=0; i<shm->active_connections; i++) {
-                cout<<"["<<shm->connections[i].pid<<"] ";
-                cout<<shm->connections[i].addr<<":";
-                cout<<shm->connections[i].port<<endl;
+        if(c == 10 || c == 13) {
+            if (cmd == "exit") {
+                cmd = "";
+                logger.set_input_string(nullptr);
+                logger.info("main", "closing app");
+                should_exit = true;
+                break;
+            } else if (cmd == "list") {
+                logger.info("main", "There are " + to_string(connections.size()) + " active connections");
+                for (auto &connection : connections) {
+                    string conn(connection->addr);
+                    conn += ":" + to_string(connection->port);
+                    logger.info("main", conn);
+                }
+            } else if (cmd == "help") {
+                logger.info("main", "Available commands:\n  exit - closes server\n  list - lists active connections");
+            } else if (cmd == "users") {
+                logger.info("main", "All users:");
+                vector<string> users;
+                u_m.listAllUsers(users);
+
+                for(auto& usr: users) {
+                    logger.info("main", "> " + usr);
+                }
+            } else {
+                logger.warn("main", "Unknown command, try help");
             }
+
+            cmd = "";
+        } else if(c == 127) {
+            cmd.pop_back();
+        } else {
+            cmd += c;
         }
-        
-        if (cmd == "help") {
-            cout<<"Available commands:\n  exit - closes server\n  list - lists active connections"<<endl;
-        }
+
+        logger.notify();
     }
 
-    kill(server_pid, SIGTERM);
+    server_t.join();
 
-    waitpid(server_pid, nullptr, 0);
-
-    shmdt(shm);
-    shmctl(shmid, IPC_RMID, nullptr);
-
-    cout<<"server closed"<<endl;
+    logger.info("main", "closing database connection");
+//    db.~Database();
+//    log"server closed"<<endl;
+    logger.info("main", "bye!");
+    logger.~Logger();
     return 0;
 }
