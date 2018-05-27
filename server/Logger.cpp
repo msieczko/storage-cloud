@@ -103,9 +103,8 @@ void Logger::err(const string& author, const string& body) {
 }
 
 void Logger::err(const string& author, const string& body, int errn) {
-    char err_buf[100];
-    strerror_r(errn, err_buf, 100);
-    string full_body = body + ": " + err_buf;
+    char err_buf[200];
+    string full_body = body + ": " + strerror_r(errn, err_buf, 200);
     add_message(ERR, author, full_body);
 }
 

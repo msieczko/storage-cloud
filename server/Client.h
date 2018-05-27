@@ -6,6 +6,9 @@
 #include "Logger.h"
 #include "User.h"
 
+#define R_DISCONNECT true
+#define R_ERROR false
+
 using namespace std;
 using namespace StorageCloud;
 
@@ -22,7 +25,7 @@ private:
     HashAlgorithm getHashAlgorithm();
     EncryptionAlgorithm getEncryptionAlgorithm();
     void setEncryptionAlgorithm(EncryptionAlgorithm);
-    bool getNBytes(int, uint8_t*);
+    bool getNBytes(int, uint8_t*, bool&);
     bool sendNBytes(int, uint8_t*);
     bool processMessage(uint8_t*, int);
     bool parseMessage(uint8_t*, int, MessageType*, uint8_t**, uint32_t*);
