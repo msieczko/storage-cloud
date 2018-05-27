@@ -49,7 +49,7 @@ void Logger::print_msg() {
 
             printed = true;
 
-            if (msg.body == "bye" && *should_exit) {
+            if (msg.body == "bye!" && *should_exit) {
                 break;
             }
         }
@@ -74,7 +74,8 @@ Logger::Logger(bool* s_e) {
 }
 
 Logger::~Logger() {
-    printer.join();
+    if(printer.joinable())
+        printer.join();
 }
 
 void Logger::notify() {
@@ -102,9 +103,8 @@ void Logger::err(const string& author, const string& body) {
 }
 
 void Logger::err(const string& author, const string& body, int errn) {
-    char err_buf[100];
-    strerror_r(errn, err_buf, 100);
-    string full_body = body + ": " + err_buf;
+    char err_buf[200];
+    string full_body = body + ": " + strerror_r(errn, err_buf, 200);
     add_message(ERR, author, full_body);
 }
 

@@ -20,7 +20,6 @@
 #include <bsoncxx/string/to_string.hpp>
 #include <bsoncxx/types.hpp>
 #include <bsoncxx/types/value.hpp>
-#include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/json.hpp>
 
 #include <mongocxx/client.hpp>
@@ -37,19 +36,20 @@ private:
     mongocxx::client* client;
     mongocxx::database db;
     Logger* logger;
-    std::string id = "db";
+    std::string l_id = "DB";
+    bool connected;
+    mongocxx::instance* inst;
 
     bool getField(string&, string&, bsoncxx::oid, bsoncxx::document::element&);
     bool setField(string&, string&, bsoncxx::oid id, bsoncxx::types::value&);
 public:
     Database(Logger*);
-//    bool listUsers(std::vector<User>&);
-//    bool addUser(User&);
+    ~Database();
     bool getField(string&&, string&&, bsoncxx::oid, bsoncxx::document::element&);
     bool getField(string&&, string&&, bsoncxx::oid, string&);
     bool getField(string&&, string&&, bsoncxx::oid, int64_t&);
     bool getField(string&&, string&&, bsoncxx::oid, const uint8_t*&, uint32_t&);
-    bool getId(string&&, string&&, string&, bsoncxx::oid&);
+    bool getId(string&&, string&&, const string&, bsoncxx::oid&);
     bool getFields(string&&, bsoncxx::oid, std::map<string, bsoncxx::document::element>&);
     bool getFields(string&&, std::vector<string>&, std::map<bsoncxx::oid, std::map<string, bsoncxx::document::element> >&);
     bool setField(string&&, string&&, bsoncxx::oid, bsoncxx::types::value&&);
@@ -57,8 +57,11 @@ public:
     bool setField(string&&, string&&, bsoncxx::oid, string&);
     bool setField(string&&, string&&, bsoncxx::oid, int64_t&);
     bool setField(string&&, string&&, bsoncxx::oid, const uint8_t*, uint32_t);
+    bool countField(string&&, string&&, bsoncxx::oid, const uint8_t*, uint32_t, uint64_t&);
+    bool removeFieldFromArray(string&&, string&&, bsoncxx::oid, bsoncxx::document::value&&);
     bool pushValToArr(string&&, string&&, bsoncxx::oid, bsoncxx::document::value&&);
     bool insertDoc(string&&, bsoncxx::oid&, std::map<string, bsoncxx::types::value>&);
+    static bsoncxx::types::b_binary stringToBinary(string&);
 };
 
 #endif //SERVER_DATABASE_H

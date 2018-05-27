@@ -24,7 +24,7 @@ void Client::setEncryptionAlgorithm(EncryptionAlgorithm newAlgorithm) {
     this_connection->encryption = newAlgorithm;
 }
 
-bool Client::getNBytes(const int n, uint8_t buf[]) {
+bool Client::getNBytes(const int n, uint8_t buf[], bool& exitReason) {
     struct epoll_event ev, events[1];
     int epfd = epoll_create1(0), nfds;
     ev.events = EPOLLIN;
@@ -32,6 +32,7 @@ bool Client::getNBytes(const int n, uint8_t buf[]) {
 
     if (epoll_ctl(epfd, EPOLL_CTL_ADD, socket, &ev) == -1) {
         perror("epoll_ctl: listen_sock");
+        exitReason = R_ERROR;
         return false;
     }
 
@@ -47,16 +48,16 @@ bool Client::getNBytes(const int n, uint8_t buf[]) {
         }
 
         if (nfds > 0) {
-            last_received = (int) recv(socket, buf, (size_t) (n - received), MSG_DONTWAIT);
+            last_received = (int) recv(socket, buf+received, (size_t) (n - received), 0);
             if (last_received == 0) {
-                if(errno != EWOULDBLOCK || errno != EAGAIN) {
-                    logger->info(id, "no new data, closing");
-                    break;
-                }
+                logger->info(id, "no new data, closing");
+                exitReason = R_DISCONNECT;
+                break;
             }
 
             if (last_received < 0) {
                 logger->err(id, "error while reading from socket", errno);
+                exitReason = R_ERROR;
                 break;
             }
 
@@ -65,6 +66,49 @@ bool Client::getNBytes(const int n, uint8_t buf[]) {
     }
 
     return (received == n);
+}
+
+bool Client::sendNBytes(const int n, uint8_t buf[]) {
+    struct epoll_event ev, events[1];
+    int epfd = epoll_create1(0), nfds;
+    ev.events = EPOLLOUT;
+    ev.data.fd = socket;
+
+    if (epoll_ctl(epfd, EPOLL_CTL_ADD, socket, &ev) == -1) {
+        perror("epoll_ctl: listen_sock");
+        return false;
+    }
+
+    int sent = 0;
+    int last_sent = 0;
+
+    while (sent != n && !(*should_exit)) {
+        nfds = epoll_wait(epfd, events, 1, 1000);
+
+        if (nfds == -1) {
+//            perror("epoll_wait");
+            break;
+        }
+
+        if (nfds > 0) {
+            last_sent = (int) send(socket, buf+sent, (size_t) (n - sent), MSG_DONTWAIT);
+            if (last_sent == 0) {
+                if(errno != EWOULDBLOCK || errno != EAGAIN) {
+                    logger->warn(id, "sent 0 bytes");
+                    break;
+                }
+            }
+
+            if (last_sent < 0) {
+                logger->err(id, "error while writing to socket", errno);
+                break;
+            }
+
+            sent += last_sent;
+        }
+    }
+
+    return (sent == n);
 }
 
 bool Client::processMessage(uint8_t buf[], int len) {
@@ -79,7 +123,6 @@ bool Client::processMessage(uint8_t buf[], int len) {
         logger->warn(id, "There was an error during message parsing");
         return false;
     }
-
 
     if(msg_type == MessageType::COMMAND) {
         Command cmd;
@@ -153,18 +196,6 @@ bool Client::parseMessage(uint8_t buf[], int len, MessageType* msg_type, uint8_t
     return true;
 }
 
-bool Client::processCommand(Command* cmd) {
-    logger->log(id, "Received command '" + CommandType_Name(cmd->type()) + "' (" + to_string(cmd->type()) +
-                    "), with " + to_string(cmd->params_size()) + " params");
-
-    ServerResponse res;
-
-    if(cmd->type() == CommandType::LOGIN) {
-        res.set_type(ResponseType::LOGGED);
-        sendServerResponse(&res);
-    }
-}
-
 bool Client::processHandshake(Handshake* handshake) {
     logger->info(id, "Setting encryption to " + EncryptionAlgorithm_Name(handshake->encryptionalgorithm()));
 
@@ -180,6 +211,7 @@ bool Client::sendServerResponse(const ServerResponse* res) {
     uint8_t* data = new uint8_t[data_len];
     res->SerializeToArray(data, data_len);
     prepareDataToSend(data, data_len);
+
     delete data;
 }
 
@@ -223,7 +255,11 @@ bool Client::prepareDataToSend(uint8_t in_buf[], uint32_t len) {
     out_buf[1] = (out_len >> 16) & 0xFF;
     out_buf[0] = (out_len >> 24) & 0xFF;
 
-    // TODO send data
+    if(sendNBytes(out_len, out_buf)) {
+        logger->log(id, "response sent successfully");
+    } else {
+        logger->warn(id, "response not send successfully");
+    }
 
     delete hash;
     delete data;
@@ -233,9 +269,10 @@ bool Client::prepareDataToSend(uint8_t in_buf[], uint32_t len) {
 bool Client::getMessage() {
     uint8_t msg_buf[MAX_PACKET_SIZE];
     uint8_t size_buf[4];
+    bool lastReason;
 
-    if(!getNBytes(4, size_buf)) {
-        if(!(*should_exit))
+    if(!getNBytes(4, size_buf, lastReason)) {
+        if(!(*should_exit) || lastReason == R_ERROR)
             logger->warn(id, "connection error (size)");
         return false;
     }
@@ -247,8 +284,8 @@ bool Client::getMessage() {
         return false;
     }
 
-    if(!getNBytes(size - 4, msg_buf)) {
-        if(!(*should_exit))
+    if(!getNBytes(size - 4, msg_buf, lastReason)) {
+        if(!(*should_exit) || lastReason == R_ERROR)
             logger->err(id, "connection error while getting message body");
         return false;
     }

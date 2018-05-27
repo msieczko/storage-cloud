@@ -5,12 +5,36 @@
 #include "User.h"
 
 using namespace mongocxx;
+using std::map;
+using std::vector;
 
-User::User(oid& id1, UserManager& u_m): id(id1), user_manager(u_m), authorized(false) {}
+User::User(oid& id1, UserManager& u_m): id(id1), user_manager(u_m), authorized(false), valid(true) {}
 
-User::User(string& username, UserManager& u_m): user_manager(u_m), authorized(false) {
-    if(!user_manager.getUserId(username, id)) {
-        std::cout<<"user not found"<<std::endl;
+User::User(UserManager& u_m):user_manager(u_m), authorized(false), valid(false) {}
+
+User::User(const string& username, UserManager& u_m): user_manager(u_m), authorized(false), valid(false) {
+    addUsername(username);
+}
+
+bool User::addUsername(const string &username) {
+    oid tmp_id;
+
+    if(!user_manager.getUserId(username, tmp_id)) {
+        valid = false;
+        authorized = false;
+        return false;
+    }
+
+    if(valid) {
+        if(tmp_id != id) {
+            id = tmp_id;
+            authorized = false;
+        }
+        return true;
+    } else {
+        id = tmp_id;
+        authorized = false;
+        valid = true;
     }
 }
 
@@ -55,26 +79,35 @@ bool User::checkPassword(string& passwd) {
 }
 
 bool User::loginByPassword(string& password, string& sid) {
+    authorized = false;
     if(checkPassword(password)) {
         uint8_t t_sid_b[48];
         if(RAND_bytes(t_sid_b, 48) != 1) {
             return false;
         }
 
-        string t_sid((char*)t_sid_b);
+        string t_sid((char*)t_sid_b, 48);
 
         if(!user_manager.addSid(id, t_sid)) {
             return false;
         }
 
         sid = t_sid;
-
+        authorized = true;
         return true;
     }
 
     return false;
 }
 
+bool User::loginBySid(string& sid) {
+    authorized = user_manager.checkSid(id, sid);
+    return authorized;
+}
+
+bool User::logout(string& sid) {
+    return user_manager.removeSid(id, sid);
+}
 
 ///---------------------UserManager---------------------
 
@@ -92,7 +125,7 @@ bool UserManager::setName(oid& id, string& res) {
     return db.setField("users", "name", id, res);
 }
 
-bool UserManager::getUserId(string& username, oid& id) {
+bool UserManager::getUserId(const string& username, oid& id) {
     return db.getId("users", "username", username, id);
 }
 
@@ -112,13 +145,49 @@ bool UserManager::setPasswdHash(oid& id, string& val) {
 }
 
 bool UserManager::addSid(oid& id, string& sid) {
-    bsoncxx::types::b_binary b_sid{};
-    b_sid.bytes = (const uint8_t*) sid.c_str();
-    b_sid.size = (uint32_t) sid.size();
     return db.pushValToArr("users", "sids", id, make_document(
-            kvp("sid", b_sid),
+            kvp("sid", Database::stringToBinary(sid)),
             kvp("time", bsoncxx::types::b_date(std::chrono::system_clock::now()))
     ));
+}
+
+bool UserManager::checkSid(oid& id, string& sid) {
+    uint64_t tmp_l = 0;
+    return (db.countField("users", "sids.sid", id, (const uint8_t*) sid.c_str(), sid.size(), tmp_l) && tmp_l == 1);
+}
+
+bool UserManager::removeSid(oid& id, string &sid) {
+    return db.removeFieldFromArray("users", "sids", id, make_document(kvp("sid", Database::stringToBinary(sid))));
+}
+
+string UserManager::mapToString(map<string, bsoncxx::document::element>& in) {
+    string wyn;
+    for(auto &flds: in) {
+        wyn += flds.first + ": " + bsoncxx::string::to_string(flds.second.get_utf8().value) + " ";
+    }
+
+    wyn.pop_back();
+
+    return wyn;
+}
+
+bool UserManager::listAllUsers(std::vector<string>& res) {
+    map<bsoncxx::oid, map<string, bsoncxx::document::element> > mmap;
+    vector<string> fields;
+    fields.emplace_back("username");
+    fields.emplace_back("surname");
+    fields.emplace_back("name");
+
+    if(!db.getFields("users", fields, mmap)) {
+        return false;
+    }
+
+    for(auto &usr: mmap) {
+//        id: usr.first.to_string()
+        res.emplace_back(mapToString(usr.second));
+    }
+
+    return true;
 }
 /**
 
@@ -128,5 +197,8 @@ db.getCollection('users').update(
 
 
 db.getCollection('users').find({username: "miloszXD", "sids.sid": "asdsasd"})
+
+
+db.getCollection('users').update({username: "miloszXD"}, {"$pull": {sids: {sid: "XDSID"}}})
 
 **/
