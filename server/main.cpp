@@ -45,7 +45,8 @@ void server() {
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == -1) {
         logger.err("server", "error while opening stream socket", errno);
-        exit(1);
+        should_exit = true;
+        return;
     }
 
     /* dowiaz adres do gniazda */
@@ -55,14 +56,16 @@ void server() {
     server.sin_port = htons(52137);
     if (bind(sock, (struct sockaddr *) &server, sizeof server) == -1) {
         logger.err("server", "error while binding stream socket", errno);
-        exit(1);
+        should_exit = true;
+        return;
     }
 
     /* wydrukuj na konsoli przydzielony port */
     length = sizeof(server);
     if (getsockname(sock,(struct sockaddr *) &server, &length) == -1) {
         logger.err("server", "getting socket name", errno);
-        exit(1);
+        should_exit = true;
+        return;
     }
     logger.info("server", "Socket port #" + to_string(ntohs(server.sin_port)));
 
@@ -211,9 +214,9 @@ int main(int argc, char **argv) {
 
 //    u.setPassword(passwd);
 
-    string newSid;
+//    string newSid;
 
-    cout<<(u.loginByPassword(passwd, newSid) ? "passwd ok" : "passwd wrong")<<" sid: "<<newSid<<endl;
+//    cout<<(u.loginByPassword(passwd, newSid) ? "passwd ok" : "passwd wrong")<<" sid: "<<newSid<<endl;
 
     while(!should_exit) {
         c = getch();
@@ -265,3 +268,15 @@ int main(int argc, char **argv) {
     logger.~Logger();
     return 0;
 }
+
+/**
+
+ filename
+hash
+size
+creationDate
+owner
+isComplete
+lastValid
+
+ **/
