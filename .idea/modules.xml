@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/storage-cloud.iml" filepath="$PROJECT_DIR$/.idea/storage-cloud.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android-client.iml" filepath="$PROJECT_DIR$/.idea/modules/android-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android-client/app/app.iml" filepath="$PROJECT_DIR$/android-client/app/app.iml" />
     </modules>
   </component>
 </project>

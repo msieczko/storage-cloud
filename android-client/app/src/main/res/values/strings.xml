@@ -6,4 +6,8 @@
     <string name="socket_disconnected">Disconnected</string>
     <string name="connect">Connect</string>
     <string name="disconnect">Disconnect</string>
+    <string name="username">username</string>
+    <string name="password">password</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
 </resources>
