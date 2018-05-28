@@ -46,6 +46,10 @@ bool User::getSurname(string& name) {
     return user_manager.getSurname(id, name);
 }
 
+bool User::getHomeDir(string& dir) {
+    return user_manager.getHomeDir(id, dir);
+}
+
 bool User::setName(string& name) {
     return user_manager.setName(id, name);
 }
@@ -109,6 +113,11 @@ bool User::logout(string& sid) {
     return user_manager.removeSid(id, sid);
 }
 
+
+bool User::listFilesinPath(string& path, vector<string>& res) {
+    return user_manager.listFilesinPath(id, path, res);
+}
+
 ///---------------------UserManager---------------------
 
 UserManager::UserManager(Database& db_t): db(db_t) {}
@@ -119,6 +128,10 @@ bool UserManager::getName(oid& id, string& res) {
 
 bool UserManager::getSurname(oid& id, string& res) {
     return db.getField("users", "surname", id, res);
+}
+
+bool UserManager::getHomeDir(oid& id, string& res) {
+    return db.getField("users", "homeDir", id, res);
 }
 
 bool UserManager::setName(oid& id, string& res) {
@@ -189,6 +202,11 @@ bool UserManager::listAllUsers(std::vector<string>& res) {
 
     return true;
 }
+
+bool UserManager::listFilesinPath(oid& id, string& path, vector<string>& res) {
+
+}
+
 /**
 
 db.getCollection('users').update(

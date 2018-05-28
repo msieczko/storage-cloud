@@ -7,8 +7,19 @@
 #include "Database.h"
 
 using bsoncxx::oid;
+using std::vector;
 
 class UserManager;
+
+struct File {
+    string filename;
+    string hash;
+    uint64_t size;
+    uint64_t creation_date;
+    bool isValid;
+    uint64_t lastValid;
+    oid owner;
+};
 
 class User {
 private:
@@ -24,6 +35,7 @@ public:
     User(oid&, UserManager&);
     User(UserManager&);
     bool getName(string&);
+    bool getHomeDir(string&);
     bool getSurname(string&);
     bool setName(string&);
     bool setPassword(string&);
@@ -33,6 +45,7 @@ public:
     bool addUsername(const string&);
     bool isValid() { return valid; };
     bool isAuthorized() { return authorized; };
+    bool listFilesinPath(string&, vector<string>&);
 };
 
 class UserManager {
@@ -44,6 +57,7 @@ private:
 public:
     bool getName(oid&, string&);
     bool getSurname(oid&, string&);
+    bool getHomeDir(oid&, string&);
     bool getPasswdHash(oid&, string&);
     bool setPasswdHash(oid&, string&);
     bool setName(oid&, string&);
@@ -52,6 +66,8 @@ public:
     bool getUserId(const string& username, oid& id);
     bool removeSid(oid&, string&);
     bool listAllUsers(std::vector<string>&);
+
+    bool listFilesinPath(oid&, string&, vector<string>&);
 
     static UserManager& getInstance(Database* db = nullptr)
     {
