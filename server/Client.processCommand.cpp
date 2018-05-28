@@ -122,6 +122,8 @@ bool Client::processCommand(Command* cmd) {
                 }
             }
         }
+
+        sendServerResponse(&res);
     } else if (cmd->type() == CommandType::LOGOUT) {
         if(!(u.isValid() && u.isAuthorized())) {
             res.set_type(ResponseType::ERROR);
@@ -135,5 +137,7 @@ bool Client::processCommand(Command* cmd) {
             logger->log(id, "client " + username + " logged out");
             sessionId = "";
         }
+
+        sendServerResponse(&res);
     }
 }
