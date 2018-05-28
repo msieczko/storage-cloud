@@ -204,7 +204,21 @@ bool UserManager::listAllUsers(std::vector<string>& res) {
 }
 
 bool UserManager::listFilesinPath(oid& id, string& path, vector<string>& res) {
+    map<bsoncxx::oid, map<string, bsoncxx::document::element> > mmap;
+    vector<string> fields;
+    fields.emplace_back("filename");
+    fields.emplace_back("size");
 
+    if(!db.getFields("files", fields, mmap)) {
+        return false;
+    }
+
+    for(auto &usr: mmap) {
+//        id: usr.first.to_string()
+        res.emplace_back(mapToString(usr.second));
+    }
+
+    return true;
 }
 
 /**

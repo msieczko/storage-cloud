@@ -25,6 +25,24 @@ void sig_handler(int signo)
 }
 
 void process(int sock, connection* conn) {
+
+    int optval = 1;
+    socklen_t optlen = sizeof(optval);
+
+    setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, &optval, optlen);
+
+    optval = 2;
+
+    setsockopt(sock, IPPROTO_TCP, TCP_KEEPCNT, &optval, optlen);
+
+    optval = 10;
+
+    setsockopt(sock, IPPROTO_TCP, TCP_KEEPIDLE, &optval, optlen);
+
+    optval = 5;
+
+    setsockopt(sock, IPPROTO_TCP, TCP_KEEPINTVL, &optval, optlen);
+
     Client client(sock, conn, &should_exit, &logger);
 
     client.loop();
@@ -171,7 +189,7 @@ int main(int argc, char **argv) {
 //    fields.emplace_back("surname");
 //    fields.emplace_back("name");
 
-    cout<<"XD:"<<endl;
+//    cout<<"XD:"<<endl;
 
 
 
@@ -184,33 +202,33 @@ int main(int argc, char **argv) {
 //        }
 //    }
 
-    cout<<":XD"<<endl;
-
-    map<string, bsoncxx::types::value> elMi;
-
-    elMi.emplace("username", bsoncxx::types::value{bsoncxx::types::b_utf8{"miloszXD"}});
-    elMi.emplace("name", bsoncxx::types::value{bsoncxx::types::b_utf8{"MiloszTest"}});
-    elMi.emplace("surname", bsoncxx::types::value{bsoncxx::types::b_utf8{"SuRnAmE"}});
-    elMi.emplace("password", bsoncxx::types::value{bsoncxx::types::b_utf8{"safepasswd"}});
-
-    bsoncxx::oid i_id;
+//    cout<<":XD"<<endl;
+//
+//    map<string, bsoncxx::types::value> elMi;
+//
+//    elMi.emplace("username", bsoncxx::types::value{bsoncxx::types::b_utf8{"miloszXD"}});
+//    elMi.emplace("name", bsoncxx::types::value{bsoncxx::types::b_utf8{"MiloszTest"}});
+//    elMi.emplace("surname", bsoncxx::types::value{bsoncxx::types::b_utf8{"SuRnAmE"}});
+//    elMi.emplace("password", bsoncxx::types::value{bsoncxx::types::b_utf8{"safepasswd"}});
+//
+//    bsoncxx::oid i_id;
 
     //db.insertDoc("users", i_id, elMi);
 
     //cout<<"inserted id: "<<i_id.to_string()<<endl;
 
-    string tmpi = "WELP";
+//    string tmpi = "WELP";
 
 //    db.setField("users", "testField", allUsers[0].id, tmpi);
 
 
-    string u_name = "miloszXD";
-    User u(u_name, u_m);
-    cout<<(u.getName(u_name) ? "got user name" : "error while getting user name")<<endl;
-
-    cout<<"received user name: "<<u_name<<" ("<<u_name.size()<<")"<<endl;
-
-    string passwd = "nicepasswd";
+//    string u_name = "miloszXD";
+//    User u(u_name, u_m);
+//    cout<<(u.getName(u_name) ? "got user name" : "error while getting user name")<<endl;
+//
+//    cout<<"received user name: "<<u_name<<" ("<<u_name.size()<<")"<<endl;
+//
+//    string passwd = "nicepasswd";
 
 //    u.setPassword(passwd);
 
