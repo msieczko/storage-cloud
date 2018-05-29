@@ -108,6 +108,133 @@ public class PacketBuilder {
         }
     }
 
+    public class ServerResponsePacketBuilder {
+        private ServerResponse.Builder responseBuilder = ServerResponse.newBuilder();
+
+        public ServerResponsePacketBuilder type(ResponseType responseType) {
+            responseBuilder.setType(responseType);
+            return this;
+        }
+
+        public ParamBuilder addParam(String paramId) {
+            return new ParamBuilder(paramId);
+        }
+
+        public ServerResponsePacketBuilder addListItem(String listItem) {
+            responseBuilder.addList(listItem);
+            return this;
+        }
+
+        public FileBuilder addFile(String name) {
+            return new FileBuilder(name);
+        }
+
+        public ServerResponsePacketBuilder data(ByteString data) {
+            responseBuilder.setData(data);
+            return this;
+        }
+
+        public Packet build() {
+            if (responseBuilder.getType() == ResponseType.UNRECOGNIZED) {
+                throw PacketBuilderException.notProvided("server response type");
+            }
+            return create(responseBuilder.build().toByteArray());
+        }
+
+        public class ParamBuilder {
+            private Param.Builder paramBuilder = Param.newBuilder();
+
+            private ParamBuilder(String paramId) {
+                paramBuilder.setParamId(paramId);
+            }
+
+            public ServerResponsePacketBuilder ofValue(String value) {
+                paramBuilder.setSParamVal(value);
+                return buildAndGetParent();
+            }
+
+            public ServerResponsePacketBuilder ofValue(long value) {
+                paramBuilder.setIParamVal(value);
+                return buildAndGetParent();
+            }
+
+            public ServerResponsePacketBuilder ofValue(ByteString value) {
+                paramBuilder.setBParamVal(value);
+                return buildAndGetParent();
+            }
+
+            private ServerResponsePacketBuilder buildAndGetParent() {
+                responseBuilder.addParams(paramBuilder.build());
+                return ServerResponsePacketBuilder.this;
+            }
+        }
+
+        public class FileBuilder {
+            private File.Builder fileBuilder = File.newBuilder();
+
+            private FileBuilder(String name) {
+                fileBuilder.setName(name);
+            }
+
+            public FileBuilder ofSize(long size) {
+                fileBuilder.setSize(size);
+                return this;
+            }
+
+            public ParamBuilder withMetadata(String paramId) {
+                return new ParamBuilder(paramId);
+            }
+
+            public ServerResponsePacketBuilder and() {
+                return ServerResponsePacketBuilder.this;
+            }
+
+            public class ParamBuilder {
+                private Param.Builder paramBuilder = Param.newBuilder();
+
+                private ParamBuilder(String paramId) {
+                    paramBuilder.setParamId(paramId);
+                }
+
+                public FileBuilder ofValue(String value) {
+                    paramBuilder.setSParamVal(value);
+                    return buildAndGetParent();
+                }
+
+                public FileBuilder ofValue(long value) {
+                    paramBuilder.setIParamVal(value);
+                    return buildAndGetParent();
+                }
+
+                public FileBuilder ofValue(ByteString value) {
+                    paramBuilder.setBParamVal(value);
+                    return buildAndGetParent();
+                }
+
+                private FileBuilder buildAndGetParent() {
+                    fileBuilder.addMetadata(paramBuilder.build());
+                    return FileBuilder.this;
+                }
+            }
+        }
+    }
+
+    public class HandshakePacketBuilder {
+        Handshake.Builder handshakeBuilder = Handshake.newBuilder();
+
+        public HandshakePacketBuilder encryptionAlgorithm(EncryptionAlgorithm algorithm) {
+            handshakeBuilder.setEncryptionAlgorithm(algorithm);
+            return this;
+        }
+
+        public Packet build() {
+            if (handshakeBuilder.getEncryptionAlgorithm() == EncryptionAlgorithm.UNRECOGNIZED) {
+                throw PacketBuilderException.notProvided("encryption algorithm");
+            }
+            return create(handshakeBuilder.build().toByteArray());
+        }
+    }
+
     private Packet create(byte[] bytes) {
         if (encryptionAlgorithm == null) {
             encryptionAlgorithm = EncryptionAlgorithm.NOENCRYPTION;
@@ -152,13 +279,4 @@ public class PacketBuilder {
 
         return new Packet(packetData);
     }
-
-    public class ServerResponsePacketBuilder {
-        //TODO
-    }
-
-    public class HandshakePacketBuilder {
-        //TODO
-    }
-
 }
