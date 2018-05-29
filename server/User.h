@@ -6,12 +6,15 @@
 #include "main.h"
 #include "Database.h"
 
+#define FILE_REGULAR 1
+#define FILE_DIR 2
+
 using bsoncxx::oid;
 using std::vector;
 
 class UserManager;
 
-struct File {
+struct UFile {
     string filename;
     string hash;
     uint64_t size;
@@ -19,6 +22,7 @@ struct File {
     bool isValid;
     uint64_t lastValid;
     oid owner;
+    uint8_t type;
 };
 
 class User {
@@ -46,6 +50,7 @@ public:
     bool isValid() { return valid; };
     bool isAuthorized() { return authorized; };
     bool listFilesinPath(string&, vector<string>&);
+    bool addFile(UFile&);
 };
 
 class UserManager {
@@ -68,6 +73,7 @@ public:
     bool listAllUsers(std::vector<string>&);
 
     bool listFilesinPath(oid&, string&, vector<string>&);
+    bool addFile(oid&, UFile&);
 
     static UserManager& getInstance(Database* db = nullptr)
     {

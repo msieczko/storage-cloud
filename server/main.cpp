@@ -184,7 +184,7 @@ int main(int argc, char **argv) {
 
 //    map<bsoncxx::oid, map<string, bsoncxx::document::element> > mmap;
 //
-//    vector<string> fields;
+    vector<string> fields;
 //    fields.emplace_back("username");
 //    fields.emplace_back("surname");
 //    fields.emplace_back("name");
@@ -222,8 +222,28 @@ int main(int argc, char **argv) {
 //    db.setField("users", "testField", allUsers[0].id, tmpi);
 
 
-//    string u_name = "miloszXD";
-//    User u(u_name, u_m);
+    string u_name = "miloszXD";
+    User u(u_name, u_m);
+    string passwd = "nicepasswd";
+    string newSid;
+    u.loginByPassword(passwd, newSid);
+
+    UFile f;
+    f.filename = "/dir/dir23/file24.test";
+    f.size = 254345;
+    f.creation_date = time(0);
+    f.type = FILE_REGULAR;
+
+    string s_tmp("/dir/dir23");
+
+    u.listFilesinPath(s_tmp, fields);
+
+    for(auto&& file: fields) {
+        logger.info("FILES", file);
+    }
+
+//    u.addFile(f);
+
 //    cout<<(u.getName(u_name) ? "got user name" : "error while getting user name")<<endl;
 //
 //    cout<<"received user name: "<<u_name<<" ("<<u_name.size()<<")"<<endl;
@@ -235,6 +255,7 @@ int main(int argc, char **argv) {
 //    string newSid;
 
 //    cout<<(u.loginByPassword(passwd, newSid) ? "passwd ok" : "passwd wrong")<<" sid: "<<newSid<<endl;
+
 
     while(!should_exit) {
         c = getch();

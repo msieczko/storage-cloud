@@ -119,6 +119,10 @@ bool User::listFilesinPath(string& path, vector<string>& res) {
     return user_manager.listFilesinPath(id, path, res);
 }
 
+bool User::addFile(UFile& file) {
+    return user_manager.addFile(id, file);
+}
+
 ///---------------------UserManager---------------------
 
 UserManager::UserManager(Database& db_t): db(db_t) {}
@@ -177,7 +181,13 @@ bool UserManager::removeSid(oid& id, string &sid) {
 string UserManager::mapToString(map<string, bsoncxx::document::element>& in) {
     string wyn;
     for(auto &flds: in) {
-        wyn += flds.first + ": " + bsoncxx::string::to_string(flds.second.get_utf8().value) + " ";
+        if(flds.second.type() == bsoncxx::type::k_utf8) {
+            wyn += flds.first + ": " + bsoncxx::string::to_string(flds.second.get_utf8().value) + " ";
+        } else if(flds.second.type() == bsoncxx::type::k_int64) {
+            wyn += flds.first + ": " + std::to_string(flds.second.get_int64().value) + " ";
+        } else {
+            wyn += flds.first + ": unknown type ";
+        }
     }
 
     wyn.pop_back();
@@ -205,12 +215,25 @@ bool UserManager::listAllUsers(std::vector<string>& res) {
 }
 
 bool UserManager::listFilesinPath(oid& id, string& path, vector<string>& res) {
-    map<bsoncxx::oid, map<string, bsoncxx::document::element> > mmap;
+//    return false;
+    map<string, map<string, bsoncxx::document::element> > mmap;
     vector<string> fields;
     fields.emplace_back("filename");
     fields.emplace_back("size");
+    fields.emplace_back("creationDate");
 
-    if(!db.getFields("files", fields, mmap)) {
+//    map<string, bsoncxx::types::value> queryValues;
+//    queryValues.emplace("owner", id);
+//    queryValues.emplace("filename", bsoncxx::types::b_regex(R"(\/dir\/nice\/[^\/]+)"));
+
+    if(path[path.size()-1] != '/') {
+        path.push_back('/');
+    }
+
+    if(!db.getFields("files",
+                     make_document(kvp("owner", id),
+                                   kvp("filename", bsoncxx::types::b_regex(path+"[^/]*[^/]$"))),
+                     fields, mmap)) {
         return false;
     }
 
@@ -220,6 +243,41 @@ bool UserManager::listFilesinPath(oid& id, string& path, vector<string>& res) {
     }
 
     return true;
+}
+
+bsoncxx::types::b_utf8 toUTF8(string& s) {
+    return bsoncxx::types::b_utf8(s);
+}
+
+bsoncxx::types::b_int64 toINT64(uint64_t i) {
+    bsoncxx::types::b_int64 tmp{};
+    tmp.value = i;
+    return tmp;
+}
+
+bsoncxx::types::b_date currDate() {
+    return bsoncxx::types::b_date(std::chrono::system_clock::now());
+}
+
+bsoncxx::types::b_oid toOID(oid i) {
+    bsoncxx::types::b_oid tmp{};
+    tmp.value = i;
+    return tmp;
+}
+
+bool UserManager::addFile(oid& id, UFile& file) {
+
+    auto doc = bsoncxx::builder::basic::document{};
+
+    doc.append(kvp("filename", toUTF8(file.filename)));
+    doc.append(kvp("size", toINT64(file.size)));
+    doc.append(kvp("creationDate", currDate()));
+    doc.append(kvp("type", toINT64(file.type)));
+    doc.append(kvp("owner", toOID(id)));
+
+    oid tmp_id;
+
+    return db.insertDoc("files", tmp_id, doc);
 }
 
 /**

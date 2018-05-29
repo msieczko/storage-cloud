@@ -249,6 +249,64 @@ bool Database::getFields(string&& colName, vector<string>& fields, map<bsoncxx::
     }
 }
 
+bool Database::getFields(string&& colName, bsoncxx::document::value&& doc, vector<string>& fields, map<string, map<string, bsoncxx::document::element> >& elements) {
+    auto odoc = bsoncxx::builder::basic::document{};
+
+    for(const auto &name: fields) {
+        odoc.append(kvp(name, 1));
+    }
+
+    mongocxx::options::find opts{};
+    opts.projection(odoc.view());
+
+    try {
+        auto cursor = db[colName].find(doc.view(), opts);
+
+        bool notEmpty = false;
+
+        for (auto doc_v: cursor) {
+            notEmpty = true;
+
+            //TODO check if id was passed as field
+            if (distance(doc_v.begin(), doc_v.end()) != fields.size() + 1) {
+                logger->log(l_id, "getFields got invalid fields count");
+                return false;
+            }
+
+            bsoncxx::document::element t_id = doc_v["filename"];
+
+            if (!t_id || t_id.type() != bsoncxx::type::k_utf8) {
+                logger->log(l_id, "getFields got invalid filename field");
+                return false;
+            }
+
+            string id = bsoncxx::string::to_string(t_id.get_utf8().value);
+
+            elements.emplace(id, map<string, bsoncxx::document::element>{});
+
+            for (auto val: doc_v) {
+                string key = bsoncxx::string::to_string(val.key());
+//                if (key != "_id") {
+                    elements[id].emplace(key, val);
+//                }
+            }
+        }
+
+        if(!notEmpty) {
+            logger->log(l_id, "getFields got empty result");
+        }
+
+        return notEmpty;
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while getting fields (3): " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while getting fields (3): unknown error");
+        return false;
+    }
+//    return false;
+}
+
 bool Database::setField(string& colName, string& fieldName, bsoncxx::oid id, bsoncxx::types::value& val) {
     try {
         db[colName].update_one(make_document(kvp("_id", id)),
@@ -336,13 +394,7 @@ bool Database::pushValToArr(string&& colName, string&& arrayName, bsoncxx::oid i
     return true;
 }
 
-bool Database::insertDoc(string&& colName, bsoncxx::oid& id, map<string, bsoncxx::types::value>& elements) {
-    auto doc = bsoncxx::builder::basic::document{};
-
-    for(const auto &elem: elements) {
-        doc.append(kvp(elem.first, elem.second));
-    }
-
+bool Database::insertDoc(string&& colName, bsoncxx::oid& id, bsoncxx::builder::basic::document& doc) {
     try {
         auto res = db[colName].insert_one(doc.view());
 

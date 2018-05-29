@@ -52,6 +52,8 @@ public:
     bool getId(string&&, string&&, const string&, bsoncxx::oid&);
     bool getFields(string&&, bsoncxx::oid, std::map<string, bsoncxx::document::element>&);
     bool getFields(string&&, std::vector<string>&, std::map<bsoncxx::oid, std::map<string, bsoncxx::document::element> >&);
+    bool getFields(string&&, bsoncxx::document::value&&, std::vector<string>&,
+            std::map<string, std::map<string, bsoncxx::document::element> >&);
     bool setField(string&&, string&&, bsoncxx::oid, bsoncxx::types::value&&);
     bool setField(string&, string&, bsoncxx::oid, bsoncxx::types::value&&);
     bool setField(string&&, string&&, bsoncxx::oid, string&);
@@ -60,7 +62,7 @@ public:
     bool countField(string&&, string&&, bsoncxx::oid, const uint8_t*, uint32_t, uint64_t&);
     bool removeFieldFromArray(string&&, string&&, bsoncxx::oid, bsoncxx::document::value&&);
     bool pushValToArr(string&&, string&&, bsoncxx::oid, bsoncxx::document::value&&);
-    bool insertDoc(string&&, bsoncxx::oid&, std::map<string, bsoncxx::types::value>&);
+    bool insertDoc(string&&, bsoncxx::oid&, bsoncxx::builder::basic::document&);
     static bsoncxx::types::b_binary stringToBinary(string&);
 };
 
