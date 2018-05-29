@@ -72,10 +72,20 @@ message Handshake {
     EncryptionAlgorithm encryptionAlgorithm = 1;
 }
 
+enum FileType {
+    NULL6 = 0;
+    FILE = 1;
+    DIRECTORY = 2;
+}
+
 message File {
-    string name = 1;
-    int64 size = 2;
-    repeated Param metadata = 3;
+    string filename = 1; //with path
+    FileType filetype = 2;
+    uint64 size = 3; //0 for directory
+    bytes hash = 4; // empty for directory
+    string owner = 5;
+    uint64 creationDate = 6;
+    repeated Param metadata = 7;
 }
 
 enum ResponseType {
