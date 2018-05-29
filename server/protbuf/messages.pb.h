@@ -244,6 +244,7 @@ class Param : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
   enum ValueCase {
     kSParamVal = 2,
     kIParamVal = 3,
+    kBParamVal = 4,
     VALUE_NOT_SET = 0,
   };
 
@@ -340,11 +341,29 @@ class Param : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
   ::google::protobuf::int64 iparamval() const;
   void set_iparamval(::google::protobuf::int64 value);
 
+  // bytes BParamVal = 4;
+  private:
+  bool has_bparamval() const;
+  public:
+  void clear_bparamval();
+  static const int kBParamValFieldNumber = 4;
+  const ::std::string& bparamval() const;
+  void set_bparamval(const ::std::string& value);
+  #if LANG_CXX11
+  void set_bparamval(::std::string&& value);
+  #endif
+  void set_bparamval(const char* value);
+  void set_bparamval(const void* value, size_t size);
+  ::std::string* mutable_bparamval();
+  ::std::string* release_bparamval();
+  void set_allocated_bparamval(::std::string* bparamval);
+
   ValueCase value_case() const;
   // @@protoc_insertion_point(class_scope:StorageCloud.Param)
  private:
   void set_has_sparamval();
   void set_has_iparamval();
+  void set_has_bparamval();
 
   inline bool has_value() const;
   void clear_value();
@@ -356,6 +375,7 @@ class Param : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
     ValueUnion() {}
     ::google::protobuf::internal::ArenaStringPtr sparamval_;
     ::google::protobuf::int64 iparamval_;
+    ::google::protobuf::internal::ArenaStringPtr bparamval_;
   } value_;
   mutable int _cached_size_;
   ::google::protobuf::uint32 _oneof_case_[1];
@@ -1231,6 +1251,101 @@ inline void Param::set_iparamval(::google::protobuf::int64 value) {
   }
   value_.iparamval_ = value;
   // @@protoc_insertion_point(field_set:StorageCloud.Param.IParamVal)
+}
+
+// bytes BParamVal = 4;
+inline bool Param::has_bparamval() const {
+  return value_case() == kBParamVal;
+}
+inline void Param::set_has_bparamval() {
+  _oneof_case_[0] = kBParamVal;
+}
+inline void Param::clear_bparamval() {
+  if (has_bparamval()) {
+    value_.bparamval_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    clear_has_value();
+  }
+}
+inline const ::std::string& Param::bparamval() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.Param.BParamVal)
+  if (has_bparamval()) {
+    return value_.bparamval_.GetNoArena();
+  }
+  return *&::google::protobuf::internal::GetEmptyStringAlreadyInited();
+}
+inline void Param::set_bparamval(const ::std::string& value) {
+  // @@protoc_insertion_point(field_set:StorageCloud.Param.BParamVal)
+  if (!has_bparamval()) {
+    clear_value();
+    set_has_bparamval();
+    value_.bparamval_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  value_.bparamval_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:StorageCloud.Param.BParamVal)
+}
+#if LANG_CXX11
+inline void Param::set_bparamval(::std::string&& value) {
+  // @@protoc_insertion_point(field_set:StorageCloud.Param.BParamVal)
+  if (!has_bparamval()) {
+    clear_value();
+    set_has_bparamval();
+    value_.bparamval_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  value_.bparamval_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:StorageCloud.Param.BParamVal)
+}
+#endif
+inline void Param::set_bparamval(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  if (!has_bparamval()) {
+    clear_value();
+    set_has_bparamval();
+    value_.bparamval_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  value_.bparamval_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:StorageCloud.Param.BParamVal)
+}
+inline void Param::set_bparamval(const void* value, size_t size) {
+  if (!has_bparamval()) {
+    clear_value();
+    set_has_bparamval();
+    value_.bparamval_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  value_.bparamval_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
+      reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:StorageCloud.Param.BParamVal)
+}
+inline ::std::string* Param::mutable_bparamval() {
+  if (!has_bparamval()) {
+    clear_value();
+    set_has_bparamval();
+    value_.bparamval_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_mutable:StorageCloud.Param.BParamVal)
+  return value_.bparamval_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Param::release_bparamval() {
+  // @@protoc_insertion_point(field_release:StorageCloud.Param.BParamVal)
+  if (has_bparamval()) {
+    clear_has_value();
+    return value_.bparamval_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  } else {
+    return NULL;
+  }
+}
+inline void Param::set_allocated_bparamval(::std::string* bparamval) {
+  if (!has_bparamval()) {
+    value_.bparamval_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  clear_value();
+  if (bparamval != NULL) {
+    set_has_bparamval();
+    value_.bparamval_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+        bparamval);
+  }
+  // @@protoc_insertion_point(field_set_allocated:StorageCloud.Param.BParamVal)
 }
 
 inline bool Param::has_value() const {
