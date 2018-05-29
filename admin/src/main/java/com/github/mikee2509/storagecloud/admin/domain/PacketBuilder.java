@@ -1,12 +1,11 @@
 package com.github.mikee2509.storagecloud.admin.domain;
 
+import com.github.mikee2509.storagecloud.admin.util.EncryptionUtility;
+import com.github.mikee2509.storagecloud.admin.util.HashUtility;
 import com.github.mikee2509.storagecloud.proto.*;
 import com.google.protobuf.ByteString;
-import org.apache.commons.codec.digest.DigestUtils;
 
 import java.nio.ByteBuffer;
-
-import static org.apache.commons.codec.digest.MessageDigestAlgorithms.*;
 
 public class PacketBuilder {
     private EncryptionAlgorithm encryptionAlgorithm;
@@ -242,32 +241,13 @@ public class PacketBuilder {
         if (encodedMessageBuilder.getHashAlgorithm() == HashAlgorithm.UNRECOGNIZED) {
             throw PacketBuilderException.notProvided("hash algorithm");
         }
-        byte[] hash;
-        switch (encodedMessageBuilder.getHashAlgorithm()) {
-            case H_SHA512:
-                hash = new DigestUtils(SHA_512).digest(bytes);
-                break;
-            case H_SHA256:
-                hash = new DigestUtils(SHA_256).digest(bytes);
-                break;
-            case H_MD5:
-                hash = new DigestUtils(MD5).digest(bytes);
-                break;
-            case H_SHA1:
-                hash = new DigestUtils(SHA_1).digest(bytes);
-                break;
-            case H_NOHASH:
-            default:
-                hash = new byte[]{};
-                break;
-        }
+        byte[] hash = HashUtility.digest(bytes, encodedMessageBuilder.getHashAlgorithm());
         encodedMessageBuilder.setHash(ByteString.copyFrom(hash));
 
-        //noinspection UnnecessaryLocalVariable
-        byte[] encrypted = bytes; // TODO implement encryption
+        byte[] encryptedData = EncryptionUtility.encrypt(bytes, encryptionAlgorithm);
 
-        encodedMessageBuilder.setDataSize(encrypted.length);
-        encodedMessageBuilder.setData(ByteString.copyFrom(encrypted));
+        encodedMessageBuilder.setDataSize(encryptedData.length);
+        encodedMessageBuilder.setData(ByteString.copyFrom(encryptedData));
         EncodedMessage encodedMessage = encodedMessageBuilder.build();
 
         byte[] packetPayload = encodedMessage.toByteArray();
