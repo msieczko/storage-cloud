@@ -13,34 +13,35 @@ bool Client::processCommand(Command* cmd) {
         bool params_ok = (cmd->params_size() == 2);
         bool alreadyAuthorized = u.isAuthorized();
         string sid;
-        string passwd, username;
+        string passwd, t_username;
 
         if(params_ok && !alreadyAuthorized) {
             sessionId = "";
             if(cmd->params(0).paramid() == "username" && cmd->params(1).paramid() == "password") {
                 passwd = cmd->params(1).sparamval();
-                username = cmd->params(0).sparamval();
+                t_username = cmd->params(0).sparamval();
             } else if (cmd->params(0).paramid() == "password" && cmd->params(1).paramid() == "username") {
                 passwd = cmd->params(0).sparamval();
-                username = cmd->params(1).sparamval();
+                t_username = cmd->params(1).sparamval();
             } else {
                 params_ok = false;
             }
 
             if(params_ok) {
-                if(u.addUsername(username)) {
+                if(u.addUsername(t_username)) {
                     u.loginByPassword(passwd, sid);
                 }
             }
         }
 
         if(params_ok && u.isAuthorized()) {
+            username = t_username;
             sessionId = sid;
             res.set_type(ResponseType::LOGGED);
             Param* tmp_param = res.add_params();
             tmp_param->set_paramid("sid");
             tmp_param->set_bparamval(sid);
-            logger->log(id, "user " + username + " logged in");
+            logger->log(id, "user " + t_username + " logged in");
         } else {
             res.set_type(ResponseType::ERROR);
             Param* tmp_param = res.add_params();
@@ -49,11 +50,11 @@ bool Client::processCommand(Command* cmd) {
             if(params_ok) {
                 tmp_param->set_sparamval("Invalid username/password");
                 if(!u.isValid()) {
-                    logger->log(id, "client " + username + " tried to log in, but that user doesn't exist");
+                    logger->log(id, "client " + t_username + " tried to log in, but that user doesn't exist");
                 } else if(!u.isAuthorized()) {
-                    logger->log(id, "client " + username + " tried to log in, but provided wrong password");
+                    logger->log(id, "client " + t_username + " tried to log in, but provided wrong password");
                 } else {
-                    logger->warn(id, "client " + username + " tried to log in, but internal error occurred");
+                    logger->warn(id, "client " + t_username + " tried to log in, but internal error occurred");
                 }
             } else {
                 if(!alreadyAuthorized) {
@@ -70,34 +71,35 @@ bool Client::processCommand(Command* cmd) {
     } else if (cmd->type() == CommandType::RELOGIN) {
         bool params_ok = (cmd->params_size() == 2);
         bool alreadyAuthorized = u.isAuthorized();
-        string sid, username;
+        string sid, t_username;
 
         if(params_ok && !alreadyAuthorized) {
             sessionId = "";
             if(cmd->params(0).paramid() == "username" && cmd->params(1).paramid() == "sid") {
                 sid = cmd->params(1).bparamval();
-                username = cmd->params(0).sparamval();
+                t_username = cmd->params(0).sparamval();
             } else if (cmd->params(0).paramid() == "sid" && cmd->params(1).paramid() == "username") {
                 sid = cmd->params(0).bparamval();
-                username = cmd->params(1).sparamval();
+                t_username = cmd->params(1).sparamval();
             } else {
                 params_ok = false;
             }
 
             if(params_ok) {
-                if(u.addUsername(username)) {
+                if(u.addUsername(t_username)) {
                     u.loginBySid(sid);
                 }
             }
         }
 
         if(params_ok && u.isAuthorized()) {
+            username = t_username;
             sessionId = sid;
             res.set_type(ResponseType::LOGGED);
             Param* tmp_param = res.add_params();
             tmp_param->set_paramid("sid");
             tmp_param->set_bparamval(sid);
-            logger->log(id, "user " + username + " relogged in");
+            logger->log(id, "user " + t_username + " relogged in");
         } else {
             res.set_type(ResponseType::ERROR);
             Param* tmp_param = res.add_params();
@@ -106,11 +108,11 @@ bool Client::processCommand(Command* cmd) {
             if(params_ok) {
                 tmp_param->set_sparamval("Invalid username or session ID");
                 if(!u.isValid()) {
-                    logger->log(id, "client " + username + " tried to relogin, but that user doesn't exist");
+                    logger->log(id, "client " + t_username + " tried to relogin, but that user doesn't exist");
                 } else if(!u.isAuthorized()) {
-                    logger->log(id, "client " + username + " tried to relogin, but provided wrong sid");
+                    logger->log(id, "client " + t_username + " tried to relogin, but provided wrong sid");
                 } else {
-                    logger->warn(id, "client " + username + " tried to relogin, but internal error occurred");
+                    logger->warn(id, "client " + t_username + " tried to relogin, but internal error occurred");
                 }
             } else {
                 if(!alreadyAuthorized) {
@@ -136,6 +138,7 @@ bool Client::processCommand(Command* cmd) {
             res.set_type(ResponseType::OK);
             logger->log(id, "client " + username + " logged out");
             sessionId = "";
+            username = "";
         }
 
         sendServerResponse(&res);
