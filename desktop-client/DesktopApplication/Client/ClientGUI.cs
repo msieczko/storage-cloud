@@ -1,18 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
 using System.Linq;
-using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace StorageCloud.Desktop
+namespace StorageCloud.Desktop.Protocol
 {
-    class Client
+    public partial class ClientGUI2 : Form
     {
-        static void Connect(string serverIP, string message)
+        public ClientGUI2()
+        {
+            InitializeComponent();
+        }
+
+        void Connect(string serverIP, string message)
         {
             string output = "";
 
@@ -22,7 +28,7 @@ namespace StorageCloud.Desktop
                 // The client requires a TcpServer that is connected
                 // to the same address specified by the server and port
                 // combination.
-                Int32 port = 13;
+                Int32 port = 15;
                 TcpClient client = new TcpClient(serverIP, port);
 
                 // Translate the passed message into ASCII and store it as a byte array.
@@ -65,6 +71,20 @@ namespace StorageCloud.Desktop
                 output = "SocketException: " + e.ToString();
                 Console.WriteLine(output);
             }
+        }
+
+        static void Main()
+        {
+            Application.Run(new ClientGUI2());
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            // In this code example, use a hard-coded
+            // IP address and message.
+            string serverIP = "localhost";
+            string message = "Hello";
+            Connect(serverIP, message);
         }
     }
 }

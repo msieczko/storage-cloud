@@ -1,52 +1,112 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using Google.Protobuf;
 using StorageCloud.Desktop.Protobuf;
 using HashAlgorithm = StorageCloud.Desktop.Protobuf.HashAlgorithm;
 
-namespace StorageCloud.Desktop
+namespace StorageCloud.Desktop.Protocol
 {
-    class Protocol
+    class PacketCoder
     {
-        struct Packet
+        // a struct holding a packet from an encoded message
+        // as well as its type
+        public struct Packet
         {
             public MessageType Type;
             public IMessage Message;
         }
 
         // prepare a packet to be sent
-        static byte[] EncodeMessage(Packet packet)
+        static byte[] EncodeMessage(Packet packet, EncryptionAlgorithm encryptionAlgorithm)
         {
-            EncodedMessage encodedMessage = CreateEncodedMessageFromPacket(packet);
-            byte[] serializedMessage = encodedMessage.ToByteArray();
-            return serializedMessage;
+            EncodedMessage encodedMessage = CreateEncodedMessageFromPacket(packet, 
+                encryptionAlgorithm, HashAlgorithm.HSha512);
+            byte[] payload = encodedMessage.ToByteArray();
+            byte[] packetSize = convertIntToByteArray(payload.Length + 4);
+            byte[] output = new byte[payload.Length + packetSize.Length];
+            Array.Copy(packetSize, output, packetSize.Length);
+            Array.Copy(payload, 0, output, packetSize.Length, payload.Length);
+
+            return output;
+        }
+
+        private static byte[] convertIntToByteArray(int value)
+        {
+            byte[] bytes = BitConverter.GetBytes(value);
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(bytes);
+            }
+
+            return bytes;
         }
 
         // parse a received packet
-        static Packet DecodeMessage(byte[] data)
+        public static Packet DecodeMessage(byte[] data, EncryptionAlgorithm encryptionAlgorithm)
         {
-            // parse the encoded message from the bytes
+            // parse the encoded message from bytes
             EncodedMessage encodedMessage = EncodedMessage.Parser.ParseFrom(data);
-            // chech hashes
-            byte[] incomingHash = encodedMessage.Hash.ToByteArray();
-            byte[] currentHash = CalculateHash(encodedMessage.Data.ToByteArray(), HashAlgorithm.HSha512);
+            // compare hashes
+            byte[] incomingHash = encodedMessage.Hash.ToByteArray(); // convert ByteString to byte[]
+            byte[] currentHash = CalculateHash(encodedMessage.Data.ToByteArray(), encodedMessage.HashAlgorithm);
             if (CompareHash(incomingHash, currentHash))
             {
-                throw new InvalidOperationException("The hash in the incoming packet does not match with the computed hash");
+                throw new InvalidOperationException("The hash in the incoming packet " +
+                                                    "does not match the computed hash");
             }
             // return the packet from the encoded message
-            return CreatePacketFromEncodedMessage(encodedMessage);
+            return CreatePacketFromEncodedMessage(encodedMessage, encryptionAlgorithm);
         }
 
-        private static Packet CreatePacketFromEncodedMessage(EncodedMessage encodedMessage)
+        public static byte[] CreateHandshakePacket(EncryptionAlgorithm encryptionAlgorithm)
+        {
+            Handshake handshake = new Handshake()
+            {
+                EncryptionAlgorithm = encryptionAlgorithm
+            };
+            Packet packet = new Packet()
+            {
+                Message = handshake,
+                Type = MessageType.Handshake
+            };
+
+            return EncodeMessage(packet, encryptionAlgorithm);
+        }
+
+        public static byte[] CreateLoginPacket(EncryptionAlgorithm encryptionAlgorithm)
+        {
+            Command command = new Command()
+            {
+                Type = CommandType.Login,
+                Params =
+                {
+                    new Param()
+                    {
+                        ParamId = "username",
+                        SParamVal = "miloszXD"
+                    },
+                    new Param()
+                    {
+                        ParamId = "password",
+                        SParamVal = "nicepasswd"
+                    }
+                }
+            };
+            Packet packet = new Packet()
+            {
+                Message = command,
+                Type = MessageType.Command
+            };
+
+            return EncodeMessage(packet, encryptionAlgorithm);
+        }
+
+        private static Packet CreatePacketFromEncodedMessage(EncodedMessage encodedMessage, 
+            EncryptionAlgorithm encryptionAlgorithm)
         {
             IMessage innerMesage = 
-                GetMessageFromEncodedMessage(encodedMessage.Type, encodedMessage.Data.ToByteArray());
+                GetMessageFromEncodedMessage(encodedMessage, encryptionAlgorithm);
             Packet packet = new Packet()
             {
                 Type = encodedMessage.Type,
@@ -55,9 +115,15 @@ namespace StorageCloud.Desktop
             return packet;
         }
 
-        private static IMessage GetMessageFromEncodedMessage(MessageType type, byte[] data)
+        private static IMessage GetMessageFromEncodedMessage(EncodedMessage encodedMessage,
+            EncryptionAlgorithm encryptionAlgorithm)
         {
-            DecryptData(data, EncryptionAlgorithm.Caesar);
+            // decrypt the data from the encoded message
+            byte[] data = encodedMessage.Data.ToByteArray(); // converting Google.Protobuf.ByteString to byte[]
+            DecryptData(data, encryptionAlgorithm);
+
+            // parse a proper message from the bytes data
+            MessageType type = encodedMessage.Type;
             switch (type)
             {
                 case MessageType.ServerResponse:
@@ -67,7 +133,7 @@ namespace StorageCloud.Desktop
                 case MessageType.Handshake:
                     return Handshake.Parser.ParseFrom(data);
                 case MessageType.Null3:
-                    throw new Exception();
+                    throw CreateNotImplementedException("Null3 message type");
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
@@ -84,7 +150,7 @@ namespace StorageCloud.Desktop
             switch (encryptionAlgorithm)
             {
                 case EncryptionAlgorithm.Null4:
-                    throw new NotImplementedException("Null4 encryption algorithm has not been implemented yet");
+                    throw CreateNotImplementedException("Null4 encryption algorithm");
                 case EncryptionAlgorithm.Noencryption:
                     break;
                 case EncryptionAlgorithm.Caesar:
@@ -117,17 +183,18 @@ namespace StorageCloud.Desktop
             }
         }
 
-        private static EncodedMessage CreateEncodedMessageFromPacket(Packet packet)
+        private static EncodedMessage CreateEncodedMessageFromPacket(Packet packet, 
+            EncryptionAlgorithm encryptionAlgorithm, HashAlgorithm hashAlgorithm)
         {
             // serialize and encrypt packet message
             byte[] data = packet.Message.ToByteArray();
-            EncryptData(data, EncryptionAlgorithm.Caesar);
+            EncryptData(data, encryptionAlgorithm);
             // create Encoded Message
             EncodedMessage encodedMessage = new EncodedMessage()
             {
                 DataSize = (ulong)packet.Message.CalculateSize(),
-                HashAlgorithm = HashAlgorithm.HSha512,
-                Hash = ByteString.CopyFrom(CalculateHash(data, HashAlgorithm.HSha512)),
+                HashAlgorithm = hashAlgorithm,
+                Hash = ByteString.CopyFrom(CalculateHash(data, hashAlgorithm)),
                 Type = packet.Type,
                 Data = ByteString.CopyFrom(data)
             };
@@ -142,8 +209,7 @@ namespace StorageCloud.Desktop
                 case HashAlgorithm.Null2:
                     throw CreateNotImplementedException("Null2");
                 case HashAlgorithm.HNohash:
-                    byte[] bytes = {new byte()};
-                    return bytes;
+                    throw CreateNotImplementedException("Nohash");
                 case HashAlgorithm.HSha256:
                     return SHA256.Create().ComputeHash(data);
                 case HashAlgorithm.HSha512:
@@ -157,9 +223,9 @@ namespace StorageCloud.Desktop
             }
         }
 
-        private static NotImplementedException CreateNotImplementedException(string prefix)
+        private static NotImplementedException CreateNotImplementedException(string what)
         {
-            return new NotImplementedException(prefix + " has not been implemented yet");
+            return new NotImplementedException(what + " has not been implemented yet");
         }
 
         static void Main(string[] args)

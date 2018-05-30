@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -7,11 +10,17 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using StorageCloud.Desktop.Protocol;
 
-namespace StorageCloud.Desktop
+namespace Server
 {
-    class Server
+    public partial class ServerGUI : Form
     {
+        public ServerGUI()
+        {
+            InitializeComponent();
+        }
+
         public void createListener()
         {
             // Create an instance of the TcpListener class.
@@ -21,7 +30,7 @@ namespace StorageCloud.Desktop
             {
                 // Set the listener on the local IP address
                 // and specify the port.
-                tcpListener = new TcpListener(ipAddress, 13);
+                tcpListener = new TcpListener(ipAddress, 15);
                 tcpListener.Start();
                 Console.WriteLine("Waiting for a connection...");
             }
@@ -46,6 +55,16 @@ namespace StorageCloud.Desktop
                 SocketHelper helper = new SocketHelper();
                 helper.processMsg(tcpClient, stream, bytes);
             }
+        }
+
+        static void Main()
+        {
+            Application.Run(new ServerGUI());
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.createListener();
         }
     }
 }
