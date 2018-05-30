@@ -1,13 +1,14 @@
 package pl.edu.pw.elka.llepak.tinbox.messageutils
 
 import com.google.protobuf.ByteString
+import pl.edu.pw.elka.llepak.tinbox.Connection.encryptionAlgorithm
+import pl.edu.pw.elka.llepak.tinbox.Connection.hashAlgorithm
 import pl.edu.pw.elka.llepak.tinbox.protobuf.*
+import pl.edu.pw.elka.llepak.tinbox.utils.EncodeUtils
 import pl.edu.pw.elka.llepak.tinbox.utils.HashUtils
 import java.io.ByteArrayOutputStream
 
 class MessageBuilder {
-    private val hashAlgorithm = HashAlgorithm.H_SHA512
-    private val encryptionAlgorithm = EncryptionAlgorithm.NOENCRYPTION
 
     fun buildParam(id: String, value: String) = Param.newBuilder().setParamId(id).setSParamVal(value).build()
 
@@ -17,16 +18,19 @@ class MessageBuilder {
 
     fun buildCommand(type: CommandType, params: List<Param>) = Command.newBuilder().setType(type).addAllParams(params).build()
 
-    fun buildHandshake() = Handshake.newBuilder().setEncryptionAlgorithm(encryptionAlgorithm).build()
+    fun buildHandshake(encryptionAlgorithm: EncryptionAlgorithm) = Handshake.newBuilder().setEncryptionAlgorithm(encryptionAlgorithm).build()
 
     fun buildEncodedMessage(messageType: MessageType, dataBytes: ByteArray): EncodedMessage {
         val hash = HashUtils.sha512(dataBytes)
 
-        // switch for cipher, switch for hash
+        val encryptedDataBytes = when (encryptionAlgorithm) {
+            EncryptionAlgorithm.CAESAR -> EncodeUtils.caesarEncode(dataBytes)
+            else -> dataBytes
+        }
 
         return EncodedMessage.newBuilder()
-                .setData(ByteString.copyFrom(dataBytes))
-                .setDataSize(dataBytes.size.toLong())
+                .setData(ByteString.copyFrom(encryptedDataBytes))
+                .setDataSize(encryptedDataBytes.size.toLong())
                 .setHashAlgorithm(hashAlgorithm)
                 .setHash(ByteString.copyFrom(hash))
                 .setType(messageType)

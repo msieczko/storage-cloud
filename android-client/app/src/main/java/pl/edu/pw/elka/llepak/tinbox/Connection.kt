@@ -19,6 +19,10 @@ object Connection {
     const val PORT = 52137
     const val TIMEOUT = 5000
 
+    val hashAlgorithm = HashAlgorithm.H_SHA512
+    var encryptionAlgorithm = EncryptionAlgorithm.NOENCRYPTION
+    val defaulEncryptionAlgorithm = EncryptionAlgorithm.CAESAR
+
     var connectTask: ConnectTask = ConnectTask()
     var reconnectTask: ReconnectTask = ReconnectTask()
     var reloginTask: ReloginTask = ReloginTask()
@@ -62,15 +66,22 @@ object Connection {
 
 
     fun sendHandshake() {
-        val handshake = HandshakeTask()
+        val handshake = HandshakeTask(defaulEncryptionAlgorithm)
         handshake.execute()
         Thread({
             connectData.postValue(handshake.get())
         }).start()
     }
 
-    fun sendHandshakeWithResponse(handshake: Handshake): ServerResponse {
-        return sendWithResponse(MessageType.HANDSHAKE, handshake.toByteArray())
+    fun sendHandshake(handshake: Handshake) {
+        sendWithoutResponse(MessageType.HANDSHAKE, handshake.toByteArray())
+    }
+
+    fun getHandshakeAnswer(): ResponseType {
+        val received = socket.getInputStream()
+        val receiveBuffer = ByteArray(4)
+        received.read(receiveBuffer, 0, 4)
+        return messageDecoder.decodeMessage(receiveBuffer, received).type
     }
 
 
@@ -93,27 +104,26 @@ object Connection {
         return messageDecoder.decodeMessage(receiveBuffer, received)
     }
 
-    fun sendCommandWithoutResponse(command: Command) {
-        val byteData = command.toByteArray()
-
-        val encodedMessage = messageBuilder.buildEncodedMessage(MessageType.COMMAND, byteData)
-
+    fun sendWithoutResponse(type: MessageType, byteData: ByteArray) {
+        val encodedMessage = messageBuilder.buildEncodedMessage(type, byteData)
         val toSend = messageBuilder.prepareToSend(encodedMessage)
-
         socket.getOutputStream().write(toSend)
     }
 
-    fun reconnect(){
+    fun reconnect() {
         when (reconnectTask.status) {
             AsyncTask.Status.FINISHED -> {
+                encryptionAlgorithm = EncryptionAlgorithm.NOENCRYPTION
                 reconnectTask = ReconnectTask()
                 reconnectTask.execute()
             }
             AsyncTask.Status.PENDING -> {
+                encryptionAlgorithm = EncryptionAlgorithm.NOENCRYPTION
                 reconnectTask.execute()
             }
             AsyncTask.Status.RUNNING -> { }
             else -> {
+                encryptionAlgorithm = EncryptionAlgorithm.NOENCRYPTION
                 reconnectTask = ReconnectTask()
                 reconnectTask.execute()
             }
@@ -121,6 +131,7 @@ object Connection {
         Thread({
             val reconnected = reconnectTask.get()
             if (reconnected) {
+                HandshakeTask(defaulEncryptionAlgorithm).execute().get()
                 Log.i("sid", sid.toString("UTF-16"))
                 Log.i("username", username)
                 if (sid != ByteString.EMPTY && username != "")
