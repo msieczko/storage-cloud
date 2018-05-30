@@ -3,11 +3,12 @@ package pl.edu.pw.elka.llepak.tinbox.viewmodels
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.os.AsyncTask
+import pl.edu.pw.elka.llepak.tinbox.Connection
 import pl.edu.pw.elka.llepak.tinbox.tasks.LogoutTask
 
 class MainMenuViewModel: ViewModel() {
 
-    lateinit var logoutTask: LogoutTask
+    var logoutTask: LogoutTask = LogoutTask()
     val loggedOutLiveData = MutableLiveData<Boolean>()
 
 
@@ -22,7 +23,7 @@ class MainMenuViewModel: ViewModel() {
                     logoutTask.execute()
                 }
                 AsyncTask.Status.RUNNING -> {}
-                null -> {
+                else -> {
                     logoutTask = LogoutTask()
                     logoutTask.execute()
                 }
@@ -34,7 +35,16 @@ class MainMenuViewModel: ViewModel() {
         }
 
         Thread({
-            loggedOutLiveData.postValue(logoutTask.get())
+            val loggedOut = logoutTask.get()
+            loggedOutLiveData.postValue(loggedOut)
+            if (loggedOut)
+                Connection.connectionData.postValue("Logged out!")
+            else
+                Connection.errorData.postValue("Error while logging out!")
         }).start()
+    }
+
+    fun getListFiles() {
+
     }
 }

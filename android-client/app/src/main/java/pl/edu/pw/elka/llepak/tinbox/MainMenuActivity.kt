@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main_menu.*
 import pl.edu.pw.elka.llepak.tinbox.Connection.connectionData
+import pl.edu.pw.elka.llepak.tinbox.Connection.errorData
 import pl.edu.pw.elka.llepak.tinbox.viewmodels.MainMenuViewModel
 
 class MainMenuActivity: AppCompatActivity() {
@@ -19,6 +20,7 @@ class MainMenuActivity: AppCompatActivity() {
         setContentView(R.layout.activity_main_menu)
 
         connectionData.observe(this, Observer(this::displayConnectionData))
+        errorData.observe(this, Observer(this::displayError))
 
         val viewModel = ViewModelProviders.of(this).get(MainMenuViewModel::class.java)
 
@@ -33,7 +35,17 @@ class MainMenuActivity: AppCompatActivity() {
     }
 
     private fun displayConnectionData(message: String?) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        if (message != null) {
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            connectionData.value = null
+        }
+    }
+
+    private fun displayError(message: String?) {
+        if (message != null) {
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            errorData.value = null
+        }
     }
 
     private fun logOut(loggedOut: Boolean?) {

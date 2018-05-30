@@ -1,11 +1,12 @@
 package pl.edu.pw.elka.llepak.tinbox.tasks
 
 import android.os.AsyncTask
+import android.util.Log
 import pl.edu.pw.elka.llepak.tinbox.Connection
-import pl.edu.pw.elka.llepak.tinbox.Connection.connectionData
 import pl.edu.pw.elka.llepak.tinbox.protobuf.CommandType
 import pl.edu.pw.elka.llepak.tinbox.protobuf.ResponseType
 import pl.edu.pw.elka.llepak.tinbox.protobuf.ServerResponse
+import java.net.SocketTimeoutException
 
 class LoginTask(private val username: String, private val password: String): AsyncTask<Unit, Unit, Boolean>() {
 
@@ -15,28 +16,20 @@ class LoginTask(private val username: String, private val password: String): Asy
         val loginObject = Connection.messageBuilder.buildCommand(CommandType.LOGIN, mutableListOf(usernameParam, passwordParam))
         var response: ServerResponse = ServerResponse.getDefaultInstance()
         var responseType: ResponseType = ResponseType.NULL5
-        val login = Thread({
+        try {
             response = Connection.sendCommandWithResponse(loginObject)
             responseType = response.type
-        })
-        login.uncaughtExceptionHandler = Thread.UncaughtExceptionHandler({ t, e ->
-            e.printStackTrace()
-        })
-        login.start()
-        login.join()
+        }
+        catch (e: Exception) {}
         return when (responseType) {
             ResponseType.LOGGED -> {
-                connectionData.postValue("Logged in as $username")
+                Log.i("sid_login", response.getParams(0).bParamVal.toString("UTF-16"))
                 Connection.sid = response.getParams(0).bParamVal
                 Connection.username = username
                 true
             }
-            ResponseType.ERROR -> {
-                connectionData.postValue("Wrong username or password!")
-                false
-            }
+            ResponseType.ERROR -> false
             else -> {
-                connectionData.postValue("Connection lost! Reconnecting!")
                 Connection.reconnect()
                 false
             }

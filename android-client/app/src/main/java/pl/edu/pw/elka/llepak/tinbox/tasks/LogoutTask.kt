@@ -1,40 +1,41 @@
 package pl.edu.pw.elka.llepak.tinbox.tasks
 
 import android.os.AsyncTask
+import com.google.protobuf.ByteString
 import pl.edu.pw.elka.llepak.tinbox.Connection
+import pl.edu.pw.elka.llepak.tinbox.Connection.connectionData
+import pl.edu.pw.elka.llepak.tinbox.Connection.errorData
+import pl.edu.pw.elka.llepak.tinbox.Connection.sid
+import pl.edu.pw.elka.llepak.tinbox.Connection.username
+import pl.edu.pw.elka.llepak.tinbox.R.string.logout
 import pl.edu.pw.elka.llepak.tinbox.protobuf.CommandType
 import pl.edu.pw.elka.llepak.tinbox.protobuf.ResponseType
 import pl.edu.pw.elka.llepak.tinbox.protobuf.ServerResponse
+import java.net.SocketTimeoutException
 
 class LogoutTask: AsyncTask<Unit, Unit, Boolean>() {
 
     override fun doInBackground(vararg params: Unit?): Boolean {
         val logoutObject = Connection.messageBuilder.buildCommand(CommandType.LOGOUT, mutableListOf())
-        var response: ServerResponse
+        val response: ServerResponse
         var responseType: ResponseType = ResponseType.NULL5
-        val logout = Thread({
+        try {
             response = Connection.sendCommandWithResponse(logoutObject)
             responseType = response.type
-        })
-        logout.uncaughtExceptionHandler = Thread.UncaughtExceptionHandler({ t, e ->
-            e.printStackTrace()
-        })
-        logout.start()
-        logout.join()
+        }
+        catch (e: Exception) {}
         return when (responseType) {
             ResponseType.OK -> {
-                Connection.connectionData.postValue("Logged out!")
+                username = ""
+                sid = ByteString.EMPTY
                 true
             }
-            ResponseType.ERROR -> {
-                Connection.connectionData.postValue("Cannot log out!")
-                false
-            }
+            ResponseType.ERROR -> false
             else -> {
-                Connection.connectionData.postValue("Connection lost! Reconnecting!")
                 Connection.reconnect()
                 false
             }
+
         }
     }
 }

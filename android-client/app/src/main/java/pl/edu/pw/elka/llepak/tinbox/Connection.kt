@@ -1,10 +1,16 @@
 package pl.edu.pw.elka.llepak.tinbox
 
 import android.arch.lifecycle.MutableLiveData
+import android.os.AsyncTask
+import android.util.Log
 import com.google.protobuf.ByteString
 import pl.edu.pw.elka.llepak.tinbox.messageutils.MessageBuilder
 import pl.edu.pw.elka.llepak.tinbox.messageutils.MessageDecoder
 import pl.edu.pw.elka.llepak.tinbox.protobuf.*
+import pl.edu.pw.elka.llepak.tinbox.tasks.ConnectTask
+import pl.edu.pw.elka.llepak.tinbox.tasks.HandshakeTask
+import pl.edu.pw.elka.llepak.tinbox.tasks.ReconnectTask
+import pl.edu.pw.elka.llepak.tinbox.tasks.ReloginTask
 import java.net.InetSocketAddress
 import java.net.Socket
 
@@ -13,67 +19,69 @@ object Connection {
     const val PORT = 52137
     const val TIMEOUT = 5000
 
+    var connectTask: ConnectTask = ConnectTask()
+    var reconnectTask: ReconnectTask = ReconnectTask()
+    var reloginTask: ReloginTask = ReloginTask()
+
     var socket: Socket = Socket()
 
     val messageBuilder = MessageBuilder()
     val messageDecoder = MessageDecoder()
 
     val connectionData = MutableLiveData<String>()
+    val errorData = MutableLiveData<String>()
+    val connectData = MutableLiveData<Boolean>()
 
     var initialized: Boolean = false
 
     var sid: ByteString = ByteString.EMPTY
     var username: String = ""
 
-    private fun connect() {
-        val connect = Thread({
-            val address = InetSocketAddress(HOST, PORT)
-            socket.connect(address, TIMEOUT)
-        })
-        connect.uncaughtExceptionHandler = Thread.UncaughtExceptionHandler({ t, e ->
-            e.printStackTrace()
-        })
-        connect.start()
-        connect.join()
-    }
-
-    fun initialize() {
-        if (initialized) return
-        connect()
-        if (socket.isConnected) {
-            socket.soTimeout = TIMEOUT
-            var response: ResponseType = ResponseType.NULL5
-            val handshake = Thread({
-                response = createAndSendHandshake()
-            })
-            handshake.start()
-            handshake.join()
-            connectionData.postValue("Connected to " + socket.inetAddress + ", port" + socket.port + ", " + response.name)
-            initialized = true
+    fun connect(message: String? = null) {
+        when (connectTask.status) {
+            AsyncTask.Status.FINISHED -> {
+                connectTask = ConnectTask()
+                connectTask.execute()
+            }
+            AsyncTask.Status.PENDING -> {
+                connectTask.execute()
+            }
+            AsyncTask.Status.RUNNING -> { }
+            else -> {
+                connectTask = ConnectTask()
+                connectTask.execute()
+            }
         }
-        else
-            connectionData.postValue("Cannot connect to host! Check your internet connection or server status and restart the app!")
+        Thread({
+            val connected = connectTask.get()
+            connectData.postValue(connected)
+            if (connected)
+                connectionData.postValue(message)
+        }).start()
     }
 
-    private fun createAndSendHandshake(): ResponseType {
-        val handshake = messageBuilder.buildHandshake()
-        val encodedMessage = messageBuilder.buildEncodedMessage(MessageType.HANDSHAKE, handshake.toByteArray())
 
-        val toSend = messageBuilder.prepareToSend(encodedMessage)
-
-        socket.getOutputStream().write(toSend)
-
-        val received = socket.getInputStream()
-        val receiveBuffer = ByteArray(4)
-        received.read(receiveBuffer, 0, 4)
-
-        return messageDecoder.decodeMessage(receiveBuffer, received).type
+    fun sendHandshake() {
+        val handshake = HandshakeTask()
+        handshake.execute()
+        Thread({
+            connectData.postValue(handshake.get())
+        }).start()
     }
+
+    fun sendHandshakeWithResponse(handshake: Handshake): ServerResponse {
+        return sendWithResponse(MessageType.HANDSHAKE, handshake.toByteArray())
+    }
+
 
     fun sendCommandWithResponse(command: Command): ServerResponse {
         val byteData = command.toByteArray()
+        val responded = sendWithResponse(MessageType.COMMAND, byteData)
+        return responded
+    }
 
-        val encodedMessage = messageBuilder.buildEncodedMessage(MessageType.COMMAND, byteData)
+    private fun sendWithResponse(type: MessageType, data: ByteArray): ServerResponse {
+        val encodedMessage = messageBuilder.buildEncodedMessage(type, data)
 
         val toSend = messageBuilder.prepareToSend(encodedMessage)
 
@@ -95,50 +103,57 @@ object Connection {
         socket.getOutputStream().write(toSend)
     }
 
-    fun reconnect() {
-        socket.close()
-        socket = Socket()
-        connect()
-        if (socket.isConnected) {
-            connectionData.postValue("Reconnected!")
-            if (sid != ByteString.EMPTY && username != "")
-                relogin()
+    fun reconnect(){
+        when (reconnectTask.status) {
+            AsyncTask.Status.FINISHED -> {
+                reconnectTask = ReconnectTask()
+                reconnectTask.execute()
+            }
+            AsyncTask.Status.PENDING -> {
+                reconnectTask.execute()
+            }
+            AsyncTask.Status.RUNNING -> { }
+            else -> {
+                reconnectTask = ReconnectTask()
+                reconnectTask.execute()
+            }
         }
-        else
-            connectionData.postValue("Connection error!")
+        Thread({
+            val reconnected = reconnectTask.get()
+            if (reconnected) {
+                Log.i("sid", sid.toString("UTF-16"))
+                Log.i("username", username)
+                if (sid != ByteString.EMPTY && username != "")
+                    relogin()
+                else
+                    connectionData.postValue("Reconnected!")
+            }
+            else
+                errorData.postValue("Error while reconnecting!")
+        }).start()
     }
 
-    private fun relogin(): Boolean {
-        val sidParam = messageBuilder.buildParam("sid", sid)
-        val userParam = messageBuilder.buildParam("username", username)
-
-        val command = messageBuilder.buildCommand(CommandType.RELOGIN, mutableListOf(sidParam, userParam))
-
-        var response: ServerResponse = ServerResponse.getDefaultInstance()
-        var responseType: ResponseType = ResponseType.NULL5
-
-        val relogin = Thread({
-            response = sendCommandWithResponse(command)
-            responseType = response.type
-        })
-        relogin.uncaughtExceptionHandler = Thread.UncaughtExceptionHandler({ t, e ->
-            e.printStackTrace()
-        })
-        relogin.start()
-        relogin.join()
-        return when(responseType) {
-            ResponseType.LOGGED -> {
-                connectionData.postValue("Logged in as ${username}")
-                sid = response.getParams(0).bParamVal
-                true
+    private fun relogin() {
+        when (reloginTask.status) {
+            AsyncTask.Status.FINISHED -> {
+                reloginTask = ReloginTask()
+                reloginTask.execute()
             }
-            ResponseType.ERROR -> {
-                connectionData.postValue("Wrong sid or username!")
-                false
+            AsyncTask.Status.PENDING -> {
+                reloginTask.execute()
             }
+            AsyncTask.Status.RUNNING -> { }
             else -> {
-                false
+                reloginTask = ReloginTask()
+                reloginTask.execute()
             }
         }
+        Thread({
+            val logged = reloginTask.get()
+            if (logged)
+                connectionData.postValue("Logged in as $username")
+            else
+                errorData.postValue("Error while relogging")
+        }).start()
     }
 }

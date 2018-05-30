@@ -3,6 +3,8 @@ package pl.edu.pw.elka.llepak.tinbox.viewmodels
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.os.AsyncTask
+import pl.edu.pw.elka.llepak.tinbox.Connection.connectionData
+import pl.edu.pw.elka.llepak.tinbox.Connection.errorData
 import pl.edu.pw.elka.llepak.tinbox.tasks.LoginTask
 
 class LoginViewModel: ViewModel() {
@@ -22,7 +24,7 @@ class LoginViewModel: ViewModel() {
                     loginTask.execute()
                 }
                 AsyncTask.Status.RUNNING -> {}
-                null -> {
+                else -> {
                     loginTask = LoginTask(username, password)
                     loginTask.execute()
                 }
@@ -34,7 +36,12 @@ class LoginViewModel: ViewModel() {
         }
 
         Thread({
-            loggedInLiveData.postValue(loginTask.get())
+            val loggedIn = loginTask.get()
+            loggedInLiveData.postValue(loggedIn)
+            if (loggedIn)
+                connectionData.postValue("Logged in as $username")
+            else
+                errorData.postValue("Error while logging in!")
         }).start()
     }
 }
