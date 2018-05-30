@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using StorageCloud.Desktop.GUI;
 
 namespace StorageCloud.Desktop
 {
@@ -13,6 +14,8 @@ namespace StorageCloud.Desktop
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            Application.Run(new MainWindowForm());
         }
     }
 }

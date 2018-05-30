@@ -1,6 +1,6 @@
-﻿namespace StorageCloud.Desktop.Protocol
+﻿namespace StorageCloud.Desktop.GUI
 {
-    partial class ClientGui
+    partial class MainWindowForm
     {
         /// <summary>
         /// Required designer variable.
@@ -35,17 +35,17 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(12, 12);
+            this.button1.Location = new System.Drawing.Point(75, 39);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(120, 57);
             this.button1.TabIndex = 0;
             this.button1.Text = "connect to server";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.connectButton_Click);
             // 
             // handshakeButton
             // 
-            this.handshakeButton.Location = new System.Drawing.Point(12, 75);
+            this.handshakeButton.Location = new System.Drawing.Point(75, 102);
             this.handshakeButton.Name = "handshakeButton";
             this.handshakeButton.Size = new System.Drawing.Size(120, 57);
             this.handshakeButton.TabIndex = 1;
@@ -55,7 +55,7 @@
             // 
             // loginButton
             // 
-            this.loginButton.Location = new System.Drawing.Point(12, 138);
+            this.loginButton.Location = new System.Drawing.Point(75, 165);
             this.loginButton.Name = "loginButton";
             this.loginButton.Size = new System.Drawing.Size(120, 57);
             this.loginButton.TabIndex = 2;
@@ -63,7 +63,7 @@
             this.loginButton.UseVisualStyleBackColor = true;
             this.loginButton.Click += new System.EventHandler(this.loginButton_Click);
             // 
-            // ClientGui
+            // MainWindowForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -71,10 +71,9 @@
             this.Controls.Add(this.loginButton);
             this.Controls.Add(this.handshakeButton);
             this.Controls.Add(this.button1);
-            this.Name = "ClientGui";
-            this.Text = "ClientGUI";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ClientGui_FormClosing);
-            this.Load += new System.EventHandler(this.ClientGui_Load);
+            this.Name = "MainWindowForm";
+            this.Text = "Storage cloud";
+            this.Load += new System.EventHandler(this.MainWindowForm_Load);
             this.ResumeLayout(false);
 
         }

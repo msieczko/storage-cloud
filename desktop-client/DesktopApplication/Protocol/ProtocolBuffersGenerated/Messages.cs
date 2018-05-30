@@ -9,7 +9,7 @@ using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
-namespace StorageCloud.Desktop.Protobuf {
+namespace StorageCloud {
 
   /// <summary>Holder for reflection information generated from messages.proto</summary>
   public static partial class MessagesReflection {
@@ -24,42 +24,42 @@ namespace StorageCloud.Desktop.Protobuf {
     static MessagesReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "Cg5tZXNzYWdlcy5wcm90bxIMU3RvcmFnZUNsb3VkIksKBVBhcmFtEg8KB3Bh",
+            "Cg5tZXNzYWdlcy5wcm90bxIMU3RvcmFnZUNsb3VkImAKBVBhcmFtEg8KB3Bh",
             "cmFtSWQYASABKAkSEwoJU1BhcmFtVmFsGAIgASgJSAASEwoJSVBhcmFtVmFs",
-            "GAMgASgDSABCBwoFdmFsdWUicwoHQ29tbWFuZBInCgR0eXBlGAEgASgOMhku",
-            "U3RvcmFnZUNsb3VkLkNvbW1hbmRUeXBlEiMKBnBhcmFtcxgCIAMoCzITLlN0",
-            "b3JhZ2VDbG91ZC5QYXJhbRIMCgRsaXN0GAMgAygJEgwKBGRhdGEYBCABKAwi",
-            "mwEKDkVuY29kZWRNZXNzYWdlEhAKCGRhdGFTaXplGAEgASgEEjIKDWhhc2hB",
-            "bGdvcml0aG0YAiABKA4yGy5TdG9yYWdlQ2xvdWQuSGFzaEFsZ29yaXRobRIM",
-            "CgRoYXNoGAMgASgMEicKBHR5cGUYBCABKA4yGS5TdG9yYWdlQ2xvdWQuTWVz",
-            "c2FnZVR5cGUSDAoEZGF0YRgFIAEoDCJLCglIYW5kc2hha2USPgoTZW5jcnlw",
-            "dGlvbkFsZ29yaXRobRgBIAEoDjIhLlN0b3JhZ2VDbG91ZC5FbmNyeXB0aW9u",
-            "QWxnb3JpdGhtIkkKBEZpbGUSDAoEbmFtZRgBIAEoCRIMCgRzaXplGAIgASgD",
-            "EiUKCG1ldGFkYXRhGAMgAygLMhMuU3RvcmFnZUNsb3VkLlBhcmFtIqEBCg5T",
-            "ZXJ2ZXJSZXNwb25zZRIoCgR0eXBlGAEgASgOMhouU3RvcmFnZUNsb3VkLlJl",
-            "c3BvbnNlVHlwZRIjCgZwYXJhbXMYAiADKAsyEy5TdG9yYWdlQ2xvdWQuUGFy",
-            "YW0SDAoEbGlzdBgDIAMoCRIkCghmaWxlTGlzdBgEIAMoCzISLlN0b3JhZ2VD",
-            "bG91ZC5GaWxlEgwKBGRhdGEYBSABKAwqaAoLQ29tbWFuZFR5cGUSCQoFTlVM",
-            "TDEQABIJCgVMT0dJThABEgsKB1JFTE9HSU4QAhIKCgZMT0dPVVQQAxIMCghS",
-            "RUdJU1RFUhAEEgwKCEdFVF9TVEFUEAUSDgoKTElTVF9GSUxFUxAGKlsKDUhh",
-            "c2hBbGdvcml0aG0SCQoFTlVMTDIQABIMCghIX05PSEFTSBABEgwKCEhfU0hB",
-            "MjU2EAISDAoISF9TSEE1MTIQAxIKCgZIX1NIQTEQBBIJCgVIX01ENRAFKkkK",
-            "C01lc3NhZ2VUeXBlEgkKBU5VTEwzEAASCwoHQ09NTUFORBABEhMKD1NFUlZF",
-            "Ul9SRVNQT05TRRACEg0KCUhBTkRTSEFLRRADKj4KE0VuY3J5cHRpb25BbGdv",
-            "cml0aG0SCQoFTlVMTDQQABIQCgxOT0VOQ1JZUFRJT04QARIKCgZDQUVTQVIQ",
-            "Aip1CgxSZXNwb25zZVR5cGUSCQoFTlVMTDUQABIGCgJPSxABEgkKBUVSUk9S",
-            "EAISCgoGTE9HR0VEEAMSCAoEU1RBVBAEEgkKBUZJTEVTEAUSCgoGU0hBUkVE",
-            "EAYSDAoIU1JWX0RBVEEQBxIMCghDQU5fU0VORBAIQiCqAh1TdG9yYWdlQ2xv",
-            "dWQuRGVza3RvcC5Qcm90b2J1ZmIGcHJvdG8z"));
+            "GAMgASgDSAASEwoJQlBhcmFtVmFsGAQgASgMSABCBwoFdmFsdWUicwoHQ29t",
+            "bWFuZBInCgR0eXBlGAEgASgOMhkuU3RvcmFnZUNsb3VkLkNvbW1hbmRUeXBl",
+            "EiMKBnBhcmFtcxgCIAMoCzITLlN0b3JhZ2VDbG91ZC5QYXJhbRIMCgRsaXN0",
+            "GAMgAygJEgwKBGRhdGEYBCABKAwimwEKDkVuY29kZWRNZXNzYWdlEhAKCGRh",
+            "dGFTaXplGAEgASgEEjIKDWhhc2hBbGdvcml0aG0YAiABKA4yGy5TdG9yYWdl",
+            "Q2xvdWQuSGFzaEFsZ29yaXRobRIMCgRoYXNoGAMgASgMEicKBHR5cGUYBCAB",
+            "KA4yGS5TdG9yYWdlQ2xvdWQuTWVzc2FnZVR5cGUSDAoEZGF0YRgFIAEoDCJL",
+            "CglIYW5kc2hha2USPgoTZW5jcnlwdGlvbkFsZ29yaXRobRgBIAEoDjIhLlN0",
+            "b3JhZ2VDbG91ZC5FbmNyeXB0aW9uQWxnb3JpdGhtIkkKBEZpbGUSDAoEbmFt",
+            "ZRgBIAEoCRIMCgRzaXplGAIgASgDEiUKCG1ldGFkYXRhGAMgAygLMhMuU3Rv",
+            "cmFnZUNsb3VkLlBhcmFtIqEBCg5TZXJ2ZXJSZXNwb25zZRIoCgR0eXBlGAEg",
+            "ASgOMhouU3RvcmFnZUNsb3VkLlJlc3BvbnNlVHlwZRIjCgZwYXJhbXMYAiAD",
+            "KAsyEy5TdG9yYWdlQ2xvdWQuUGFyYW0SDAoEbGlzdBgDIAMoCRIkCghmaWxl",
+            "TGlzdBgEIAMoCzISLlN0b3JhZ2VDbG91ZC5GaWxlEgwKBGRhdGEYBSABKAwq",
+            "aAoLQ29tbWFuZFR5cGUSCQoFTlVMTDEQABIJCgVMT0dJThABEgsKB1JFTE9H",
+            "SU4QAhIKCgZMT0dPVVQQAxIMCghSRUdJU1RFUhAEEgwKCEdFVF9TVEFUEAUS",
+            "DgoKTElTVF9GSUxFUxAGKlsKDUhhc2hBbGdvcml0aG0SCQoFTlVMTDIQABIM",
+            "CghIX05PSEFTSBABEgwKCEhfU0hBMjU2EAISDAoISF9TSEE1MTIQAxIKCgZI",
+            "X1NIQTEQBBIJCgVIX01ENRAFKkkKC01lc3NhZ2VUeXBlEgkKBU5VTEwzEAAS",
+            "CwoHQ09NTUFORBABEhMKD1NFUlZFUl9SRVNQT05TRRACEg0KCUhBTkRTSEFL",
+            "RRADKj4KE0VuY3J5cHRpb25BbGdvcml0aG0SCQoFTlVMTDQQABIQCgxOT0VO",
+            "Q1JZUFRJT04QARIKCgZDQUVTQVIQAip1CgxSZXNwb25zZVR5cGUSCQoFTlVM",
+            "TDUQABIGCgJPSxABEgkKBUVSUk9SEAISCgoGTE9HR0VEEAMSCAoEU1RBVBAE",
+            "EgkKBUZJTEVTEAUSCgoGU0hBUkVEEAYSDAoIU1JWX0RBVEEQBxIMCghDQU5f",
+            "U0VORBAIYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::StorageCloud.Desktop.Protobuf.CommandType), typeof(global::StorageCloud.Desktop.Protobuf.HashAlgorithm), typeof(global::StorageCloud.Desktop.Protobuf.MessageType), typeof(global::StorageCloud.Desktop.Protobuf.EncryptionAlgorithm), typeof(global::StorageCloud.Desktop.Protobuf.ResponseType), }, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::StorageCloud.Desktop.Protobuf.Param), global::StorageCloud.Desktop.Protobuf.Param.Parser, new[]{ "ParamId", "SParamVal", "IParamVal" }, new[]{ "Value" }, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::StorageCloud.Desktop.Protobuf.Command), global::StorageCloud.Desktop.Protobuf.Command.Parser, new[]{ "Type", "Params", "List", "Data" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::StorageCloud.Desktop.Protobuf.EncodedMessage), global::StorageCloud.Desktop.Protobuf.EncodedMessage.Parser, new[]{ "DataSize", "HashAlgorithm", "Hash", "Type", "Data" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::StorageCloud.Desktop.Protobuf.Handshake), global::StorageCloud.Desktop.Protobuf.Handshake.Parser, new[]{ "EncryptionAlgorithm" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::StorageCloud.Desktop.Protobuf.File), global::StorageCloud.Desktop.Protobuf.File.Parser, new[]{ "Name", "Size", "Metadata" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::StorageCloud.Desktop.Protobuf.ServerResponse), global::StorageCloud.Desktop.Protobuf.ServerResponse.Parser, new[]{ "Type", "Params", "List", "FileList", "Data" }, null, null, null)
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::StorageCloud.CommandType), typeof(global::StorageCloud.HashAlgorithm), typeof(global::StorageCloud.MessageType), typeof(global::StorageCloud.EncryptionAlgorithm), typeof(global::StorageCloud.ResponseType), }, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::StorageCloud.Param), global::StorageCloud.Param.Parser, new[]{ "ParamId", "SParamVal", "IParamVal", "BParamVal" }, new[]{ "Value" }, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::StorageCloud.Command), global::StorageCloud.Command.Parser, new[]{ "Type", "Params", "List", "Data" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::StorageCloud.EncodedMessage), global::StorageCloud.EncodedMessage.Parser, new[]{ "DataSize", "HashAlgorithm", "Hash", "Type", "Data" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::StorageCloud.Handshake), global::StorageCloud.Handshake.Parser, new[]{ "EncryptionAlgorithm" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::StorageCloud.File), global::StorageCloud.File.Parser, new[]{ "Name", "Size", "Metadata" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::StorageCloud.ServerResponse), global::StorageCloud.ServerResponse.Parser, new[]{ "Type", "Params", "List", "FileList", "Data" }, null, null, null)
           }));
     }
     #endregion
@@ -121,7 +121,7 @@ namespace StorageCloud.Desktop.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::StorageCloud.Desktop.Protobuf.MessagesReflection.Descriptor.MessageTypes[0]; }
+      get { return global::StorageCloud.MessagesReflection.Descriptor.MessageTypes[0]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -145,6 +145,9 @@ namespace StorageCloud.Desktop.Protobuf {
           break;
         case ValueOneofCase.IParamVal:
           IParamVal = other.IParamVal;
+          break;
+        case ValueOneofCase.BParamVal:
+          BParamVal = other.BParamVal;
           break;
       }
 
@@ -189,12 +192,24 @@ namespace StorageCloud.Desktop.Protobuf {
       }
     }
 
+    /// <summary>Field number for the "BParamVal" field.</summary>
+    public const int BParamValFieldNumber = 4;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pb::ByteString BParamVal {
+      get { return valueCase_ == ValueOneofCase.BParamVal ? (pb::ByteString) value_ : pb::ByteString.Empty; }
+      set {
+        value_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+        valueCase_ = ValueOneofCase.BParamVal;
+      }
+    }
+
     private object value_;
     /// <summary>Enum of possible cases for the "value" oneof.</summary>
     public enum ValueOneofCase {
       None = 0,
       SParamVal = 2,
       IParamVal = 3,
+      BParamVal = 4,
     }
     private ValueOneofCase valueCase_ = ValueOneofCase.None;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -224,6 +239,7 @@ namespace StorageCloud.Desktop.Protobuf {
       if (ParamId != other.ParamId) return false;
       if (SParamVal != other.SParamVal) return false;
       if (IParamVal != other.IParamVal) return false;
+      if (BParamVal != other.BParamVal) return false;
       if (ValueCase != other.ValueCase) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -234,6 +250,7 @@ namespace StorageCloud.Desktop.Protobuf {
       if (ParamId.Length != 0) hash ^= ParamId.GetHashCode();
       if (valueCase_ == ValueOneofCase.SParamVal) hash ^= SParamVal.GetHashCode();
       if (valueCase_ == ValueOneofCase.IParamVal) hash ^= IParamVal.GetHashCode();
+      if (valueCase_ == ValueOneofCase.BParamVal) hash ^= BParamVal.GetHashCode();
       hash ^= (int) valueCase_;
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -260,6 +277,10 @@ namespace StorageCloud.Desktop.Protobuf {
         output.WriteRawTag(24);
         output.WriteInt64(IParamVal);
       }
+      if (valueCase_ == ValueOneofCase.BParamVal) {
+        output.WriteRawTag(34);
+        output.WriteBytes(BParamVal);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -276,6 +297,9 @@ namespace StorageCloud.Desktop.Protobuf {
       }
       if (valueCase_ == ValueOneofCase.IParamVal) {
         size += 1 + pb::CodedOutputStream.ComputeInt64Size(IParamVal);
+      }
+      if (valueCase_ == ValueOneofCase.BParamVal) {
+        size += 1 + pb::CodedOutputStream.ComputeBytesSize(BParamVal);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -297,6 +321,9 @@ namespace StorageCloud.Desktop.Protobuf {
           break;
         case ValueOneofCase.IParamVal:
           IParamVal = other.IParamVal;
+          break;
+        case ValueOneofCase.BParamVal:
+          BParamVal = other.BParamVal;
           break;
       }
 
@@ -323,6 +350,10 @@ namespace StorageCloud.Desktop.Protobuf {
             IParamVal = input.ReadInt64();
             break;
           }
+          case 34: {
+            BParamVal = input.ReadBytes();
+            break;
+          }
         }
       }
     }
@@ -340,7 +371,7 @@ namespace StorageCloud.Desktop.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::StorageCloud.Desktop.Protobuf.MessagesReflection.Descriptor.MessageTypes[1]; }
+      get { return global::StorageCloud.MessagesReflection.Descriptor.MessageTypes[1]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -371,9 +402,9 @@ namespace StorageCloud.Desktop.Protobuf {
 
     /// <summary>Field number for the "type" field.</summary>
     public const int TypeFieldNumber = 1;
-    private global::StorageCloud.Desktop.Protobuf.CommandType type_ = 0;
+    private global::StorageCloud.CommandType type_ = 0;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::StorageCloud.Desktop.Protobuf.CommandType Type {
+    public global::StorageCloud.CommandType Type {
       get { return type_; }
       set {
         type_ = value;
@@ -382,11 +413,11 @@ namespace StorageCloud.Desktop.Protobuf {
 
     /// <summary>Field number for the "params" field.</summary>
     public const int ParamsFieldNumber = 2;
-    private static readonly pb::FieldCodec<global::StorageCloud.Desktop.Protobuf.Param> _repeated_params_codec
-        = pb::FieldCodec.ForMessage(18, global::StorageCloud.Desktop.Protobuf.Param.Parser);
-    private readonly pbc::RepeatedField<global::StorageCloud.Desktop.Protobuf.Param> params_ = new pbc::RepeatedField<global::StorageCloud.Desktop.Protobuf.Param>();
+    private static readonly pb::FieldCodec<global::StorageCloud.Param> _repeated_params_codec
+        = pb::FieldCodec.ForMessage(18, global::StorageCloud.Param.Parser);
+    private readonly pbc::RepeatedField<global::StorageCloud.Param> params_ = new pbc::RepeatedField<global::StorageCloud.Param>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public pbc::RepeatedField<global::StorageCloud.Desktop.Protobuf.Param> Params {
+    public pbc::RepeatedField<global::StorageCloud.Param> Params {
       get { return params_; }
     }
 
@@ -511,7 +542,7 @@ namespace StorageCloud.Desktop.Protobuf {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
-            type_ = (global::StorageCloud.Desktop.Protobuf.CommandType) input.ReadEnum();
+            type_ = (global::StorageCloud.CommandType) input.ReadEnum();
             break;
           }
           case 18: {
@@ -540,7 +571,7 @@ namespace StorageCloud.Desktop.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::StorageCloud.Desktop.Protobuf.MessagesReflection.Descriptor.MessageTypes[2]; }
+      get { return global::StorageCloud.MessagesReflection.Descriptor.MessageTypes[2]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -583,9 +614,9 @@ namespace StorageCloud.Desktop.Protobuf {
 
     /// <summary>Field number for the "hashAlgorithm" field.</summary>
     public const int HashAlgorithmFieldNumber = 2;
-    private global::StorageCloud.Desktop.Protobuf.HashAlgorithm hashAlgorithm_ = 0;
+    private global::StorageCloud.HashAlgorithm hashAlgorithm_ = 0;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::StorageCloud.Desktop.Protobuf.HashAlgorithm HashAlgorithm {
+    public global::StorageCloud.HashAlgorithm HashAlgorithm {
       get { return hashAlgorithm_; }
       set {
         hashAlgorithm_ = value;
@@ -605,9 +636,9 @@ namespace StorageCloud.Desktop.Protobuf {
 
     /// <summary>Field number for the "type" field.</summary>
     public const int TypeFieldNumber = 4;
-    private global::StorageCloud.Desktop.Protobuf.MessageType type_ = 0;
+    private global::StorageCloud.MessageType type_ = 0;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::StorageCloud.Desktop.Protobuf.MessageType Type {
+    public global::StorageCloud.MessageType Type {
       get { return type_; }
       set {
         type_ = value;
@@ -752,7 +783,7 @@ namespace StorageCloud.Desktop.Protobuf {
             break;
           }
           case 16: {
-            hashAlgorithm_ = (global::StorageCloud.Desktop.Protobuf.HashAlgorithm) input.ReadEnum();
+            hashAlgorithm_ = (global::StorageCloud.HashAlgorithm) input.ReadEnum();
             break;
           }
           case 26: {
@@ -760,7 +791,7 @@ namespace StorageCloud.Desktop.Protobuf {
             break;
           }
           case 32: {
-            type_ = (global::StorageCloud.Desktop.Protobuf.MessageType) input.ReadEnum();
+            type_ = (global::StorageCloud.MessageType) input.ReadEnum();
             break;
           }
           case 42: {
@@ -781,7 +812,7 @@ namespace StorageCloud.Desktop.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::StorageCloud.Desktop.Protobuf.MessagesReflection.Descriptor.MessageTypes[3]; }
+      get { return global::StorageCloud.MessagesReflection.Descriptor.MessageTypes[3]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -809,9 +840,9 @@ namespace StorageCloud.Desktop.Protobuf {
 
     /// <summary>Field number for the "encryptionAlgorithm" field.</summary>
     public const int EncryptionAlgorithmFieldNumber = 1;
-    private global::StorageCloud.Desktop.Protobuf.EncryptionAlgorithm encryptionAlgorithm_ = 0;
+    private global::StorageCloud.EncryptionAlgorithm encryptionAlgorithm_ = 0;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::StorageCloud.Desktop.Protobuf.EncryptionAlgorithm EncryptionAlgorithm {
+    public global::StorageCloud.EncryptionAlgorithm EncryptionAlgorithm {
       get { return encryptionAlgorithm_; }
       set {
         encryptionAlgorithm_ = value;
@@ -893,7 +924,7 @@ namespace StorageCloud.Desktop.Protobuf {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
-            encryptionAlgorithm_ = (global::StorageCloud.Desktop.Protobuf.EncryptionAlgorithm) input.ReadEnum();
+            encryptionAlgorithm_ = (global::StorageCloud.EncryptionAlgorithm) input.ReadEnum();
             break;
           }
         }
@@ -910,7 +941,7 @@ namespace StorageCloud.Desktop.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::StorageCloud.Desktop.Protobuf.MessagesReflection.Descriptor.MessageTypes[4]; }
+      get { return global::StorageCloud.MessagesReflection.Descriptor.MessageTypes[4]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -962,11 +993,11 @@ namespace StorageCloud.Desktop.Protobuf {
 
     /// <summary>Field number for the "metadata" field.</summary>
     public const int MetadataFieldNumber = 3;
-    private static readonly pb::FieldCodec<global::StorageCloud.Desktop.Protobuf.Param> _repeated_metadata_codec
-        = pb::FieldCodec.ForMessage(26, global::StorageCloud.Desktop.Protobuf.Param.Parser);
-    private readonly pbc::RepeatedField<global::StorageCloud.Desktop.Protobuf.Param> metadata_ = new pbc::RepeatedField<global::StorageCloud.Desktop.Protobuf.Param>();
+    private static readonly pb::FieldCodec<global::StorageCloud.Param> _repeated_metadata_codec
+        = pb::FieldCodec.ForMessage(26, global::StorageCloud.Param.Parser);
+    private readonly pbc::RepeatedField<global::StorageCloud.Param> metadata_ = new pbc::RepeatedField<global::StorageCloud.Param>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public pbc::RepeatedField<global::StorageCloud.Desktop.Protobuf.Param> Metadata {
+    public pbc::RepeatedField<global::StorageCloud.Param> Metadata {
       get { return metadata_; }
     }
 
@@ -1087,7 +1118,7 @@ namespace StorageCloud.Desktop.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::StorageCloud.Desktop.Protobuf.MessagesReflection.Descriptor.MessageTypes[5]; }
+      get { return global::StorageCloud.MessagesReflection.Descriptor.MessageTypes[5]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1119,9 +1150,9 @@ namespace StorageCloud.Desktop.Protobuf {
 
     /// <summary>Field number for the "type" field.</summary>
     public const int TypeFieldNumber = 1;
-    private global::StorageCloud.Desktop.Protobuf.ResponseType type_ = 0;
+    private global::StorageCloud.ResponseType type_ = 0;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::StorageCloud.Desktop.Protobuf.ResponseType Type {
+    public global::StorageCloud.ResponseType Type {
       get { return type_; }
       set {
         type_ = value;
@@ -1130,11 +1161,11 @@ namespace StorageCloud.Desktop.Protobuf {
 
     /// <summary>Field number for the "params" field.</summary>
     public const int ParamsFieldNumber = 2;
-    private static readonly pb::FieldCodec<global::StorageCloud.Desktop.Protobuf.Param> _repeated_params_codec
-        = pb::FieldCodec.ForMessage(18, global::StorageCloud.Desktop.Protobuf.Param.Parser);
-    private readonly pbc::RepeatedField<global::StorageCloud.Desktop.Protobuf.Param> params_ = new pbc::RepeatedField<global::StorageCloud.Desktop.Protobuf.Param>();
+    private static readonly pb::FieldCodec<global::StorageCloud.Param> _repeated_params_codec
+        = pb::FieldCodec.ForMessage(18, global::StorageCloud.Param.Parser);
+    private readonly pbc::RepeatedField<global::StorageCloud.Param> params_ = new pbc::RepeatedField<global::StorageCloud.Param>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public pbc::RepeatedField<global::StorageCloud.Desktop.Protobuf.Param> Params {
+    public pbc::RepeatedField<global::StorageCloud.Param> Params {
       get { return params_; }
     }
 
@@ -1150,11 +1181,11 @@ namespace StorageCloud.Desktop.Protobuf {
 
     /// <summary>Field number for the "fileList" field.</summary>
     public const int FileListFieldNumber = 4;
-    private static readonly pb::FieldCodec<global::StorageCloud.Desktop.Protobuf.File> _repeated_fileList_codec
-        = pb::FieldCodec.ForMessage(34, global::StorageCloud.Desktop.Protobuf.File.Parser);
-    private readonly pbc::RepeatedField<global::StorageCloud.Desktop.Protobuf.File> fileList_ = new pbc::RepeatedField<global::StorageCloud.Desktop.Protobuf.File>();
+    private static readonly pb::FieldCodec<global::StorageCloud.File> _repeated_fileList_codec
+        = pb::FieldCodec.ForMessage(34, global::StorageCloud.File.Parser);
+    private readonly pbc::RepeatedField<global::StorageCloud.File> fileList_ = new pbc::RepeatedField<global::StorageCloud.File>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public pbc::RepeatedField<global::StorageCloud.Desktop.Protobuf.File> FileList {
+    public pbc::RepeatedField<global::StorageCloud.File> FileList {
       get { return fileList_; }
     }
 
@@ -1271,7 +1302,7 @@ namespace StorageCloud.Desktop.Protobuf {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
-            type_ = (global::StorageCloud.Desktop.Protobuf.ResponseType) input.ReadEnum();
+            type_ = (global::StorageCloud.ResponseType) input.ReadEnum();
             break;
           }
           case 18: {

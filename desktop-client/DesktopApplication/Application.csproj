@@ -32,7 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>StorageCloud.Desktop.Protocol.ClientGui</StartupObject>
+    <StartupObject>StorageCloud.Desktop.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
@@ -51,18 +51,35 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="GUI\ClientGUI.cs">
+    <Compile Include="GUI\LoggedForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUI\ClientGUI.Designer.cs">
-      <DependentUpon>ClientGUI.cs</DependentUpon>
+    <Compile Include="GUI\LoggedForm.Designer.cs">
+      <DependentUpon>LoggedForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="GUI\PacketCoder.cs" />
-    <Compile Include="GUI\PacketManager.cs" />
-    <Compile Include="Protocol\Protocol.cs" />
+    <Compile Include="GUI\LoginForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\LoginForm.Designer.cs">
+      <DependentUpon>LoginForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="GUI\MainWindowForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\MainWindowForm.Designer.cs">
+      <DependentUpon>MainWindowForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Protocol\PacketCoder.cs" />
+    <Compile Include="Protocol\PacketManager.cs" />
     <Compile Include="Protocol\ProtocolBuffersGenerated\Messages.cs" />
+    <EmbeddedResource Include="GUI\LoggedForm.resx">
+      <DependentUpon>LoggedForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\LoginForm.resx">
+      <DependentUpon>LoginForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -73,8 +90,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="GUI\ClientGUI.resx">
-      <DependentUpon>ClientGUI.cs</DependentUpon>
+    <EmbeddedResource Include="GUI\MainWindowForm.resx">
+      <DependentUpon>MainWindowForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
