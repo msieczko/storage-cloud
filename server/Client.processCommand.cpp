@@ -204,7 +204,7 @@ bool Client::processCommand(Command* cmd) {
                     }
                 }
             } else {
-                resError(res, "Wrong command format", "tried to list files, but command format was wrong");
+                resError(res, "Wrong command format", "tried to make directory, but command format was wrong");
             }
 
         }

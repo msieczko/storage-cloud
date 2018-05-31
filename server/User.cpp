@@ -361,7 +361,13 @@ bool UserManager::addFile(oid& id, UFile& file, string& home_dir) {
         doc.append(kvp("hash", toBinary(tmp)));
         doc.append(kvp("isValid", toBool(true)));
 
-        string fullPath = root_path + home_dir + file.filename;
+        string homeDir;
+
+        if(!getHomeDir(id, homeDir)) {
+            return false;
+        }
+
+        string fullPath = root_path + homeDir + file.filename;
         int mkdir_res = mkdir(fullPath.c_str(), S_IRWXU);
 
         if(mkdir_res != 0) {
