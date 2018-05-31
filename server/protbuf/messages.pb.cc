@@ -307,23 +307,30 @@ void AddDescriptorsImpl() {
       "\030\001 \001(\0162\032.StorageCloud.ResponseType\022#\n\006pa"
       "rams\030\002 \003(\0132\023.StorageCloud.Param\022\014\n\004list\030"
       "\003 \003(\t\022$\n\010fileList\030\004 \003(\0132\022.StorageCloud.F"
-      "ile\022\014\n\004data\030\005 \001(\014*h\n\013CommandType\022\t\n\005NULL"
-      "1\020\000\022\t\n\005LOGIN\020\001\022\013\n\007RELOGIN\020\002\022\n\n\006LOGOUT\020\003\022"
-      "\014\n\010REGISTER\020\004\022\014\n\010GET_STAT\020\005\022\016\n\nLIST_FILE"
-      "S\020\006*[\n\rHashAlgorithm\022\t\n\005NULL2\020\000\022\014\n\010H_NOH"
-      "ASH\020\001\022\014\n\010H_SHA256\020\002\022\014\n\010H_SHA512\020\003\022\n\n\006H_S"
-      "HA1\020\004\022\t\n\005H_MD5\020\005*I\n\013MessageType\022\t\n\005NULL3"
-      "\020\000\022\013\n\007COMMAND\020\001\022\023\n\017SERVER_RESPONSE\020\002\022\r\n\t"
-      "HANDSHAKE\020\003*>\n\023EncryptionAlgorithm\022\t\n\005NU"
-      "LL4\020\000\022\020\n\014NOENCRYPTION\020\001\022\n\n\006CAESAR\020\002*.\n\010F"
-      "ileType\022\t\n\005NULL6\020\000\022\010\n\004FILE\020\001\022\r\n\tDIRECTOR"
-      "Y\020\002*u\n\014ResponseType\022\t\n\005NULL5\020\000\022\006\n\002OK\020\001\022\t"
-      "\n\005ERROR\020\002\022\n\n\006LOGGED\020\003\022\010\n\004STAT\020\004\022\t\n\005FILES"
-      "\020\005\022\n\n\006SHARED\020\006\022\014\n\010SRV_DATA\020\007\022\014\n\010CAN_SEND"
-      "\020\010b\006proto3"
+      "ile\022\014\n\004data\030\005 \001(\014*\373\002\n\013CommandType\022\t\n\005NUL"
+      "L1\020\000\022\t\n\005LOGIN\020\001\022\013\n\007RELOGIN\020\002\022\n\n\006LOGOUT\020\003"
+      "\022\014\n\010REGISTER\020\004\022\014\n\010GET_STAT\020\005\022\016\n\nLIST_FIL"
+      "ES\020\006\022\t\n\005MKDIR\020\007\022\n\n\006DELETE\020\010\022\n\n\006RENAME\020\t\022"
+      "\t\n\005SHARE\020\n\022\016\n\nSHARE_INFO\020\013\022\010\n\004MOVE\020\014\022\014\n\010"
+      "DOWNLOAD\020\r\022\014\n\010METADATA\020\016\022\014\n\010USR_DATA\020\017\022\013"
+      "\n\007UNSHARE\020\020\022\017\n\013DELETE_USER\020\021\022\024\n\020CHANGE_U"
+      "SER_PASS\020\022\022\r\n\tUSER_STAT\020\023\022\023\n\017LIST_USER_F"
+      "ILES\020\024\022\024\n\020DELETE_USER_FILE\020\025\022\021\n\rADMIN_UN"
+      "SHARE\020\026\022\024\n\020ADMIN_SHARE_INFO\020\027\022\010\n\004WARN\020\030*"
+      "[\n\rHashAlgorithm\022\t\n\005NULL2\020\000\022\014\n\010H_NOHASH\020"
+      "\001\022\014\n\010H_SHA256\020\002\022\014\n\010H_SHA512\020\003\022\n\n\006H_SHA1\020"
+      "\004\022\t\n\005H_MD5\020\005*I\n\013MessageType\022\t\n\005NULL3\020\000\022\013"
+      "\n\007COMMAND\020\001\022\023\n\017SERVER_RESPONSE\020\002\022\r\n\tHAND"
+      "SHAKE\020\003*>\n\023EncryptionAlgorithm\022\t\n\005NULL4\020"
+      "\000\022\020\n\014NOENCRYPTION\020\001\022\n\n\006CAESAR\020\002*.\n\010FileT"
+      "ype\022\t\n\005NULL6\020\000\022\010\n\004FILE\020\001\022\r\n\tDIRECTORY\020\002*"
+      "u\n\014ResponseType\022\t\n\005NULL5\020\000\022\006\n\002OK\020\001\022\t\n\005ER"
+      "ROR\020\002\022\n\n\006LOGGED\020\003\022\010\n\004STAT\020\004\022\t\n\005FILES\020\005\022\n"
+      "\n\006SHARED\020\006\022\014\n\010SRV_DATA\020\007\022\014\n\010CAN_SEND\020\010b\006"
+      "proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1330);
+      descriptor, 1606);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "messages.proto", &protobuf_RegisterTypes);
 }
@@ -353,6 +360,24 @@ bool CommandType_IsValid(int value) {
     case 4:
     case 5:
     case 6:
+    case 7:
+    case 8:
+    case 9:
+    case 10:
+    case 11:
+    case 12:
+    case 13:
+    case 14:
+    case 15:
+    case 16:
+    case 17:
+    case 18:
+    case 19:
+    case 20:
+    case 21:
+    case 22:
+    case 23:
+    case 24:
       return true;
     default:
       return false;

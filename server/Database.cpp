@@ -115,6 +115,40 @@ bool Database::getField(string&& colName, string&& fieldName, bsoncxx::oid id, c
     return false;
 }
 
+bool Database::getField(string&& colName, string&& fieldToGetName, string&& idFieldName, bsoncxx::oid& id,
+                        string&& fieldName, const string& fieldVal, int64_t& res) {
+
+    mongocxx::options::find opts{};
+    opts.projection(make_document(kvp(fieldToGetName, 1), kvp("_id", 0)));
+
+    try {
+        auto cursor = db[colName].find(make_document(kvp(idFieldName, id), kvp(fieldName, fieldVal)), opts);
+
+        auto doc_i = cursor.begin();
+
+        if (doc_i == cursor.end() || doc_i->empty()) {
+            logger->log(l_id, "getField (2) got empty resultSet");
+            return false;
+        }
+
+        auto val = doc_i->begin();
+
+        if (bsoncxx::string::to_string(val->key()) == fieldName && val->type() == bsoncxx::type::k_int64) {
+            res = val->get_int64().value;
+            return true;
+        }
+
+        logger->log(l_id, "getField (2) got invalid field");
+        return false;
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while getting field (2): " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while getting field (2): unknown error");
+        return false;
+    }
+}
+
 bool Database::getId(string&& colName, string&& fieldName, const string& fieldValue, bsoncxx::oid& id) {
     mongocxx::options::find opts{};
     opts.projection(make_document(kvp("_id", 1)));
@@ -418,6 +452,19 @@ bool Database::countField(string&& colName, string&& fieldName, bsoncxx::oid id,
         return false;
     } catch (...) {
         logger->err(l_id, "error while counting binary fields: unknown error");
+        return false;
+    }
+}
+
+bool Database::countField(string&& colName, string&& fieldName, const string& fieldVal, string&& idFieldName, bsoncxx::oid id, uint64_t& res) {
+    try {
+        res = (uint64_t) db[colName].count(make_document(kvp(idFieldName, id), kvp(fieldName, fieldVal)));
+        return true;
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while counting string fields: " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while counting string fields: unknown error");
         return false;
     }
 }

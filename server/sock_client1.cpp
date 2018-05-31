@@ -142,10 +142,15 @@ int main(int argc, char *argv[])
 
 
     cmd.clear_params();
-    cmd.set_type(StorageCloud::LIST_FILES);
+//    cmd.set_type(StorageCloud::LIST_FILES);
+//    tmp_param = cmd.add_params();
+//    tmp_param->set_paramid("path");
+//    tmp_param->set_sparamval("/dir/dir23");
+
+    cmd.set_type(StorageCloud::MKDIR);
     tmp_param = cmd.add_params();
     tmp_param->set_paramid("path");
-    tmp_param->set_sparamval("/dir/dir23");
+    tmp_param->set_sparamval("/test_dir");
     delete data;
     data = new uint8_t[cmd.ByteSize()];
     cmd.SerializeToArray(data, cmd.ByteSize());

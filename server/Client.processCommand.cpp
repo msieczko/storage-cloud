@@ -170,6 +170,41 @@ bool Client::processCommand(Command* cmd) {
                 }
 
                 res.set_type(ResponseType::FILES);
+            } else {
+                resError(res, "Wrong command format", "tried to list files, but command format was wrong");
+            }
+
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::MKDIR) {
+        if(!(u.isValid() && u.isAuthorized())) {
+            resError(res, "You are not logged in", "tried to make directory, but was not logged in");
+        } else {
+            if(cmd->params_size() == 1 && cmd->params(0).paramid() == "path" && !cmd->params(0).sparamval().empty()) {
+                UFile file;
+                file.filename = cmd->params(0).sparamval();
+                file.type = FILE_DIR;
+
+                uint8_t wyn = u.addFile(file);
+
+                if(wyn == ADD_FILE_OK) {
+                    res.set_type(ResponseType::OK);
+                } else {
+                    if(wyn == ADD_FILE_INTERNAL_ERROR) {
+                        resError(res, "Internal error occured", "tried to make directory, but internal error occured");
+                    } else if(wyn == ADD_FILE_WRONG_DIR) {
+                        resError(res, "Wrong path", "tried to make directory, but provided wrong path");
+                    } else if(wyn == ADD_FILE_EMPTY_NAME) {
+                        resError(res, "Filename empty", "tried to make directory, but provided empty filename");
+                    } else if(wyn == ADD_FILE_FILE_EXISTS) {
+                        resError(res, "Directory already exists", "tried to make directory, but directory already exists");
+                    } else {
+                        resError(res, "Unknown error", "tried to make directory, but unknown error occured");
+                    }
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to list files, but command format was wrong");
             }
 
         }

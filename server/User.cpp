@@ -3,6 +3,8 @@
 //
 
 #include "User.h"
+#include <sys/types.h>
+#include <sys/stat.h>
 
 using namespace mongocxx;
 using std::map;
@@ -121,8 +123,37 @@ bool User::listFilesinPath(const string& path, vector<UFile>& res) {
     return user_manager.listFilesinPath(id, path, res);
 }
 
-bool User::addFile(UFile& file) {
-    return user_manager.addFile(id, file);
+// also adds directory
+uint8_t User::addFile(UFile& file) {
+    if(file.filename[0] != '/') {
+        return ADD_FILE_WRONG_DIR;
+    }
+
+    if(user_manager.yourFileExists(id, file.filename)) {
+        return ADD_FILE_FILE_EXISTS;
+    }
+
+    uint64_t pos;
+
+    if((pos = file.filename.rfind('/')) == string::npos) {
+        return ADD_FILE_WRONG_DIR;
+    }
+
+    if(pos == file.filename.size() - 1) {
+        return ADD_FILE_EMPTY_NAME;
+    }
+
+    string dir = file.filename.substr(0, pos);
+
+    if(!dir.empty() && !user_manager.yourFileIsDir(id, dir)) {
+        return ADD_FILE_WRONG_DIR;
+    }
+
+    if(user_manager.addFile(id, file, home_dir)) {
+        return ADD_FILE_OK;
+    }
+
+    return ADD_FILE_INTERNAL_ERROR;
 }
 
 ///---------------------UserManager---------------------
@@ -288,19 +319,80 @@ bsoncxx::types::b_oid toOID(oid i) {
     return tmp;
 }
 
-bool UserManager::addFile(oid& id, UFile& file) {
+bsoncxx::types::b_bool toBool(bool b) {
+    bsoncxx::types::b_bool tmp{};
+    tmp.value = b;
+    return tmp;
+}
 
+bsoncxx::types::b_binary toBinary(string& str) {
+    bsoncxx::types::b_binary b_sid{};
+    b_sid.bytes = (const uint8_t*) str.c_str();
+    b_sid.size = (uint32_t) str.size();
+    return b_sid;
+}
+
+// also adds directory
+bool UserManager::addFile(oid& id, UFile& file, string& home_dir) {
     auto doc = bsoncxx::builder::basic::document{};
 
-    doc.append(kvp("filename", toUTF8(file.filename)));
-    doc.append(kvp("size", toINT64(file.size)));
-    doc.append(kvp("creationDate", currDate()));
-    doc.append(kvp("type", toINT64(file.type)));
-    doc.append(kvp("owner", toOID(id)));
+    //TODO increase file count in parent dir
 
-    oid tmp_id;
+    if(file.type == FILE_REGULAR) {
+        doc.append(kvp("filename", toUTF8(file.filename)));
+        doc.append(kvp("size", toINT64(file.size)));
+        doc.append(kvp("creationDate", currDate()));
+        doc.append(kvp("type", toINT64(file.type)));
+        doc.append(kvp("hash", toBinary(file.hash)));
+        doc.append(kvp("isValid", toBool(false)));
+        doc.append(kvp("lastValid", toINT64(0)));
+        doc.append(kvp("owner", toOID(id)));
 
-    return db.insertDoc("files", tmp_id, doc);
+        oid tmp_id;
+
+        return db.insertDoc("files", tmp_id, doc);
+    } else if(file.type == FILE_DIR) {
+        string tmp = "";
+        doc.append(kvp("filename", toUTF8(file.filename)));
+        doc.append(kvp("size", toINT64(0)));
+        doc.append(kvp("creationDate", currDate()));
+        doc.append(kvp("type", toINT64(FILE_DIR)));
+        doc.append(kvp("owner", toOID(id)));
+        doc.append(kvp("hash", toBinary(tmp)));
+        doc.append(kvp("isValid", toBool(true)));
+
+        string fullPath = root_path + home_dir + file.filename;
+        int mkdir_res = mkdir(fullPath.c_str(), S_IRWXU);
+
+        if(mkdir_res != 0) {
+            //TODO log it;
+            return false;
+        }
+
+        oid tmp_id;
+        if(!db.insertDoc("files", tmp_id, doc)) {
+            rmdir(fullPath.c_str());
+            return false;
+        }
+
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool UserManager::yourFileExists(oid &id, const string &filename) {
+    uint64_t tmp_l = 0;
+    return (db.countField("files", "filename", filename, "owner", id, tmp_l) && tmp_l == 1);
+}
+
+bool UserManager::yourFileIsDir(oid &id, const string &path) {
+    int64_t type;
+    if(!db.getField("files", "type", "owner", id, "filename", path, type)) {
+        return false;
+    }
+
+    return type == FILE_DIR;
 }
 
 /**

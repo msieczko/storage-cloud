@@ -94,12 +94,30 @@ enum CommandType {
   REGISTER = 4,
   GET_STAT = 5,
   LIST_FILES = 6,
+  MKDIR = 7,
+  DELETE = 8,
+  RENAME = 9,
+  SHARE = 10,
+  SHARE_INFO = 11,
+  MOVE = 12,
+  DOWNLOAD = 13,
+  METADATA = 14,
+  USR_DATA = 15,
+  UNSHARE = 16,
+  DELETE_USER = 17,
+  CHANGE_USER_PASS = 18,
+  USER_STAT = 19,
+  LIST_USER_FILES = 20,
+  DELETE_USER_FILE = 21,
+  ADMIN_UNSHARE = 22,
+  ADMIN_SHARE_INFO = 23,
+  WARN = 24,
   CommandType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   CommandType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool CommandType_IsValid(int value);
 const CommandType CommandType_MIN = NULL1;
-const CommandType CommandType_MAX = LIST_FILES;
+const CommandType CommandType_MAX = WARN;
 const int CommandType_ARRAYSIZE = CommandType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* CommandType_descriptor();

@@ -9,6 +9,13 @@
 #define FILE_REGULAR 1
 #define FILE_DIR 2
 
+#define ADD_FILE_OK 0
+#define ADD_FILE_WRONG_DIR 1
+#define ADD_FILE_NO_SPACE 2
+#define ADD_FILE_INTERNAL_ERROR 3
+#define ADD_FILE_FILE_EXISTS 4
+#define ADD_FILE_EMPTY_NAME 5
+
 using bsoncxx::oid;
 using std::vector;
 
@@ -33,6 +40,9 @@ private:
     bool authorized;
     bool valid;
 
+    // home dir is pernament
+    string home_dir;
+
     bool checkPassword(string&);
 
 public:
@@ -51,12 +61,13 @@ public:
     bool isValid() { return valid; };
     bool isAuthorized() { return authorized; };
     bool listFilesinPath(const string&, vector<UFile>&);
-    bool addFile(UFile&);
+    uint8_t addFile(UFile&);
 };
 
 class UserManager {
 private:
     Database& db;
+    string root_path = "/storage";
 
     explicit UserManager(Database&);
     string mapToString(std::map<string, bsoncxx::document::element>&);
@@ -69,12 +80,14 @@ public:
     bool setName(oid&, string&);
     bool addSid(oid&, string&);
     bool checkSid(oid&, string&);
+    bool yourFileExists(oid &, const string &);
+    bool yourFileIsDir(oid &, const string &);
     bool getUserId(const string& username, oid& id);
     bool removeSid(oid&, string&);
     bool listAllUsers(std::vector<string>&);
 
     bool listFilesinPath(oid&, const string&, vector<UFile>&);
-    bool addFile(oid&, UFile&);
+    bool addFile(oid&, UFile&, string& home_dir);
 
     static UserManager& getInstance(Database* db = nullptr)
     {

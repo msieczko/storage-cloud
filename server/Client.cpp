@@ -276,7 +276,7 @@ bool Client::getMessage() {
     bool lastReason;
 
     if(!getNBytes(4, size_buf, lastReason)) {
-        if(!(*should_exit) || lastReason == R_ERROR)
+        if(!(*should_exit) && lastReason == R_ERROR)
             logger->warn(id, "connection error (size)");
         return false;
     }
@@ -289,7 +289,7 @@ bool Client::getMessage() {
     }
 
     if(!getNBytes(size - 4, msg_buf, lastReason)) {
-        if(!(*should_exit) || lastReason == R_ERROR)
+        if(!(*should_exit) && lastReason == R_ERROR)
             logger->err(id, "connection error while getting message body");
         return false;
     }
