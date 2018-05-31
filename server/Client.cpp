@@ -210,7 +210,9 @@ bool Client::sendServerResponse(const ServerResponse* res) {
     uint32_t data_len = res->ByteSize();
     uint8_t* data = new uint8_t[data_len];
     res->SerializeToArray(data, data_len);
-    prepareDataToSend(data, data_len);
+    if(prepareDataToSend(data, data_len)) {
+        logger->log(id + "/sendResponse", res->DebugString());
+    }
 
     delete data;
 }
@@ -257,13 +259,15 @@ bool Client::prepareDataToSend(uint8_t in_buf[], uint32_t len) {
 
     if(sendNBytes(out_len, out_buf)) {
         logger->log(id, "response sent successfully");
-    } else {
-        logger->warn(id, "response not send successfully");
+        delete hash;
+        delete data;
+        return true;
     }
 
+    logger->warn(id, "response not sent successfully");
     delete hash;
     delete data;
-    return true;
+    return false;
 }
 
 bool Client::getMessage() {

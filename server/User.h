@@ -14,6 +14,7 @@ using std::vector;
 
 class UserManager;
 
+// user file
 struct UFile {
     string filename;
     string hash;
@@ -21,7 +22,7 @@ struct UFile {
     uint64_t creation_date;
     bool isValid;
     uint64_t lastValid;
-    oid owner;
+    string owner_name;
     uint8_t type;
 };
 
@@ -49,7 +50,7 @@ public:
     bool addUsername(const string&);
     bool isValid() { return valid; };
     bool isAuthorized() { return authorized; };
-    bool listFilesinPath(string&, vector<string>&);
+    bool listFilesinPath(const string&, vector<UFile>&);
     bool addFile(UFile&);
 };
 
@@ -72,7 +73,7 @@ public:
     bool removeSid(oid&, string&);
     bool listAllUsers(std::vector<string>&);
 
-    bool listFilesinPath(oid&, string&, vector<string>&);
+    bool listFilesinPath(oid&, const string&, vector<UFile>&);
     bool addFile(oid&, UFile&);
 
     static UserManager& getInstance(Database* db = nullptr)

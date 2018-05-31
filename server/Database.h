@@ -54,6 +54,7 @@ public:
     bool getFields(string&&, std::vector<string>&, std::map<bsoncxx::oid, std::map<string, bsoncxx::document::element> >&);
     bool getFields(string&&, bsoncxx::document::value&&, std::vector<string>&,
             std::map<string, std::map<string, bsoncxx::document::element> >&);
+    bool getFieldsAdvanced(string&&, mongocxx::pipeline&, std::vector<string>&, std::map<string, std::map<string, bsoncxx::document::element> >&);
     bool setField(string&&, string&&, bsoncxx::oid, bsoncxx::types::value&&);
     bool setField(string&, string&, bsoncxx::oid, bsoncxx::types::value&&);
     bool setField(string&&, string&&, bsoncxx::oid, string&);

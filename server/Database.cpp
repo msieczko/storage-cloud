@@ -307,6 +307,64 @@ bool Database::getFields(string&& colName, bsoncxx::document::value&& doc, vecto
 //    return false;
 }
 
+bool Database::getFieldsAdvanced(string&& colName, mongocxx::pipeline& stages, vector<string>& fields, map<string, map<string, bsoncxx::document::element> >& elements) {
+    auto odoc = bsoncxx::builder::basic::document{};
+
+    for(const auto &name: fields) {
+        odoc.append(kvp(name, 1));
+    }
+
+    stages.project(odoc.view());
+
+    try {
+        auto cursor = db[colName].aggregate(stages);
+
+        bool notEmpty = false;
+
+        for (auto doc_v: cursor) {
+            notEmpty = true;
+
+            //TODO check if id was passed as field
+            if (distance(doc_v.begin(), doc_v.end()) != fields.size() + 1 && distance(doc_v.begin(), doc_v.end()) != fields.size()) {
+                logger->log(l_id, "getFieldsAdvanced got invalid fields count");
+//                logger->log(l_id, std::to_string(distance(doc_v.begin(), doc_v.end())) + " != " + std::to_string(fields.size()));
+                return false;
+            }
+
+            bsoncxx::document::element t_id = doc_v["filename"];
+
+            if (!t_id || t_id.type() != bsoncxx::type::k_utf8) {
+                logger->log(l_id, "getFieldsAdvanced got invalid filename field");
+                return false;
+            }
+
+            string id = bsoncxx::string::to_string(t_id.get_utf8().value);
+
+            elements.emplace(id, map<string, bsoncxx::document::element>{});
+
+            for (auto val: doc_v) {
+                string key = bsoncxx::string::to_string(val.key());
+//                if (key != "_id") {
+                elements[id].emplace(key, val);
+//                }
+            }
+        }
+
+        if(!notEmpty) {
+            logger->log(l_id, "getFieldsAdvanced got empty result");
+        }
+
+        return notEmpty;
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while getting fields (4): " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while getting fields (4): unknown error");
+        return false;
+    }
+//    return false;
+}
+
 bool Database::setField(string& colName, string& fieldName, bsoncxx::oid id, bsoncxx::types::value& val) {
     try {
         db[colName].update_one(make_document(kvp("_id", id)),

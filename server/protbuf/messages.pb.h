@@ -182,6 +182,28 @@ inline bool EncryptionAlgorithm_Parse(
   return ::google::protobuf::internal::ParseNamedEnum<EncryptionAlgorithm>(
     EncryptionAlgorithm_descriptor(), name, value);
 }
+enum FileType {
+  NULL6 = 0,
+  FILE = 1,
+  DIRECTORY = 2,
+  FileType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
+  FileType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+};
+bool FileType_IsValid(int value);
+const FileType FileType_MIN = NULL6;
+const FileType FileType_MAX = DIRECTORY;
+const int FileType_ARRAYSIZE = FileType_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* FileType_descriptor();
+inline const ::std::string& FileType_Name(FileType value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    FileType_descriptor(), value);
+}
+inline bool FileType_Parse(
+    const ::std::string& name, FileType* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<FileType>(
+    FileType_descriptor(), name, value);
+}
 enum ResponseType {
   NULL5 = 0,
   OK = 1,
@@ -859,10 +881,10 @@ class File : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
 
   // accessors -------------------------------------------------------
 
-  // repeated .StorageCloud.Param metadata = 3;
+  // repeated .StorageCloud.Param metadata = 7;
   int metadata_size() const;
   void clear_metadata();
-  static const int kMetadataFieldNumber = 3;
+  static const int kMetadataFieldNumber = 7;
   const ::StorageCloud::Param& metadata(int index) const;
   ::StorageCloud::Param* mutable_metadata(int index);
   ::StorageCloud::Param* add_metadata();
@@ -871,33 +893,77 @@ class File : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   const ::google::protobuf::RepeatedPtrField< ::StorageCloud::Param >&
       metadata() const;
 
-  // string name = 1;
-  void clear_name();
-  static const int kNameFieldNumber = 1;
-  const ::std::string& name() const;
-  void set_name(const ::std::string& value);
+  // string filename = 1;
+  void clear_filename();
+  static const int kFilenameFieldNumber = 1;
+  const ::std::string& filename() const;
+  void set_filename(const ::std::string& value);
   #if LANG_CXX11
-  void set_name(::std::string&& value);
+  void set_filename(::std::string&& value);
   #endif
-  void set_name(const char* value);
-  void set_name(const char* value, size_t size);
-  ::std::string* mutable_name();
-  ::std::string* release_name();
-  void set_allocated_name(::std::string* name);
+  void set_filename(const char* value);
+  void set_filename(const char* value, size_t size);
+  ::std::string* mutable_filename();
+  ::std::string* release_filename();
+  void set_allocated_filename(::std::string* filename);
 
-  // int64 size = 2;
+  // bytes hash = 4;
+  void clear_hash();
+  static const int kHashFieldNumber = 4;
+  const ::std::string& hash() const;
+  void set_hash(const ::std::string& value);
+  #if LANG_CXX11
+  void set_hash(::std::string&& value);
+  #endif
+  void set_hash(const char* value);
+  void set_hash(const void* value, size_t size);
+  ::std::string* mutable_hash();
+  ::std::string* release_hash();
+  void set_allocated_hash(::std::string* hash);
+
+  // string owner = 5;
+  void clear_owner();
+  static const int kOwnerFieldNumber = 5;
+  const ::std::string& owner() const;
+  void set_owner(const ::std::string& value);
+  #if LANG_CXX11
+  void set_owner(::std::string&& value);
+  #endif
+  void set_owner(const char* value);
+  void set_owner(const char* value, size_t size);
+  ::std::string* mutable_owner();
+  ::std::string* release_owner();
+  void set_allocated_owner(::std::string* owner);
+
+  // uint64 size = 3;
   void clear_size();
-  static const int kSizeFieldNumber = 2;
-  ::google::protobuf::int64 size() const;
-  void set_size(::google::protobuf::int64 value);
+  static const int kSizeFieldNumber = 3;
+  ::google::protobuf::uint64 size() const;
+  void set_size(::google::protobuf::uint64 value);
+
+  // uint64 creationDate = 6;
+  void clear_creationdate();
+  static const int kCreationDateFieldNumber = 6;
+  ::google::protobuf::uint64 creationdate() const;
+  void set_creationdate(::google::protobuf::uint64 value);
+
+  // .StorageCloud.FileType filetype = 2;
+  void clear_filetype();
+  static const int kFiletypeFieldNumber = 2;
+  ::StorageCloud::FileType filetype() const;
+  void set_filetype(::StorageCloud::FileType value);
 
   // @@protoc_insertion_point(class_scope:StorageCloud.File)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::RepeatedPtrField< ::StorageCloud::Param > metadata_;
-  ::google::protobuf::internal::ArenaStringPtr name_;
-  ::google::protobuf::int64 size_;
+  ::google::protobuf::internal::ArenaStringPtr filename_;
+  ::google::protobuf::internal::ArenaStringPtr hash_;
+  ::google::protobuf::internal::ArenaStringPtr owner_;
+  ::google::protobuf::uint64 size_;
+  ::google::protobuf::uint64 creationdate_;
+  int filetype_;
   mutable int _cached_size_;
   friend struct ::protobuf_messages_2eproto::TableStruct;
   friend void ::protobuf_messages_2eproto::InitDefaultsFileImpl();
@@ -1701,74 +1767,208 @@ inline void Handshake::set_encryptionalgorithm(::StorageCloud::EncryptionAlgorit
 
 // File
 
-// string name = 1;
-inline void File::clear_name() {
-  name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// string filename = 1;
+inline void File::clear_filename() {
+  filename_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& File::name() const {
-  // @@protoc_insertion_point(field_get:StorageCloud.File.name)
-  return name_.GetNoArena();
+inline const ::std::string& File::filename() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.File.filename)
+  return filename_.GetNoArena();
 }
-inline void File::set_name(const ::std::string& value) {
+inline void File::set_filename(const ::std::string& value) {
   
-  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:StorageCloud.File.name)
+  filename_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:StorageCloud.File.filename)
 }
 #if LANG_CXX11
-inline void File::set_name(::std::string&& value) {
+inline void File::set_filename(::std::string&& value) {
   
-  name_.SetNoArena(
+  filename_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:StorageCloud.File.name)
+  // @@protoc_insertion_point(field_set_rvalue:StorageCloud.File.filename)
 }
 #endif
-inline void File::set_name(const char* value) {
+inline void File::set_filename(const char* value) {
   GOOGLE_DCHECK(value != NULL);
   
-  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:StorageCloud.File.name)
+  filename_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:StorageCloud.File.filename)
 }
-inline void File::set_name(const char* value, size_t size) {
+inline void File::set_filename(const char* value, size_t size) {
   
-  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  filename_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:StorageCloud.File.name)
+  // @@protoc_insertion_point(field_set_pointer:StorageCloud.File.filename)
 }
-inline ::std::string* File::mutable_name() {
+inline ::std::string* File::mutable_filename() {
   
-  // @@protoc_insertion_point(field_mutable:StorageCloud.File.name)
-  return name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:StorageCloud.File.filename)
+  return filename_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* File::release_name() {
-  // @@protoc_insertion_point(field_release:StorageCloud.File.name)
+inline ::std::string* File::release_filename() {
+  // @@protoc_insertion_point(field_release:StorageCloud.File.filename)
   
-  return name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return filename_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void File::set_allocated_name(::std::string* name) {
-  if (name != NULL) {
+inline void File::set_allocated_filename(::std::string* filename) {
+  if (filename != NULL) {
     
   } else {
     
   }
-  name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name);
-  // @@protoc_insertion_point(field_set_allocated:StorageCloud.File.name)
+  filename_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), filename);
+  // @@protoc_insertion_point(field_set_allocated:StorageCloud.File.filename)
 }
 
-// int64 size = 2;
-inline void File::clear_size() {
-  size_ = GOOGLE_LONGLONG(0);
+// .StorageCloud.FileType filetype = 2;
+inline void File::clear_filetype() {
+  filetype_ = 0;
 }
-inline ::google::protobuf::int64 File::size() const {
+inline ::StorageCloud::FileType File::filetype() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.File.filetype)
+  return static_cast< ::StorageCloud::FileType >(filetype_);
+}
+inline void File::set_filetype(::StorageCloud::FileType value) {
+  
+  filetype_ = value;
+  // @@protoc_insertion_point(field_set:StorageCloud.File.filetype)
+}
+
+// uint64 size = 3;
+inline void File::clear_size() {
+  size_ = GOOGLE_ULONGLONG(0);
+}
+inline ::google::protobuf::uint64 File::size() const {
   // @@protoc_insertion_point(field_get:StorageCloud.File.size)
   return size_;
 }
-inline void File::set_size(::google::protobuf::int64 value) {
+inline void File::set_size(::google::protobuf::uint64 value) {
   
   size_ = value;
   // @@protoc_insertion_point(field_set:StorageCloud.File.size)
 }
 
-// repeated .StorageCloud.Param metadata = 3;
+// bytes hash = 4;
+inline void File::clear_hash() {
+  hash_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& File::hash() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.File.hash)
+  return hash_.GetNoArena();
+}
+inline void File::set_hash(const ::std::string& value) {
+  
+  hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:StorageCloud.File.hash)
+}
+#if LANG_CXX11
+inline void File::set_hash(::std::string&& value) {
+  
+  hash_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:StorageCloud.File.hash)
+}
+#endif
+inline void File::set_hash(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:StorageCloud.File.hash)
+}
+inline void File::set_hash(const void* value, size_t size) {
+  
+  hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:StorageCloud.File.hash)
+}
+inline ::std::string* File::mutable_hash() {
+  
+  // @@protoc_insertion_point(field_mutable:StorageCloud.File.hash)
+  return hash_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* File::release_hash() {
+  // @@protoc_insertion_point(field_release:StorageCloud.File.hash)
+  
+  return hash_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void File::set_allocated_hash(::std::string* hash) {
+  if (hash != NULL) {
+    
+  } else {
+    
+  }
+  hash_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), hash);
+  // @@protoc_insertion_point(field_set_allocated:StorageCloud.File.hash)
+}
+
+// string owner = 5;
+inline void File::clear_owner() {
+  owner_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& File::owner() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.File.owner)
+  return owner_.GetNoArena();
+}
+inline void File::set_owner(const ::std::string& value) {
+  
+  owner_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:StorageCloud.File.owner)
+}
+#if LANG_CXX11
+inline void File::set_owner(::std::string&& value) {
+  
+  owner_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:StorageCloud.File.owner)
+}
+#endif
+inline void File::set_owner(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  owner_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:StorageCloud.File.owner)
+}
+inline void File::set_owner(const char* value, size_t size) {
+  
+  owner_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:StorageCloud.File.owner)
+}
+inline ::std::string* File::mutable_owner() {
+  
+  // @@protoc_insertion_point(field_mutable:StorageCloud.File.owner)
+  return owner_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* File::release_owner() {
+  // @@protoc_insertion_point(field_release:StorageCloud.File.owner)
+  
+  return owner_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void File::set_allocated_owner(::std::string* owner) {
+  if (owner != NULL) {
+    
+  } else {
+    
+  }
+  owner_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), owner);
+  // @@protoc_insertion_point(field_set_allocated:StorageCloud.File.owner)
+}
+
+// uint64 creationDate = 6;
+inline void File::clear_creationdate() {
+  creationdate_ = GOOGLE_ULONGLONG(0);
+}
+inline ::google::protobuf::uint64 File::creationdate() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.File.creationDate)
+  return creationdate_;
+}
+inline void File::set_creationdate(::google::protobuf::uint64 value) {
+  
+  creationdate_ = value;
+  // @@protoc_insertion_point(field_set:StorageCloud.File.creationDate)
+}
+
+// repeated .StorageCloud.Param metadata = 7;
 inline int File::metadata_size() const {
   return metadata_.size();
 }
@@ -2038,6 +2238,11 @@ template <> struct is_proto_enum< ::StorageCloud::EncryptionAlgorithm> : ::googl
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::EncryptionAlgorithm>() {
   return ::StorageCloud::EncryptionAlgorithm_descriptor();
+}
+template <> struct is_proto_enum< ::StorageCloud::FileType> : ::google::protobuf::internal::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::FileType>() {
+  return ::StorageCloud::FileType_descriptor();
 }
 template <> struct is_proto_enum< ::StorageCloud::ResponseType> : ::google::protobuf::internal::true_type {};
 template <>

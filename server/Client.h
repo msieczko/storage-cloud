@@ -36,6 +36,8 @@ private:
     bool prepareDataToSend(uint8_t*, uint32_t);
     bool getMessage();
 
+    void resError(ServerResponse&, string&&, string&&);
+
 public:
     Client(int, connection*, bool*, Logger*);
     void loop();

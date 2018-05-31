@@ -184,7 +184,7 @@ int main(int argc, char **argv) {
 
 //    map<bsoncxx::oid, map<string, bsoncxx::document::element> > mmap;
 //
-    vector<string> fields;
+//    vector<string> fields;
 //    fields.emplace_back("username");
 //    fields.emplace_back("surname");
 //    fields.emplace_back("name");
@@ -236,10 +236,12 @@ int main(int argc, char **argv) {
 
     string s_tmp("/dir/dir23");
 
+    vector<UFile> fields;
+
     u.listFilesinPath(s_tmp, fields);
 
     for(auto&& file: fields) {
-        logger.info("FILES", file);
+        logger.info("FILES", file.filename + " " + file.owner_name);
     }
 
 //    u.addFile(f);

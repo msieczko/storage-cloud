@@ -8,6 +8,8 @@ using namespace mongocxx;
 using std::map;
 using std::vector;
 
+using bsoncxx::builder::basic::make_array;
+
 User::User(oid& id1, UserManager& u_m): id(id1), user_manager(u_m), authorized(false), valid(true) {}
 
 User::User(UserManager& u_m):user_manager(u_m), authorized(false), valid(false) {}
@@ -115,7 +117,7 @@ bool User::logout(string& sid) {
 }
 
 
-bool User::listFilesinPath(string& path, vector<string>& res) {
+bool User::listFilesinPath(const string& path, vector<UFile>& res) {
     return user_manager.listFilesinPath(id, path, res);
 }
 
@@ -214,32 +216,53 @@ bool UserManager::listAllUsers(std::vector<string>& res) {
     return true;
 }
 
-bool UserManager::listFilesinPath(oid& id, string& path, vector<string>& res) {
+bool UserManager::listFilesinPath(oid& id, const string& path, vector<UFile>& files) {
 //    return false;
     map<string, map<string, bsoncxx::document::element> > mmap;
     vector<string> fields;
     fields.emplace_back("filename");
     fields.emplace_back("size");
     fields.emplace_back("creationDate");
+    fields.emplace_back("ownerName");
+    fields.emplace_back("type");
+    fields.emplace_back("hash");
+//    fields.emplace_back("isValid");
 
 //    map<string, bsoncxx::types::value> queryValues;
 //    queryValues.emplace("owner", id);
 //    queryValues.emplace("filename", bsoncxx::types::b_regex(R"(\/dir\/nice\/[^\/]+)"));
 
-    if(path[path.size()-1] != '/') {
-        path.push_back('/');
+    string parsedPath = path;
+
+    if(parsedPath[parsedPath.size()-1] != '/') {
+        parsedPath.push_back('/');
     }
 
-    if(!db.getFields("files",
-                     make_document(kvp("owner", id),
-                                   kvp("filename", bsoncxx::types::b_regex(path+"[^/]*[^/]$"))),
-                     fields, mmap)) {
+    mongocxx::pipeline stages;
+
+    stages.match(make_document(kvp("owner", id), kvp("isValid", true), kvp("filename", bsoncxx::types::b_regex(parsedPath+"[^/]*[^/]$"))));
+    stages.lookup(make_document(kvp("from", "users"), kvp("localField", "owner"), kvp("foreignField", "_id"), kvp("as", "ownerTMP")));
+    stages.unwind("$ownerTMP");
+    stages.add_fields(make_document(kvp("ownerName", make_document(kvp("$concat", make_array("$ownerTMP.name", " ", "$ownerTMP.surname"))))));
+    stages.project(make_document(kvp("ownerTMP", 0), kvp("_id", 0)));
+
+    if(!db.getFieldsAdvanced("files", stages, fields, mmap)) {
         return false;
     }
 
     for(auto &usr: mmap) {
 //        id: usr.first.to_string()
-        res.emplace_back(mapToString(usr.second));
+//        res.emplace_back(mapToString(usr.second));
+
+        UFile tmp;
+        tmp.filename = bsoncxx::string::to_string(usr.second["filename"].get_utf8().value);
+        tmp.size = (uint64_t) usr.second["size"].get_int64().value;
+        tmp.creation_date = (uint64_t) usr.second["creationDate"].get_date().to_int64();
+        tmp.owner_name = bsoncxx::string::to_string(usr.second["ownerName"].get_utf8().value);
+        tmp.type = (uint8_t) usr.second["type"].get_int64().value;
+        tmp.hash = string((const char*) usr.second["hash"].get_binary().bytes, usr.second["hash"].get_binary().size);
+
+        files.emplace_back(tmp);
     }
 
     return true;

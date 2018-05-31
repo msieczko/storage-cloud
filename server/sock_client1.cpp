@@ -135,6 +135,64 @@ int main(int argc, char *argv[])
 
     cout<<"received response size: "<<rcv_siz<<endl;
 
+
+
+
+
+
+
+    cmd.clear_params();
+    cmd.set_type(StorageCloud::LIST_FILES);
+    tmp_param = cmd.add_params();
+    tmp_param->set_paramid("path");
+    tmp_param->set_sparamval("/dir/dir23");
+    delete data;
+    data = new uint8_t[cmd.ByteSize()];
+    cmd.SerializeToArray(data, cmd.ByteSize());
+
+    cout<<"cmd size: "<<cmd.ByteSize()<<endl;
+
+    delete edata;
+    edata = new uint8_t[cmd.ByteSize()];
+
+    SHA512(data, cmd.ByteSize(), hash);
+
+    encrypt(data, edata, cmd.ByteSize());
+
+    msg.set_hash((char*)hash, HASH_SIZE);
+    msg.set_datasize(cmd.ByteSize());
+    msg.set_data((char*)edata, cmd.ByteSize());
+    msg.set_hashalgorithm(StorageCloud::H_SHA512);
+    msg.set_type(StorageCloud::COMMAND);
+
+    msg.SerializeToArray(buf+4, 1020);
+
+    siz = msg.ByteSize() + 4;
+
+    cout<<"size: "<<siz<<" ("<<siz-4<<"+4)"<<endl;
+
+    buf[3] = siz & 0xFF;
+    buf[2] = (siz >> 8) & 0xFF;
+    buf[1] = (siz >> 16) & 0xFF;
+    buf[0] = (siz >> 24) & 0xFF;
+
+    if (write( sock, buf, siz ) == -1)
+
+        perror("writing on stream socket");
+
+//    if (write( sock, DATA, sizeof DATA ) == -1)
+//
+//        perror("writing on stream socket");
+//
+//    sleep(3);
+//
+//    write( sock, DATA2, sizeof DATA2 );
+//
+
+    rcv_siz = (uint32_t) recv(sock, in_buf, 1024, NULL);
+
+    cout<<"received response size: "<<rcv_siz<<endl;
+
     close(sock);
     exit(0);
 }

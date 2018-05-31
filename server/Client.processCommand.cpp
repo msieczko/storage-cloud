@@ -3,6 +3,14 @@
 using namespace std;
 using namespace StorageCloud;
 
+void Client::resError(ServerResponse& res, string&& reason, string&& loggerReason) {
+    res.set_type(ResponseType::ERROR);
+    Param* tmp_param = res.add_params();
+    tmp_param->set_paramid("msg");
+    tmp_param->set_sparamval(reason);
+    logger->log(id, "client " + username + " " + loggerReason);
+}
+
 bool Client::processCommand(Command* cmd) {
     logger->log(id, "Received command '" + CommandType_Name(cmd->type()) + "' (" + to_string(cmd->type()) +
                     "), with " + to_string(cmd->params_size()) + " params");
@@ -139,6 +147,31 @@ bool Client::processCommand(Command* cmd) {
             logger->log(id, "client " + username + " logged out");
             sessionId = "";
             username = "";
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::LIST_FILES) {
+        if(!(u.isValid() && u.isAuthorized())) {
+            resError(res, "You are not logged in", "tried to list files, but was not logged in");
+        } else {
+            if(cmd->params_size() == 1 && cmd->params(0).paramid() == "path") {
+                vector<UFile> files;
+                u.listFilesinPath(cmd->params(0).sparamval(), files);
+
+                for(auto&& file: files) {
+//                    logger.info("FILES", file.filename + " " + file.owner_name);
+                    File* tmp_file = res.add_filelist();
+                    tmp_file->set_filename(file.filename);
+                    tmp_file->set_filetype(file.type == FILE_REGULAR ? FileType::FILE : FileType::DIRECTORY);
+                    tmp_file->set_size(file.size);
+                    tmp_file->set_hash(file.hash);
+                    tmp_file->set_owner(file.owner_name);
+                    tmp_file->set_creationdate(file.creation_date);
+                }
+
+                res.set_type(ResponseType::FILES);
+            }
+
         }
 
         sendServerResponse(&res);
