@@ -133,7 +133,7 @@ bool Database::getField(string&& colName, string&& fieldToGetName, string&& idFi
 
         auto val = doc_i->begin();
 
-        if (bsoncxx::string::to_string(val->key()) == fieldName && val->type() == bsoncxx::type::k_int64) {
+        if (bsoncxx::string::to_string(val->key()) == fieldToGetName && val->type() == bsoncxx::type::k_int64) {
             res = val->get_int64().value;
             return true;
         }
@@ -437,6 +437,22 @@ bool Database::setField(string&& colName, string&& fieldName, bsoncxx::oid id, i
     bsoncxx::types::b_int64 tmp{};
     tmp.value = newVal;
     return setField(colName, fieldName, id, bsoncxx::types::value{tmp});
+}
+
+bool Database::incField(string&& colName, string&& fieldName, string&& idFieldName, bsoncxx::oid& id,
+                        string&& matchFieldName, string& matchFieldVal) {
+    try {
+        db[colName].update_one(make_document(kvp(idFieldName, id), kvp(matchFieldName, matchFieldVal)),
+                               make_document(kvp("$inc", make_document(kvp(fieldName, 1)))));
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while incrementing field: " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while incrementing field: unknown error");
+        return false;
+    }
+
+    return true;
 }
 
 bool Database::countField(string&& colName, string&& fieldName, bsoncxx::oid id, const uint8_t* valToCheck, uint32_t valSize, uint64_t& res) {

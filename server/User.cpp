@@ -5,6 +5,7 @@
 #include "User.h"
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <fstream>
 
 using namespace mongocxx;
 using std::map;
@@ -149,7 +150,7 @@ uint8_t User::addFile(UFile& file) {
         return ADD_FILE_WRONG_DIR;
     }
 
-    if(user_manager.addFile(id, file, home_dir)) {
+    if(user_manager.addFile(id, file, dir)) {
         return ADD_FILE_OK;
     }
 
@@ -333,7 +334,7 @@ bsoncxx::types::b_binary toBinary(string& str) {
 }
 
 // also adds directory
-bool UserManager::addFile(oid& id, UFile& file, string& home_dir) {
+bool UserManager::addFile(oid& id, UFile& file, string& dir) {
     auto doc = bsoncxx::builder::basic::document{};
 
     //TODO increase file count in parent dir
@@ -342,15 +343,35 @@ bool UserManager::addFile(oid& id, UFile& file, string& home_dir) {
         doc.append(kvp("filename", toUTF8(file.filename)));
         doc.append(kvp("size", toINT64(file.size)));
         doc.append(kvp("creationDate", currDate()));
-        doc.append(kvp("type", toINT64(file.type)));
+        doc.append(kvp("type", toINT64(FILE_REGULAR)));
         doc.append(kvp("hash", toBinary(file.hash)));
         doc.append(kvp("isValid", toBool(false)));
         doc.append(kvp("lastValid", toINT64(0)));
         doc.append(kvp("owner", toOID(id)));
 
-        oid tmp_id;
+        string homeDir;
 
-        return db.insertDoc("files", tmp_id, doc);
+        if(!getHomeDir(id, homeDir)) {
+            return false;
+        }
+
+        string fullPath = root_path + homeDir + file.filename;
+
+        std::fstream fs;
+        fs.open(fullPath, std::ios::out);
+
+        if(!fs.is_open()) {
+            //TODO log it;
+            return false;
+        }
+
+        fs.close();
+
+        oid tmp_id;
+        if(!db.insertDoc("files", tmp_id, doc)) {
+            remove(fullPath.c_str());
+            return false;
+        }
     } else if(file.type == FILE_DIR) {
         string tmp = "";
         doc.append(kvp("filename", toUTF8(file.filename)));
@@ -380,11 +401,16 @@ bool UserManager::addFile(oid& id, UFile& file, string& home_dir) {
             rmdir(fullPath.c_str());
             return false;
         }
-
-        return true;
     } else {
         return false;
     }
+
+    // if not root dir
+    if(!dir.empty()) {
+        db.incField("files", "size", "owner", id, "filename", dir);
+    }
+
+    return true;
 }
 
 bool UserManager::yourFileExists(oid &id, const string &filename) {

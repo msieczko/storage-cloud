@@ -61,6 +61,7 @@ public:
     bool setField(string&&, string&&, bsoncxx::oid, string&);
     bool setField(string&&, string&&, bsoncxx::oid, int64_t&);
     bool setField(string&&, string&&, bsoncxx::oid, const uint8_t*, uint32_t);
+    bool incField(string&&, string&&, string&&, bsoncxx::oid&, string&&, string&);
     bool countField(string&&, string&&, bsoncxx::oid, const uint8_t*, uint32_t, uint64_t&);
     bool countField(string&&, string&&, const string&, string&&, bsoncxx::oid, uint64_t&);
     bool removeFieldFromArray(string&&, string&&, bsoncxx::oid, bsoncxx::document::value&&);

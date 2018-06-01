@@ -16,6 +16,8 @@
 #define ADD_FILE_FILE_EXISTS 4
 #define ADD_FILE_EMPTY_NAME 5
 
+#define FILE_HASH_SIZE SHA_DIGEST_LENGTH
+
 using bsoncxx::oid;
 using std::vector;
 
@@ -39,9 +41,6 @@ private:
     UserManager& user_manager;
     bool authorized;
     bool valid;
-
-    // home dir is pernament
-    string home_dir;
 
     bool checkPassword(string&);
 

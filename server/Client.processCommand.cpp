@@ -177,6 +177,66 @@ bool Client::processCommand(Command* cmd) {
         }
 
         sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::METADATA) {
+        if(!(u.isValid() && u.isAuthorized())) {
+            resError(res, "You are not logged in", "tried to add metadata, but was not logged in");
+        } else {
+            string path, hash;
+            uint64_t size = 0;
+            uint8_t validFields = 0;
+
+            for(auto& param: cmd->params()) {
+                if(param.paramid() == "target_file_path") {
+                    path = param.sparamval();
+                    validFields++;
+                } else if(param.paramid() == "file_checksum") {
+                    hash = param.bparamval();
+                    validFields++;
+                } else if(param.paramid() == "size") {
+                    size = param.iparamval();
+                    validFields++;
+                }
+            }
+
+            bool paramsOk = false;
+
+            if(validFields == 3) {
+                if(path.size() > 0 && hash.size() == FILE_HASH_SIZE && size < 1024*1024*1024*50) {
+                    paramsOk = true;
+                }
+            }
+
+            if(paramsOk) {
+                UFile file;
+                file.filename = path;
+                file.type = FILE_REGULAR;
+                file.hash = hash;
+                file.size = size;
+
+                uint8_t wyn = u.addFile(file);
+
+                if(wyn == ADD_FILE_OK) {
+                    res.set_type(ResponseType::OK);
+                } else {
+                    if(wyn == ADD_FILE_INTERNAL_ERROR) {
+                        resError(res, "Internal error occured", "tried to add metadata, but internal error occured");
+                    } else if(wyn == ADD_FILE_WRONG_DIR) {
+                        resError(res, "Wrong path", "tried to add metadata, but provided wrong path");
+                    } else if(wyn == ADD_FILE_EMPTY_NAME) {
+                        resError(res, "Filename empty", "tried to add metadata, but provided empty filename");
+                    } else if(wyn == ADD_FILE_FILE_EXISTS) {
+                        resError(res, "Directory already exists", "tried to add metadata, but directory already exists");
+                    } else {
+                        resError(res, "Unknown error", "tried to add metadata, but unknown error occured");
+                    }
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to add metadata, but command format was wrong");
+            }
+
+        }
+
+        sendServerResponse(&res);
     } else if (cmd->type() == CommandType::MKDIR) {
         if(!(u.isValid() && u.isAuthorized())) {
             resError(res, "You are not logged in", "tried to make directory, but was not logged in");
