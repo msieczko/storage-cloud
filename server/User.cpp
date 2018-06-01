@@ -13,11 +13,11 @@ using std::vector;
 
 using bsoncxx::builder::basic::make_array;
 
-User::User(oid& id1, UserManager& u_m): id(id1), user_manager(u_m), authorized(false), valid(true) {}
+User::User(oid& id1, UserManager& u_m): id(id1), user_manager(u_m), authorized(false), valid(true), currentInFileValid(false) {}
 
-User::User(UserManager& u_m):user_manager(u_m), authorized(false), valid(false) {}
+User::User(UserManager& u_m):user_manager(u_m), authorized(false), valid(false), currentInFileValid(false) {}
 
-User::User(const string& username, UserManager& u_m): user_manager(u_m), authorized(false), valid(false) {
+User::User(const string& username, UserManager& u_m): user_manager(u_m), authorized(false), valid(false), currentInFileValid(false) {
     addUsername(username);
 }
 
@@ -126,12 +126,9 @@ bool User::listFilesinPath(const string& path, vector<UFile>& res) {
 
 // also adds directory
 uint8_t User::addFile(UFile& file) {
+    currentInFileValid = false;
     if(file.filename[0] != '/') {
         return ADD_FILE_WRONG_DIR;
-    }
-
-    if(user_manager.yourFileExists(id, file.filename)) {
-        return ADD_FILE_FILE_EXISTS;
     }
 
     uint64_t pos;
@@ -150,11 +147,44 @@ uint8_t User::addFile(UFile& file) {
         return ADD_FILE_WRONG_DIR;
     }
 
-    if(user_manager.addFile(id, file, dir)) {
+    if(user_manager.yourFileExists(id, file.filename)) {
+        if(file.type == FILE_REGULAR) {
+            UFile tmp_file;
+            if(user_manager.getYourFileMetadata(id, file.filename, tmp_file)) {
+                if(!tmp_file.isValid && tmp_file.size == file.size && tmp_file.hash == file.hash) {
+                    currentInFile = tmp_file;
+                    currentInFileValid = true;
+                    return ADD_FILE_CONTINUE_OK;
+                }
+            }
+        }
+
+        return ADD_FILE_FILE_EXISTS;
+    }
+
+    oid fileId;
+
+    if(user_manager.addNewFile(id, file, dir, fileId)) {
+        if(file.type == FILE_REGULAR) {
+            currentInFile = file;
+            currentInFile.isValid = false;
+            currentInFile.lastValid = 0;
+            currentInFile.id = fileId;
+            currentInFileValid = true;
+        }
+
         return ADD_FILE_OK;
     }
 
     return ADD_FILE_INTERNAL_ERROR;
+}
+
+const UFile& User::getCurrentInFileMetadata() {
+    return currentInFile;
+}
+
+bool User::isCurrentInFileValid() {
+    return currentInFileValid;
 }
 
 ///---------------------UserManager---------------------
@@ -334,7 +364,7 @@ bsoncxx::types::b_binary toBinary(string& str) {
 }
 
 // also adds directory
-bool UserManager::addFile(oid& id, UFile& file, string& dir) {
+bool UserManager::addNewFile(oid& id, UFile& file, string& dir, oid& newId) {
     auto doc = bsoncxx::builder::basic::document{};
 
     //TODO increase file count in parent dir
@@ -367,8 +397,7 @@ bool UserManager::addFile(oid& id, UFile& file, string& dir) {
 
         fs.close();
 
-        oid tmp_id;
-        if(!db.insertDoc("files", tmp_id, doc)) {
+        if(!db.insertDoc("files", newId, doc)) {
             remove(fullPath.c_str());
             return false;
         }
@@ -396,8 +425,7 @@ bool UserManager::addFile(oid& id, UFile& file, string& dir) {
             return false;
         }
 
-        oid tmp_id;
-        if(!db.insertDoc("files", tmp_id, doc)) {
+        if(!db.insertDoc("files", newId, doc)) {
             rmdir(fullPath.c_str());
             return false;
         }
@@ -425,6 +453,51 @@ bool UserManager::yourFileIsDir(oid &id, const string &path) {
     }
 
     return type == FILE_DIR;
+}
+
+bool UserManager::getYourFileMetadata(oid& id, const string& filename, UFile& file) {
+    map<string, map<string, bsoncxx::document::element> > mmap;
+    vector<string> fields;
+    fields.emplace_back("filename");
+    fields.emplace_back("size");
+    fields.emplace_back("creationDate");
+    fields.emplace_back("ownerName");
+    fields.emplace_back("type");
+    fields.emplace_back("hash");
+    fields.emplace_back("isValid");
+    fields.emplace_back("lastChunk");
+    fields.emplace_back("_id");
+    
+    mongocxx::pipeline stages;
+
+    stages.match(make_document(kvp("owner", id), kvp("filename", filename), kvp("type", FILE_REGULAR)));
+    stages.lookup(make_document(kvp("from", "users"), kvp("localField", "owner"), kvp("foreignField", "_id"), kvp("as", "ownerTMP")));
+    stages.unwind("$ownerTMP");
+    stages.add_fields(make_document(kvp("ownerName", make_document(kvp("$concat", make_array("$ownerTMP.name", " ", "$ownerTMP.surname"))))));
+    stages.project(make_document(kvp("ownerTMP", 0)));
+
+    if(!db.getFieldsAdvanced("files", stages, fields, mmap)) {
+        return false;
+    }
+    
+    if(mmap.size() != 1) {
+        //TODO log
+        return false;
+    }
+
+    auto tmp_file = *(mmap.begin());
+    
+    file.filename = bsoncxx::string::to_string(tmp_file.second["filename"].get_utf8().value);
+    file.size = (uint64_t) tmp_file.second["size"].get_int64().value;
+    file.creation_date = (uint64_t) tmp_file.second["creationDate"].get_date().to_int64();
+    file.owner_name = bsoncxx::string::to_string(tmp_file.second["ownerName"].get_utf8().value);
+    file.type = (uint8_t) tmp_file.second["type"].get_int64().value;
+    file.hash = string((const char*) tmp_file.second["hash"].get_binary().bytes, tmp_file.second["hash"].get_binary().size);
+    file.isValid = tmp_file.second["isValid"].get_bool();
+    file.lastValid = (uint64_t) tmp_file.second["lastValid"].get_int64();
+    file.id = tmp_file.second["_id"].get_oid().value;
+
+    return true;
 }
 
 /**

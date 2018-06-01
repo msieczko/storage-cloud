@@ -15,6 +15,7 @@
 #define ADD_FILE_INTERNAL_ERROR 3
 #define ADD_FILE_FILE_EXISTS 4
 #define ADD_FILE_EMPTY_NAME 5
+#define ADD_FILE_CONTINUE_OK 6
 
 #define FILE_HASH_SIZE SHA_DIGEST_LENGTH
 
@@ -25,6 +26,7 @@ class UserManager;
 
 // user file
 struct UFile {
+    oid id;
     string filename;
     string hash;
     uint64_t size;
@@ -41,6 +43,8 @@ private:
     UserManager& user_manager;
     bool authorized;
     bool valid;
+    bool currentInFileValid;
+    UFile currentInFile;
 
     bool checkPassword(string&);
 
@@ -60,6 +64,8 @@ public:
     bool isValid() { return valid; };
     bool isAuthorized() { return authorized; };
     bool listFilesinPath(const string&, vector<UFile>&);
+    const UFile& getCurrentInFileMetadata();
+    bool isCurrentInFileValid();
     uint8_t addFile(UFile&);
 };
 
@@ -86,7 +92,8 @@ public:
     bool listAllUsers(std::vector<string>&);
 
     bool listFilesinPath(oid&, const string&, vector<UFile>&);
-    bool addFile(oid&, UFile&, string& home_dir);
+    bool addNewFile(oid&, UFile&, string&, oid&);
+    bool getYourFileMetadata(oid&, const string&, UFile&);
 
     static UserManager& getInstance(Database* db = nullptr)
     {

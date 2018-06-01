@@ -201,7 +201,7 @@ bool Client::processCommand(Command* cmd) {
             bool paramsOk = false;
 
             if(validFields == 3) {
-                if(path.size() > 0 && hash.size() == FILE_HASH_SIZE && size < 1024*1024*1024*50) {
+                if(path.size() > 0 && hash.size() == FILE_HASH_SIZE && size < 1024ull*1024ull*1024ull*50ull) {
                     paramsOk = true;
                 }
             }
@@ -216,7 +216,20 @@ bool Client::processCommand(Command* cmd) {
                 uint8_t wyn = u.addFile(file);
 
                 if(wyn == ADD_FILE_OK) {
-                    res.set_type(ResponseType::OK);
+                    res.set_type(ResponseType::CAN_SEND);
+                    Param* tmp = res.add_params();
+                    tmp->set_paramid("starting_chunk");
+                    tmp->set_iparamval(0);
+                } else if(wyn == ADD_FILE_CONTINUE_OK) {
+                    UFile tmp_file = u.getCurrentInFileMetadata();
+                    if(!u.isCurrentInFileValid()) {
+                        resError(res, "Internal error occured (2)", "tried to add metadata, tried to continue, but internal error occured");
+                        logger->err(id, "client " + username + " tried to add metadata, tried to continue, but internal error occured");
+                    } else {
+                        Param* tmp = res.add_params();
+                        tmp->set_paramid("starting_chunk");
+                        tmp->set_iparamval(tmp_file.lastValid);
+                    }
                 } else {
                     if(wyn == ADD_FILE_INTERNAL_ERROR) {
                         resError(res, "Internal error occured", "tried to add metadata, but internal error occured");
@@ -225,7 +238,7 @@ bool Client::processCommand(Command* cmd) {
                     } else if(wyn == ADD_FILE_EMPTY_NAME) {
                         resError(res, "Filename empty", "tried to add metadata, but provided empty filename");
                     } else if(wyn == ADD_FILE_FILE_EXISTS) {
-                        resError(res, "Directory already exists", "tried to add metadata, but directory already exists");
+                        resError(res, "File already exists", "tried to add metadata, but filename already exists");
                     } else {
                         resError(res, "Unknown error", "tried to add metadata, but unknown error occured");
                     }
@@ -265,6 +278,40 @@ bool Client::processCommand(Command* cmd) {
                 }
             } else {
                 resError(res, "Wrong command format", "tried to make directory, but command format was wrong");
+            }
+
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::USR_DATA) {
+        if(!(u.isValid() && u.isAuthorized())) {
+            resError(res, "You are not logged in", "tried to put data, but was not logged in");
+        } else {
+            return false;
+            if(cmd->params_size() == 1 && cmd->params(0).paramid() == "path" && !cmd->params(0).sparamval().empty()) {
+                UFile file;
+                file.filename = cmd->params(0).sparamval();
+                file.type = FILE_DIR;
+
+                uint8_t wyn = u.addFile(file);
+
+                if(wyn == ADD_FILE_OK) {
+                    res.set_type(ResponseType::OK);
+                } else {
+                    if(wyn == ADD_FILE_INTERNAL_ERROR) {
+                        resError(res, "Internal error occured", "tried to make directory, but internal error occured");
+                    } else if(wyn == ADD_FILE_WRONG_DIR) {
+                        resError(res, "Wrong path", "tried to make directory, but provided wrong path");
+                    } else if(wyn == ADD_FILE_EMPTY_NAME) {
+                        resError(res, "Filename empty", "tried to make directory, but provided empty filename");
+                    } else if(wyn == ADD_FILE_FILE_EXISTS) {
+                        resError(res, "Directory already exists", "tried to make directory, but directory already exists");
+                    } else {
+                        resError(res, "Unknown error", "tried to make directory, but unknown error occured");
+                    }
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to put data, but command format was wrong");
             }
 
         }
