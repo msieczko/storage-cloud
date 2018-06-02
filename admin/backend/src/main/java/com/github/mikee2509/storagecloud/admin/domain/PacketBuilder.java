@@ -172,7 +172,7 @@ public class PacketBuilder {
             private File.Builder fileBuilder = File.newBuilder();
 
             private FileBuilder(String name) {
-                fileBuilder.setName(name);
+                fileBuilder.setFilename(name);
             }
 
             public FileBuilder ofSize(long size) {
