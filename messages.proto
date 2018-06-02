@@ -19,11 +19,27 @@ enum CommandType {
     REGISTER = 4;
     GET_STAT = 5;
     LIST_FILES = 6;
+    MKDIR = 7;
+    DELETE = 8;
+    RENAME = 9;
+    SHARE = 10;
+    SHARE_INFO = 11;
+    MOVE = 12;
+    DOWNLOAD = 13;
+    METADATA = 14;
+    USR_DATA = 15;
+    UNSHARE = 16;
+    DELETE_USER = 17;
+    CHANGE_USER_PASS = 18;
+    USER_STAT = 19;
+    LIST_USER_FILES = 20;
+    DELETE_USER_FILE = 21;
+    ADMIN_UNSHARE = 22;
+    ADMIN_SHARE_INFO = 23;
+    WARN = 24;
 }
 
 message Command {
-    // TODO uzupelnic wszystkie typy
-
     CommandType type = 1;
 
     repeated Param params = 2;
@@ -72,10 +88,35 @@ message Handshake {
     EncryptionAlgorithm encryptionAlgorithm = 1;
 }
 
+enum FileType {
+    NULL6 = 0;
+    FILE = 1;
+    DIRECTORY = 2;
+}
+
 message File {
-    string name = 1;
-    int64 size = 2;
-    repeated Param metadata = 3;
+    string filename = 1; //with path
+    FileType filetype = 2;
+    uint64 size = 3; //for directory it's files count inside
+    bytes hash = 4; // empty for directory
+    string owner = 5;
+    uint64 creationDate = 6;
+    repeated Param metadata = 7;
+}
+
+enum UserRole {
+    NULL7 = 0;
+    USER = 1;
+    ADMIN = 2;
+}
+
+message User {
+    string username = 1;
+    string firstName = 2;
+    string lastName = 3;
+    UserRole role = 4;
+    uint64 capacity = 5;
+    uint64 usedSpace = 6;
 }
 
 enum ResponseType {

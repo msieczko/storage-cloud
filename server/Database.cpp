@@ -115,6 +115,40 @@ bool Database::getField(string&& colName, string&& fieldName, bsoncxx::oid id, c
     return false;
 }
 
+bool Database::getField(string&& colName, string&& fieldToGetName, string&& idFieldName, bsoncxx::oid& id,
+                        string&& fieldName, const string& fieldVal, int64_t& res) {
+
+    mongocxx::options::find opts{};
+    opts.projection(make_document(kvp(fieldToGetName, 1), kvp("_id", 0)));
+
+    try {
+        auto cursor = db[colName].find(make_document(kvp(idFieldName, id), kvp(fieldName, fieldVal)), opts);
+
+        auto doc_i = cursor.begin();
+
+        if (doc_i == cursor.end() || doc_i->empty()) {
+            logger->log(l_id, "getField (2) got empty resultSet");
+            return false;
+        }
+
+        auto val = doc_i->begin();
+
+        if (bsoncxx::string::to_string(val->key()) == fieldToGetName && val->type() == bsoncxx::type::k_int64) {
+            res = val->get_int64().value;
+            return true;
+        }
+
+        logger->log(l_id, "getField (2) got invalid field");
+        return false;
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while getting field (2): " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while getting field (2): unknown error");
+        return false;
+    }
+}
+
 bool Database::getId(string&& colName, string&& fieldName, const string& fieldValue, bsoncxx::oid& id) {
     mongocxx::options::find opts{};
     opts.projection(make_document(kvp("_id", 1)));
@@ -249,6 +283,122 @@ bool Database::getFields(string&& colName, vector<string>& fields, map<bsoncxx::
     }
 }
 
+bool Database::getFields(string&& colName, bsoncxx::document::value&& doc, vector<string>& fields, map<string, map<string, bsoncxx::document::element> >& elements) {
+    auto odoc = bsoncxx::builder::basic::document{};
+
+    for(const auto &name: fields) {
+        odoc.append(kvp(name, 1));
+    }
+
+    mongocxx::options::find opts{};
+    opts.projection(odoc.view());
+
+    try {
+        auto cursor = db[colName].find(doc.view(), opts);
+
+        bool notEmpty = false;
+
+        for (auto doc_v: cursor) {
+            notEmpty = true;
+
+            //TODO check if id was passed as field
+            if (distance(doc_v.begin(), doc_v.end()) != fields.size() + 1) {
+                logger->log(l_id, "getFields got invalid fields count");
+                return false;
+            }
+
+            bsoncxx::document::element t_id = doc_v["filename"];
+
+            if (!t_id || t_id.type() != bsoncxx::type::k_utf8) {
+                logger->log(l_id, "getFields got invalid filename field");
+                return false;
+            }
+
+            string id = bsoncxx::string::to_string(t_id.get_utf8().value);
+
+            elements.emplace(id, map<string, bsoncxx::document::element>{});
+
+            for (auto val: doc_v) {
+                string key = bsoncxx::string::to_string(val.key());
+//                if (key != "_id") {
+                    elements[id].emplace(key, val);
+//                }
+            }
+        }
+
+        if(!notEmpty) {
+            logger->log(l_id, "getFields got empty result");
+        }
+
+        return notEmpty;
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while getting fields (3): " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while getting fields (3): unknown error");
+        return false;
+    }
+//    return false;
+}
+
+bool Database::getFieldsAdvanced(string&& colName, mongocxx::pipeline& stages, vector<string>& fields, map<string, map<string, bsoncxx::document::element> >& elements) {
+    auto odoc = bsoncxx::builder::basic::document{};
+
+    for(const auto &name: fields) {
+        odoc.append(kvp(name, 1));
+    }
+
+    stages.project(odoc.view());
+
+    try {
+        auto cursor = db[colName].aggregate(stages);
+
+        bool notEmpty = false;
+
+        for (auto doc_v: cursor) {
+            notEmpty = true;
+
+            //TODO check if id was passed as field
+            if ((distance(doc_v.begin(), doc_v.end()) != fields.size() - 1) && (distance(doc_v.begin(), doc_v.end()) != fields.size())) {
+                logger->log(l_id, "getFieldsAdvanced got invalid fields count");
+                logger->log(l_id, std::to_string(distance(doc_v.begin(), doc_v.end())) + " != " + std::to_string(fields.size()));
+                return false;
+            }
+
+            bsoncxx::document::element t_id = doc_v["filename"];
+
+            if (!t_id || t_id.type() != bsoncxx::type::k_utf8) {
+                logger->log(l_id, "getFieldsAdvanced got invalid filename field");
+                return false;
+            }
+
+            string id = bsoncxx::string::to_string(t_id.get_utf8().value);
+
+            elements.emplace(id, map<string, bsoncxx::document::element>{});
+
+            for (auto val: doc_v) {
+                string key = bsoncxx::string::to_string(val.key());
+//                if (key != "_id") {
+                elements[id].emplace(key, val);
+//                }
+            }
+        }
+
+        if(!notEmpty) {
+            logger->log(l_id, "getFieldsAdvanced got empty result");
+        }
+
+        return notEmpty;
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while getting fields (4): " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while getting fields (4): unknown error");
+        return false;
+    }
+//    return false;
+}
+
 bool Database::setField(string& colName, string& fieldName, bsoncxx::oid id, bsoncxx::types::value& val) {
     try {
         db[colName].update_one(make_document(kvp("_id", id)),
@@ -289,6 +439,43 @@ bool Database::setField(string&& colName, string&& fieldName, bsoncxx::oid id, i
     return setField(colName, fieldName, id, bsoncxx::types::value{tmp});
 }
 
+bool Database::setField(string&& colName, string&& fieldName, bsoncxx::oid id, bool newVal) {
+    bsoncxx::types::b_bool tmp{};
+    tmp.value = newVal;
+    return setField(colName, fieldName, id, bsoncxx::types::value{tmp});
+}
+
+bool Database::incField(string&& colName, string&& fieldName, string&& idFieldName, bsoncxx::oid& id,
+                        string&& matchFieldName, string& matchFieldVal) {
+    try {
+        db[colName].update_one(make_document(kvp(idFieldName, id), kvp(matchFieldName, matchFieldVal)),
+                               make_document(kvp("$inc", make_document(kvp(fieldName, 1)))));
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while incrementing field: " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while incrementing field: unknown error");
+        return false;
+    }
+
+    return true;
+}
+
+bool Database::incField(string&& colName, bsoncxx::oid& id, string&& incField, int64_t incVal = 1) {
+    try {
+        db[colName].update_one(make_document(kvp("_id", id)),
+                               make_document(kvp("$inc", make_document(kvp(incField, incVal)))));
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while incrementing field (2): " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while incrementing field (2): unknown error");
+        return false;
+    }
+
+    return true;
+}
+
 bool Database::countField(string&& colName, string&& fieldName, bsoncxx::oid id, const uint8_t* valToCheck, uint32_t valSize, uint64_t& res) {
     bsoncxx::types::b_binary b_val{};
     b_val.bytes = valToCheck;
@@ -302,6 +489,19 @@ bool Database::countField(string&& colName, string&& fieldName, bsoncxx::oid id,
         return false;
     } catch (...) {
         logger->err(l_id, "error while counting binary fields: unknown error");
+        return false;
+    }
+}
+
+bool Database::countField(string&& colName, string&& fieldName, const string& fieldVal, string&& idFieldName, bsoncxx::oid id, uint64_t& res) {
+    try {
+        res = (uint64_t) db[colName].count(make_document(kvp(idFieldName, id), kvp(fieldName, fieldVal)));
+        return true;
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while counting string fields: " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while counting string fields: unknown error");
         return false;
     }
 }
@@ -336,13 +536,7 @@ bool Database::pushValToArr(string&& colName, string&& arrayName, bsoncxx::oid i
     return true;
 }
 
-bool Database::insertDoc(string&& colName, bsoncxx::oid& id, map<string, bsoncxx::types::value>& elements) {
-    auto doc = bsoncxx::builder::basic::document{};
-
-    for(const auto &elem: elements) {
-        doc.append(kvp(elem.first, elem.second));
-    }
-
+bool Database::insertDoc(string&& colName, bsoncxx::oid& id, bsoncxx::builder::basic::document& doc) {
     try {
         auto res = db[colName].insert_one(doc.view());
 
