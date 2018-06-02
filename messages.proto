@@ -104,6 +104,21 @@ message File {
     repeated Param metadata = 7;
 }
 
+enum UserRole {
+    NULL7 = 0;
+    USER = 1;
+    ADMIN = 2;
+}
+
+message User {
+    string username = 1;
+    string firstName = 2;
+    string lastName = 3;
+    UserRole role = 4;
+    uint64 capacity = 5;
+    uint64 usedSpace = 6;
+}
+
 enum ResponseType {
     NULL5 = 0;
     OK = 1;

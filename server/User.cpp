@@ -187,6 +187,26 @@ bool User::isCurrentInFileValid() {
     return currentInFileValid;
 }
 
+bool User::addFileChunk(const string& chunk) {
+    if(!currentInFileValid) {
+        return false;
+    }
+
+    if(currentInFile.size > currentInFile.lastValid + chunk.size()) {
+        return false;
+    }
+
+    if(!user_manager.addFileChunk(currentInFile, chunk)) {
+        return false;
+    }
+
+    if(currentInFile.size != currentInFile.lastValid) {
+        return true;
+    }
+
+    return user_manager.validateFile(currentInFile);
+}
+
 ///---------------------UserManager---------------------
 
 UserManager::UserManager(Database& db_t): db(db_t) {}
@@ -302,7 +322,7 @@ bool UserManager::listFilesinPath(oid& id, const string& path, vector<UFile>& fi
 
     mongocxx::pipeline stages;
 
-    stages.match(make_document(kvp("owner", id), kvp("isValid", true), kvp("filename", bsoncxx::types::b_regex(parsedPath+"[^/]*[^/]$"))));
+    stages.match(make_document(kvp("owner", id), kvp("isValid", true), kvp("filename", bsoncxx::types::b_regex("^"+parsedPath+"[^/]*[^/]$"))));
     stages.lookup(make_document(kvp("from", "users"), kvp("localField", "owner"), kvp("foreignField", "_id"), kvp("as", "ownerTMP")));
     stages.unwind("$ownerTMP");
     stages.add_fields(make_document(kvp("ownerName", make_document(kvp("$concat", make_array("$ownerTMP.name", " ", "$ownerTMP.surname"))))));
@@ -401,6 +421,8 @@ bool UserManager::addNewFile(oid& id, UFile& file, string& dir, oid& newId) {
             remove(fullPath.c_str());
             return false;
         }
+
+        file.realPath = fullPath;
     } else if(file.type == FILE_DIR) {
         string tmp = "";
         doc.append(kvp("filename", toUTF8(file.filename)));
@@ -429,6 +451,8 @@ bool UserManager::addNewFile(oid& id, UFile& file, string& dir, oid& newId) {
             rmdir(fullPath.c_str());
             return false;
         }
+
+        file.realPath = fullPath;
     } else {
         return false;
     }
@@ -465,7 +489,7 @@ bool UserManager::getYourFileMetadata(oid& id, const string& filename, UFile& fi
     fields.emplace_back("type");
     fields.emplace_back("hash");
     fields.emplace_back("isValid");
-    fields.emplace_back("lastChunk");
+    fields.emplace_back("lastValid");
     fields.emplace_back("_id");
     
     mongocxx::pipeline stages;
@@ -496,6 +520,91 @@ bool UserManager::getYourFileMetadata(oid& id, const string& filename, UFile& fi
     file.isValid = tmp_file.second["isValid"].get_bool();
     file.lastValid = (uint64_t) tmp_file.second["lastValid"].get_int64();
     file.id = tmp_file.second["_id"].get_oid().value;
+
+    string homeDir;
+
+    if(!getHomeDir(id, homeDir)) {
+        return false;
+    }
+
+    file.realPath = root_path + homeDir + file.filename;
+
+    return true;
+}
+
+bool UserManager::addFileChunk(UFile& file, const string& chunk) {
+    std::fstream fs;
+    if(file.lastValid == 0) {
+        fs.open(file.realPath, std::ios::out | std::ios::binary | std::ios::trunc);
+    } else {
+        fs.open(file.realPath, std::ios::out | std::ios::binary | std::ios::in);
+    }
+    if(!fs.is_open()) {
+        return false;
+    }
+    fs.seekp(file.lastValid, std::ios::beg);
+
+    fs.write(chunk.c_str(), chunk.size());
+    if(fs.bad()) {
+        return false;
+    }
+
+    fs.close();
+
+    file.lastValid += chunk.size();
+
+    return db.incField("files", file.id, "lastValid", chunk.size());
+}
+
+bool UserManager::validateFile(UFile& file) {
+    uint8_t hash[FILE_HASH_SIZE];
+    SHA_CTX sha1;
+    SHA1_Init(&sha1);
+    const int bufSize = 32768;
+    uint8_t* buffer = new uint8_t[bufSize];
+
+    std::ifstream is (file.realPath, std::ios::binary | std::ios::in);
+    if(!is.is_open()) {
+        return false;
+    }
+
+    is.seekg (0, is.end);
+    uint64_t length = is.tellg();
+    is.seekg (0, is.beg);
+
+    if(length != file.size) {
+        return false;
+    }
+
+    int bytesRead = 0;
+
+    do {
+        is.read((char*) buffer, bufSize);
+        if(is.bad()) {
+            break;
+        }
+        SHA1_Update(&sha1, buffer, is.gcount());
+    } while(!is.eof());
+
+    if(!is.eof()) {
+        return false;
+    }
+
+    SHA1_Final(hash, &sha1);
+
+    is.close();
+
+    for(int i=0; i<FILE_HASH_SIZE; i++) {
+        if((uint8_t) file.hash[i] != hash[i]) {
+            return false;
+        }
+    }
+
+    if(!db.setField("files", "isValid", file.id, true)) {
+        return false;
+    }
+
+    file.isValid = true;
 
     return true;
 }

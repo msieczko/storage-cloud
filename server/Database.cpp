@@ -359,9 +359,9 @@ bool Database::getFieldsAdvanced(string&& colName, mongocxx::pipeline& stages, v
             notEmpty = true;
 
             //TODO check if id was passed as field
-            if (distance(doc_v.begin(), doc_v.end()) != fields.size() + 1 && distance(doc_v.begin(), doc_v.end()) != fields.size()) {
+            if ((distance(doc_v.begin(), doc_v.end()) != fields.size() - 1) && (distance(doc_v.begin(), doc_v.end()) != fields.size())) {
                 logger->log(l_id, "getFieldsAdvanced got invalid fields count");
-//                logger->log(l_id, std::to_string(distance(doc_v.begin(), doc_v.end())) + " != " + std::to_string(fields.size()));
+                logger->log(l_id, std::to_string(distance(doc_v.begin(), doc_v.end())) + " != " + std::to_string(fields.size()));
                 return false;
             }
 
@@ -439,6 +439,12 @@ bool Database::setField(string&& colName, string&& fieldName, bsoncxx::oid id, i
     return setField(colName, fieldName, id, bsoncxx::types::value{tmp});
 }
 
+bool Database::setField(string&& colName, string&& fieldName, bsoncxx::oid id, bool newVal) {
+    bsoncxx::types::b_bool tmp{};
+    tmp.value = newVal;
+    return setField(colName, fieldName, id, bsoncxx::types::value{tmp});
+}
+
 bool Database::incField(string&& colName, string&& fieldName, string&& idFieldName, bsoncxx::oid& id,
                         string&& matchFieldName, string& matchFieldVal) {
     try {
@@ -449,6 +455,21 @@ bool Database::incField(string&& colName, string&& fieldName, string&& idFieldNa
         return false;
     } catch (...) {
         logger->err(l_id, "error while incrementing field: unknown error");
+        return false;
+    }
+
+    return true;
+}
+
+bool Database::incField(string&& colName, bsoncxx::oid& id, string&& incField, int64_t incVal = 1) {
+    try {
+        db[colName].update_one(make_document(kvp("_id", id)),
+                               make_document(kvp("$inc", make_document(kvp(incField, incVal)))));
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while incrementing field (2): " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while incrementing field (2): unknown error");
         return false;
     }
 

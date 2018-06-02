@@ -35,6 +35,7 @@ struct UFile {
     uint64_t lastValid;
     string owner_name;
     uint8_t type;
+    string realPath;
 };
 
 class User {
@@ -67,6 +68,7 @@ public:
     const UFile& getCurrentInFileMetadata();
     bool isCurrentInFileValid();
     uint8_t addFile(UFile&);
+    bool addFileChunk(const string&);
 };
 
 class UserManager {
@@ -94,6 +96,8 @@ public:
     bool listFilesinPath(oid&, const string&, vector<UFile>&);
     bool addNewFile(oid&, UFile&, string&, oid&);
     bool getYourFileMetadata(oid&, const string&, UFile&);
+    bool addFileChunk(UFile&, const string&);
+    bool validateFile(UFile&);
 
     static UserManager& getInstance(Database* db = nullptr)
     {

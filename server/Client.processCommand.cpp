@@ -156,7 +156,10 @@ bool Client::processCommand(Command* cmd) {
         } else {
             if(cmd->params_size() == 1 && cmd->params(0).paramid() == "path") {
                 vector<UFile> files;
-                u.listFilesinPath(cmd->params(0).sparamval(), files);
+
+                if(!u.listFilesinPath(cmd->params(0).sparamval(), files)) {
+                    resError(res, "Internal error occured", "tried to list files, but internal error occured");
+                }
 
                 for(auto&& file: files) {
 //                    logger.info("FILES", file.filename + " " + file.owner_name);
@@ -287,28 +290,14 @@ bool Client::processCommand(Command* cmd) {
         if(!(u.isValid() && u.isAuthorized())) {
             resError(res, "You are not logged in", "tried to put data, but was not logged in");
         } else {
-            return false;
-            if(cmd->params_size() == 1 && cmd->params(0).paramid() == "path" && !cmd->params(0).sparamval().empty()) {
-                UFile file;
-                file.filename = cmd->params(0).sparamval();
-                file.type = FILE_DIR;
-
-                uint8_t wyn = u.addFile(file);
-
-                if(wyn == ADD_FILE_OK) {
+            if(cmd->params_size() == 1 && cmd->params(0).paramid() == "data" && cmd->params(0).bparamval().length()) {
+                if(u.addFileChunk(cmd->params(0).bparamval())) {
+                    if(u.getCurrentInFileMetadata().isValid) {
+                        logger->log(id, "user " + username + ": adding file accomplished");
+                    }
                     res.set_type(ResponseType::OK);
                 } else {
-                    if(wyn == ADD_FILE_INTERNAL_ERROR) {
-                        resError(res, "Internal error occured", "tried to make directory, but internal error occured");
-                    } else if(wyn == ADD_FILE_WRONG_DIR) {
-                        resError(res, "Wrong path", "tried to make directory, but provided wrong path");
-                    } else if(wyn == ADD_FILE_EMPTY_NAME) {
-                        resError(res, "Filename empty", "tried to make directory, but provided empty filename");
-                    } else if(wyn == ADD_FILE_FILE_EXISTS) {
-                        resError(res, "Directory already exists", "tried to make directory, but directory already exists");
-                    } else {
-                        resError(res, "Unknown error", "tried to make directory, but unknown error occured");
-                    }
+                    resError(res, "Error occured", "tried to put data, but error occured");
                 }
             } else {
                 resError(res, "Wrong command format", "tried to put data, but command format was wrong");
