@@ -2,6 +2,7 @@
 #define SERVER_LOGGER_H
 
 #include "main.h"
+#include <sstream>
 
 enum MessageLevel {
     DEBUG,

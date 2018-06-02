@@ -186,7 +186,7 @@ void InitDefaultsServerResponse() {
 }
 
 ::google::protobuf::Metadata file_level_metadata[6];
-const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[5];
+const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[6];
 
 const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
@@ -229,8 +229,12 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, name_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, filename_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, filetype_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, size_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, hash_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, owner_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, creationdate_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, metadata_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::ServerResponse, _internal_metadata_),
@@ -249,7 +253,7 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROT
   { 19, -1, sizeof(::StorageCloud::EncodedMessage)},
   { 29, -1, sizeof(::StorageCloud::Handshake)},
   { 35, -1, sizeof(::StorageCloud::File)},
-  { 43, -1, sizeof(::StorageCloud::ServerResponse)},
+  { 47, -1, sizeof(::StorageCloud::ServerResponse)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -295,27 +299,38 @@ void AddDescriptorsImpl() {
       "(\0162\031.StorageCloud.MessageType\022\014\n\004data\030\005 "
       "\001(\014\"K\n\tHandshake\022>\n\023encryptionAlgorithm\030"
       "\001 \001(\0162!.StorageCloud.EncryptionAlgorithm"
-      "\"I\n\004File\022\014\n\004name\030\001 \001(\t\022\014\n\004size\030\002 \001(\003\022%\n\010"
-      "metadata\030\003 \003(\0132\023.StorageCloud.Param\"\241\001\n\016"
-      "ServerResponse\022(\n\004type\030\001 \001(\0162\032.StorageCl"
-      "oud.ResponseType\022#\n\006params\030\002 \003(\0132\023.Stora"
-      "geCloud.Param\022\014\n\004list\030\003 \003(\t\022$\n\010fileList\030"
-      "\004 \003(\0132\022.StorageCloud.File\022\014\n\004data\030\005 \001(\014*"
-      "h\n\013CommandType\022\t\n\005NULL1\020\000\022\t\n\005LOGIN\020\001\022\013\n\007"
-      "RELOGIN\020\002\022\n\n\006LOGOUT\020\003\022\014\n\010REGISTER\020\004\022\014\n\010G"
-      "ET_STAT\020\005\022\016\n\nLIST_FILES\020\006*[\n\rHashAlgorit"
-      "hm\022\t\n\005NULL2\020\000\022\014\n\010H_NOHASH\020\001\022\014\n\010H_SHA256\020"
-      "\002\022\014\n\010H_SHA512\020\003\022\n\n\006H_SHA1\020\004\022\t\n\005H_MD5\020\005*I"
-      "\n\013MessageType\022\t\n\005NULL3\020\000\022\013\n\007COMMAND\020\001\022\023\n"
-      "\017SERVER_RESPONSE\020\002\022\r\n\tHANDSHAKE\020\003*>\n\023Enc"
-      "ryptionAlgorithm\022\t\n\005NULL4\020\000\022\020\n\014NOENCRYPT"
-      "ION\020\001\022\n\n\006CAESAR\020\002*u\n\014ResponseType\022\t\n\005NUL"
-      "L5\020\000\022\006\n\002OK\020\001\022\t\n\005ERROR\020\002\022\n\n\006LOGGED\020\003\022\010\n\004S"
-      "TAT\020\004\022\t\n\005FILES\020\005\022\n\n\006SHARED\020\006\022\014\n\010SRV_DATA"
-      "\020\007\022\014\n\010CAN_SEND\020\010b\006proto3"
+      "\"\252\001\n\004File\022\020\n\010filename\030\001 \001(\t\022(\n\010filetype\030"
+      "\002 \001(\0162\026.StorageCloud.FileType\022\014\n\004size\030\003 "
+      "\001(\004\022\014\n\004hash\030\004 \001(\014\022\r\n\005owner\030\005 \001(\t\022\024\n\014crea"
+      "tionDate\030\006 \001(\004\022%\n\010metadata\030\007 \003(\0132\023.Stora"
+      "geCloud.Param\"\241\001\n\016ServerResponse\022(\n\004type"
+      "\030\001 \001(\0162\032.StorageCloud.ResponseType\022#\n\006pa"
+      "rams\030\002 \003(\0132\023.StorageCloud.Param\022\014\n\004list\030"
+      "\003 \003(\t\022$\n\010fileList\030\004 \003(\0132\022.StorageCloud.F"
+      "ile\022\014\n\004data\030\005 \001(\014*\373\002\n\013CommandType\022\t\n\005NUL"
+      "L1\020\000\022\t\n\005LOGIN\020\001\022\013\n\007RELOGIN\020\002\022\n\n\006LOGOUT\020\003"
+      "\022\014\n\010REGISTER\020\004\022\014\n\010GET_STAT\020\005\022\016\n\nLIST_FIL"
+      "ES\020\006\022\t\n\005MKDIR\020\007\022\n\n\006DELETE\020\010\022\n\n\006RENAME\020\t\022"
+      "\t\n\005SHARE\020\n\022\016\n\nSHARE_INFO\020\013\022\010\n\004MOVE\020\014\022\014\n\010"
+      "DOWNLOAD\020\r\022\014\n\010METADATA\020\016\022\014\n\010USR_DATA\020\017\022\013"
+      "\n\007UNSHARE\020\020\022\017\n\013DELETE_USER\020\021\022\024\n\020CHANGE_U"
+      "SER_PASS\020\022\022\r\n\tUSER_STAT\020\023\022\023\n\017LIST_USER_F"
+      "ILES\020\024\022\024\n\020DELETE_USER_FILE\020\025\022\021\n\rADMIN_UN"
+      "SHARE\020\026\022\024\n\020ADMIN_SHARE_INFO\020\027\022\010\n\004WARN\020\030*"
+      "[\n\rHashAlgorithm\022\t\n\005NULL2\020\000\022\014\n\010H_NOHASH\020"
+      "\001\022\014\n\010H_SHA256\020\002\022\014\n\010H_SHA512\020\003\022\n\n\006H_SHA1\020"
+      "\004\022\t\n\005H_MD5\020\005*I\n\013MessageType\022\t\n\005NULL3\020\000\022\013"
+      "\n\007COMMAND\020\001\022\023\n\017SERVER_RESPONSE\020\002\022\r\n\tHAND"
+      "SHAKE\020\003*>\n\023EncryptionAlgorithm\022\t\n\005NULL4\020"
+      "\000\022\020\n\014NOENCRYPTION\020\001\022\n\n\006CAESAR\020\002*.\n\010FileT"
+      "ype\022\t\n\005NULL6\020\000\022\010\n\004FILE\020\001\022\r\n\tDIRECTORY\020\002*"
+      "u\n\014ResponseType\022\t\n\005NULL5\020\000\022\006\n\002OK\020\001\022\t\n\005ER"
+      "ROR\020\002\022\n\n\006LOGGED\020\003\022\010\n\004STAT\020\004\022\t\n\005FILES\020\005\022\n"
+      "\n\006SHARED\020\006\022\014\n\010SRV_DATA\020\007\022\014\n\010CAN_SEND\020\010b\006"
+      "proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1184);
+      descriptor, 1606);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "messages.proto", &protobuf_RegisterTypes);
 }
@@ -345,6 +360,24 @@ bool CommandType_IsValid(int value) {
     case 4:
     case 5:
     case 6:
+    case 7:
+    case 8:
+    case 9:
+    case 10:
+    case 11:
+    case 12:
+    case 13:
+    case 14:
+    case 15:
+    case 16:
+    case 17:
+    case 18:
+    case 19:
+    case 20:
+    case 21:
+    case 22:
+    case 23:
+    case 24:
       return true;
     default:
       return false;
@@ -400,9 +433,24 @@ bool EncryptionAlgorithm_IsValid(int value) {
   }
 }
 
-const ::google::protobuf::EnumDescriptor* ResponseType_descriptor() {
+const ::google::protobuf::EnumDescriptor* FileType_descriptor() {
   protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
   return protobuf_messages_2eproto::file_level_enum_descriptors[4];
+}
+bool FileType_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::google::protobuf::EnumDescriptor* ResponseType_descriptor() {
+  protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_messages_2eproto::file_level_enum_descriptors[5];
 }
 bool ResponseType_IsValid(int value) {
   switch (value) {
@@ -1896,8 +1944,12 @@ void Handshake::InternalSwap(Handshake* other) {
 void File::InitAsDefaultInstance() {
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int File::kNameFieldNumber;
+const int File::kFilenameFieldNumber;
+const int File::kFiletypeFieldNumber;
 const int File::kSizeFieldNumber;
+const int File::kHashFieldNumber;
+const int File::kOwnerFieldNumber;
+const int File::kCreationDateFieldNumber;
 const int File::kMetadataFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -1915,17 +1967,31 @@ File::File(const File& from)
       metadata_(from.metadata_),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.name().size() > 0) {
-    name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
+  filename_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.filename().size() > 0) {
+    filename_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.filename_);
   }
-  size_ = from.size_;
+  hash_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.hash().size() > 0) {
+    hash_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.hash_);
+  }
+  owner_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.owner().size() > 0) {
+    owner_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.owner_);
+  }
+  ::memcpy(&size_, &from.size_,
+    static_cast<size_t>(reinterpret_cast<char*>(&filetype_) -
+    reinterpret_cast<char*>(&size_)) + sizeof(filetype_));
   // @@protoc_insertion_point(copy_constructor:StorageCloud.File)
 }
 
 void File::SharedCtor() {
-  name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  size_ = GOOGLE_LONGLONG(0);
+  filename_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  hash_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  owner_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&size_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&filetype_) -
+      reinterpret_cast<char*>(&size_)) + sizeof(filetype_));
   _cached_size_ = 0;
 }
 
@@ -1935,7 +2001,9 @@ File::~File() {
 }
 
 void File::SharedDtor() {
-  name_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  filename_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  hash_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  owner_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 void File::SetCachedSize(int size) const {
@@ -1968,8 +2036,12 @@ void File::Clear() {
   (void) cached_has_bits;
 
   metadata_.Clear();
-  name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  size_ = GOOGLE_LONGLONG(0);
+  filename_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  hash_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  owner_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&size_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&filetype_) -
+      reinterpret_cast<char*>(&size_)) + sizeof(filetype_));
   _internal_metadata_.Clear();
 }
 
@@ -1983,29 +2055,44 @@ bool File::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // string name = 1;
+      // string filename = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_name()));
+                input, this->mutable_filename()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->name().data(), static_cast<int>(this->name().length()),
+            this->filename().data(), static_cast<int>(this->filename().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "StorageCloud.File.name"));
+            "StorageCloud.File.filename"));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // int64 size = 2;
+      // .StorageCloud.FileType filetype = 2;
       case 2: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          set_filetype(static_cast< ::StorageCloud::FileType >(value));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint64 size = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
                  input, &size_)));
         } else {
           goto handle_unusual;
@@ -2013,10 +2100,52 @@ bool File::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .StorageCloud.Param metadata = 3;
-      case 3: {
+      // bytes hash = 4;
+      case 4: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
+            static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_hash()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string owner = 5;
+      case 5: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(42u /* 42 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_owner()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->owner().data(), static_cast<int>(this->owner().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "StorageCloud.File.owner"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint64 creationDate = 6;
+      case 6: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(48u /* 48 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
+                 input, &creationdate_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated .StorageCloud.Param metadata = 7;
+      case 7: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(58u /* 58 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(input, add_metadata()));
         } else {
           goto handle_unusual;
@@ -2050,26 +2179,53 @@ void File::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string name = 1;
-  if (this->name().size() > 0) {
+  // string filename = 1;
+  if (this->filename().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->name().data(), static_cast<int>(this->name().length()),
+      this->filename().data(), static_cast<int>(this->filename().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "StorageCloud.File.name");
+      "StorageCloud.File.filename");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->name(), output);
+      1, this->filename(), output);
   }
 
-  // int64 size = 2;
+  // .StorageCloud.FileType filetype = 2;
+  if (this->filetype() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      2, this->filetype(), output);
+  }
+
+  // uint64 size = 3;
   if (this->size() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(2, this->size(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(3, this->size(), output);
   }
 
-  // repeated .StorageCloud.Param metadata = 3;
+  // bytes hash = 4;
+  if (this->hash().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
+      4, this->hash(), output);
+  }
+
+  // string owner = 5;
+  if (this->owner().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->owner().data(), static_cast<int>(this->owner().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "StorageCloud.File.owner");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      5, this->owner(), output);
+  }
+
+  // uint64 creationDate = 6;
+  if (this->creationdate() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(6, this->creationdate(), output);
+  }
+
+  // repeated .StorageCloud.Param metadata = 7;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->metadata_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3, this->metadata(static_cast<int>(i)), output);
+      7, this->metadata(static_cast<int>(i)), output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -2086,28 +2242,57 @@ void File::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string name = 1;
-  if (this->name().size() > 0) {
+  // string filename = 1;
+  if (this->filename().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->name().data(), static_cast<int>(this->name().length()),
+      this->filename().data(), static_cast<int>(this->filename().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "StorageCloud.File.name");
+      "StorageCloud.File.filename");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->name(), target);
+        1, this->filename(), target);
   }
 
-  // int64 size = 2;
+  // .StorageCloud.FileType filetype = 2;
+  if (this->filetype() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      2, this->filetype(), target);
+  }
+
+  // uint64 size = 3;
   if (this->size() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(2, this->size(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(3, this->size(), target);
   }
 
-  // repeated .StorageCloud.Param metadata = 3;
+  // bytes hash = 4;
+  if (this->hash().size() > 0) {
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
+        4, this->hash(), target);
+  }
+
+  // string owner = 5;
+  if (this->owner().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->owner().data(), static_cast<int>(this->owner().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "StorageCloud.File.owner");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        5, this->owner(), target);
+  }
+
+  // uint64 creationDate = 6;
+  if (this->creationdate() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(6, this->creationdate(), target);
+  }
+
+  // repeated .StorageCloud.Param metadata = 7;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->metadata_size()); i < n; i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        3, this->metadata(static_cast<int>(i)), deterministic, target);
+        7, this->metadata(static_cast<int>(i)), deterministic, target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -2127,7 +2312,7 @@ size_t File::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  // repeated .StorageCloud.Param metadata = 3;
+  // repeated .StorageCloud.Param metadata = 7;
   {
     unsigned int count = static_cast<unsigned int>(this->metadata_size());
     total_size += 1UL * count;
@@ -2138,18 +2323,45 @@ size_t File::ByteSizeLong() const {
     }
   }
 
-  // string name = 1;
-  if (this->name().size() > 0) {
+  // string filename = 1;
+  if (this->filename().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->name());
+        this->filename());
   }
 
-  // int64 size = 2;
+  // bytes hash = 4;
+  if (this->hash().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::BytesSize(
+        this->hash());
+  }
+
+  // string owner = 5;
+  if (this->owner().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->owner());
+  }
+
+  // uint64 size = 3;
   if (this->size() != 0) {
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
+      ::google::protobuf::internal::WireFormatLite::UInt64Size(
         this->size());
+  }
+
+  // uint64 creationDate = 6;
+  if (this->creationdate() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt64Size(
+        this->creationdate());
+  }
+
+  // .StorageCloud.FileType filetype = 2;
+  if (this->filetype() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::EnumSize(this->filetype());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -2182,12 +2394,26 @@ void File::MergeFrom(const File& from) {
   (void) cached_has_bits;
 
   metadata_.MergeFrom(from.metadata_);
-  if (from.name().size() > 0) {
+  if (from.filename().size() > 0) {
 
-    name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
+    filename_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.filename_);
+  }
+  if (from.hash().size() > 0) {
+
+    hash_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.hash_);
+  }
+  if (from.owner().size() > 0) {
+
+    owner_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.owner_);
   }
   if (from.size() != 0) {
     set_size(from.size());
+  }
+  if (from.creationdate() != 0) {
+    set_creationdate(from.creationdate());
+  }
+  if (from.filetype() != 0) {
+    set_filetype(from.filetype());
   }
 }
 
@@ -2216,8 +2442,12 @@ void File::Swap(File* other) {
 void File::InternalSwap(File* other) {
   using std::swap;
   metadata_.InternalSwap(&other->metadata_);
-  name_.Swap(&other->name_);
+  filename_.Swap(&other->filename_);
+  hash_.Swap(&other->hash_);
+  owner_.Swap(&other->owner_);
   swap(size_, other->size_);
+  swap(creationdate_, other->creationdate_);
+  swap(filetype_, other->filetype_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);
 }

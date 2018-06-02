@@ -210,7 +210,9 @@ bool Client::sendServerResponse(const ServerResponse* res) {
     uint32_t data_len = res->ByteSize();
     uint8_t* data = new uint8_t[data_len];
     res->SerializeToArray(data, data_len);
-    prepareDataToSend(data, data_len);
+    if(prepareDataToSend(data, data_len)) {
+        logger->log(id + "/sendResponse", res->DebugString());
+    }
 
     delete data;
 }
@@ -257,13 +259,15 @@ bool Client::prepareDataToSend(uint8_t in_buf[], uint32_t len) {
 
     if(sendNBytes(out_len, out_buf)) {
         logger->log(id, "response sent successfully");
-    } else {
-        logger->warn(id, "response not send successfully");
+        delete hash;
+        delete data;
+        return true;
     }
 
+    logger->warn(id, "response not sent successfully");
     delete hash;
     delete data;
-    return true;
+    return false;
 }
 
 bool Client::getMessage() {
@@ -272,7 +276,7 @@ bool Client::getMessage() {
     bool lastReason;
 
     if(!getNBytes(4, size_buf, lastReason)) {
-        if(!(*should_exit) || lastReason == R_ERROR)
+        if(!(*should_exit) && lastReason == R_ERROR)
             logger->warn(id, "connection error (size)");
         return false;
     }
@@ -285,7 +289,7 @@ bool Client::getMessage() {
     }
 
     if(!getNBytes(size - 4, msg_buf, lastReason)) {
-        if(!(*should_exit) || lastReason == R_ERROR)
+        if(!(*should_exit) && lastReason == R_ERROR)
             logger->err(id, "connection error while getting message body");
         return false;
     }

@@ -25,6 +25,8 @@
 #include <termios.h>
 #include <map>
 #include <chrono>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
 
 #include <openssl/sha.h>
 #include <openssl/md5.h>
