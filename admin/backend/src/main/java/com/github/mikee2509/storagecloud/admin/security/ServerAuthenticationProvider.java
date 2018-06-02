@@ -8,8 +8,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-
 @Component
 public class ServerAuthenticationProvider implements AuthenticationProvider {
     @Override
@@ -28,8 +26,8 @@ public class ServerAuthenticationProvider implements AuthenticationProvider {
                 .setLastName("Kowalski")
                 .build();
 
-        UserAuthDetails userAuthDetails = UserAuthDetails.create(user, password);
-        return new UsernamePasswordAuthenticationToken(userAuthDetails, null, new ArrayList<>());
+        UserAuthDetails authDetails = UserAuthDetails.create(user, password);
+        return new UsernamePasswordAuthenticationToken(authDetails, null, authDetails.getAuthorities());
     }
 
     @Override
