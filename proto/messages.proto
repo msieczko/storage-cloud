@@ -11,6 +11,40 @@ message Param {
     }
 }
 
+option java_package = "com.github.mikee2509.storagecloud.proto";
+option java_multiple_files = true;
+
+message EncodedMessage {
+    uint64 dataSize = 1;
+    HashAlgorithm hashAlgorithm = 2;
+    bytes hash = 3;
+    MessageType type = 4;
+    bytes data = 5;
+}
+
+enum HashAlgorithm {
+    NULL2 = 0;
+    H_NOHASH = 1;
+    H_SHA256 = 2;
+    H_SHA512 = 3;
+    H_SHA1 = 4;
+    H_MD5 = 5;
+}
+
+enum MessageType {
+    NULL3 = 0;
+    COMMAND = 1;
+    SERVER_RESPONSE = 2;
+    HANDSHAKE = 3;
+}
+
+message Command {
+    CommandType type = 1;
+    repeated Param params = 2;
+    repeated string list = 3; // używane do list plików/użytkowników/etc
+    bytes data = 4;
+}
+
 enum CommandType {
     NULL1 = 0;
     LOGIN = 1;
@@ -39,55 +73,6 @@ enum CommandType {
     WARN = 24;
 }
 
-message Command {
-    CommandType type = 1;
-
-    repeated Param params = 2;
-
-    // używane do list plików/użytkowników/etc
-    repeated string list = 3;
-
-    bytes data = 4;
-}
-
-enum HashAlgorithm {
-    NULL2 = 0;
-    H_NOHASH = 1;
-    H_SHA256 = 2;
-    H_SHA512 = 3;
-    H_SHA1 = 4;
-    H_MD5 = 5;
-}
-
-enum MessageType {
-    NULL3 = 0;
-    COMMAND = 1;
-    SERVER_RESPONSE = 2;
-    HANDSHAKE = 3;
-}
-
-message EncodedMessage {
-    uint64 dataSize = 1;
-
-    HashAlgorithm hashAlgorithm = 2;
-
-    bytes hash = 3;
-
-    MessageType type = 4;
-
-    bytes data = 5;
-}
-
-enum EncryptionAlgorithm {
-    NULL4 = 0;
-    NOENCRYPTION = 1;
-    CAESAR = 2;
-}
-
-message Handshake {
-    EncryptionAlgorithm encryptionAlgorithm = 1;
-}
-
 enum FileType {
     NULL6 = 0;
     FILE = 1;
@@ -110,15 +95,6 @@ enum UserRole {
     ADMIN = 2;
 }
 
-message User {
-    string username = 1;
-    string firstName = 2;
-    string lastName = 3;
-    UserRole role = 4;
-    uint64 capacity = 5;
-    uint64 usedSpace = 6;
-}
-
 enum ResponseType {
     NULL5 = 0;
     OK = 1;
@@ -131,14 +107,30 @@ enum ResponseType {
     CAN_SEND = 8;
 }
 
+message Handshake {
+    EncryptionAlgorithm encryptionAlgorithm = 1;
+}
+
+enum EncryptionAlgorithm {
+    NULL4 = 0;
+    NOENCRYPTION = 1;
+    CAESAR = 2;
+}
+
+message User {
+    string username = 1;
+    string firstName = 2;
+    string lastName = 3;
+    UserRole role = 4;
+    uint64 capacity = 5;
+    uint64 usedSpace = 6;
+}
+
 message ServerResponse {
     ResponseType type = 1;
-
     repeated Param params = 2;
-
     repeated string list = 3;
-
     repeated File fileList = 4;
-
-    bytes data = 5;
+    repeated User userList = 5;
+    bytes data = 6;
 }

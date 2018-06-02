@@ -37,7 +37,7 @@ namespace protobuf_messages_2eproto {
 struct TableStruct {
   static const ::google::protobuf::internal::ParseTableField entries[];
   static const ::google::protobuf::internal::AuxillaryParseTableField aux[];
-  static const ::google::protobuf::internal::ParseTable schema[6];
+  static const ::google::protobuf::internal::ParseTable schema[7];
   static const ::google::protobuf::internal::FieldMetadata field_metadata[];
   static const ::google::protobuf::internal::SerializationTable serialization_table[];
   static const ::google::protobuf::uint32 offsets[];
@@ -45,22 +45,25 @@ struct TableStruct {
 void AddDescriptors();
 void InitDefaultsParamImpl();
 void InitDefaultsParam();
-void InitDefaultsCommandImpl();
-void InitDefaultsCommand();
 void InitDefaultsEncodedMessageImpl();
 void InitDefaultsEncodedMessage();
-void InitDefaultsHandshakeImpl();
-void InitDefaultsHandshake();
+void InitDefaultsCommandImpl();
+void InitDefaultsCommand();
 void InitDefaultsFileImpl();
 void InitDefaultsFile();
+void InitDefaultsHandshakeImpl();
+void InitDefaultsHandshake();
+void InitDefaultsUserImpl();
+void InitDefaultsUser();
 void InitDefaultsServerResponseImpl();
 void InitDefaultsServerResponse();
 inline void InitDefaults() {
   InitDefaultsParam();
-  InitDefaultsCommand();
   InitDefaultsEncodedMessage();
-  InitDefaultsHandshake();
+  InitDefaultsCommand();
   InitDefaultsFile();
+  InitDefaultsHandshake();
+  InitDefaultsUser();
   InitDefaultsServerResponse();
 }
 }  // namespace protobuf_messages_2eproto
@@ -83,53 +86,12 @@ extern ParamDefaultTypeInternal _Param_default_instance_;
 class ServerResponse;
 class ServerResponseDefaultTypeInternal;
 extern ServerResponseDefaultTypeInternal _ServerResponse_default_instance_;
+class User;
+class UserDefaultTypeInternal;
+extern UserDefaultTypeInternal _User_default_instance_;
 }  // namespace StorageCloud
 namespace StorageCloud {
 
-enum CommandType {
-  NULL1 = 0,
-  LOGIN = 1,
-  RELOGIN = 2,
-  LOGOUT = 3,
-  REGISTER = 4,
-  GET_STAT = 5,
-  LIST_FILES = 6,
-  MKDIR = 7,
-  DELETE = 8,
-  RENAME = 9,
-  SHARE = 10,
-  SHARE_INFO = 11,
-  MOVE = 12,
-  DOWNLOAD = 13,
-  METADATA = 14,
-  USR_DATA = 15,
-  UNSHARE = 16,
-  DELETE_USER = 17,
-  CHANGE_USER_PASS = 18,
-  USER_STAT = 19,
-  LIST_USER_FILES = 20,
-  DELETE_USER_FILE = 21,
-  ADMIN_UNSHARE = 22,
-  ADMIN_SHARE_INFO = 23,
-  WARN = 24,
-  CommandType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
-  CommandType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
-};
-bool CommandType_IsValid(int value);
-const CommandType CommandType_MIN = NULL1;
-const CommandType CommandType_MAX = WARN;
-const int CommandType_ARRAYSIZE = CommandType_MAX + 1;
-
-const ::google::protobuf::EnumDescriptor* CommandType_descriptor();
-inline const ::std::string& CommandType_Name(CommandType value) {
-  return ::google::protobuf::internal::NameOfEnum(
-    CommandType_descriptor(), value);
-}
-inline bool CommandType_Parse(
-    const ::std::string& name, CommandType* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<CommandType>(
-    CommandType_descriptor(), name, value);
-}
 enum HashAlgorithm {
   NULL2 = 0,
   H_NOHASH = 1,
@@ -178,27 +140,49 @@ inline bool MessageType_Parse(
   return ::google::protobuf::internal::ParseNamedEnum<MessageType>(
     MessageType_descriptor(), name, value);
 }
-enum EncryptionAlgorithm {
-  NULL4 = 0,
-  NOENCRYPTION = 1,
-  CAESAR = 2,
-  EncryptionAlgorithm_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
-  EncryptionAlgorithm_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+enum CommandType {
+  NULL1 = 0,
+  LOGIN = 1,
+  RELOGIN = 2,
+  LOGOUT = 3,
+  REGISTER = 4,
+  GET_STAT = 5,
+  LIST_FILES = 6,
+  MKDIR = 7,
+  DELETE = 8,
+  RENAME = 9,
+  SHARE = 10,
+  SHARE_INFO = 11,
+  MOVE = 12,
+  DOWNLOAD = 13,
+  METADATA = 14,
+  USR_DATA = 15,
+  UNSHARE = 16,
+  DELETE_USER = 17,
+  CHANGE_USER_PASS = 18,
+  USER_STAT = 19,
+  LIST_USER_FILES = 20,
+  DELETE_USER_FILE = 21,
+  ADMIN_UNSHARE = 22,
+  ADMIN_SHARE_INFO = 23,
+  WARN = 24,
+  CommandType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
+  CommandType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
-bool EncryptionAlgorithm_IsValid(int value);
-const EncryptionAlgorithm EncryptionAlgorithm_MIN = NULL4;
-const EncryptionAlgorithm EncryptionAlgorithm_MAX = CAESAR;
-const int EncryptionAlgorithm_ARRAYSIZE = EncryptionAlgorithm_MAX + 1;
+bool CommandType_IsValid(int value);
+const CommandType CommandType_MIN = NULL1;
+const CommandType CommandType_MAX = WARN;
+const int CommandType_ARRAYSIZE = CommandType_MAX + 1;
 
-const ::google::protobuf::EnumDescriptor* EncryptionAlgorithm_descriptor();
-inline const ::std::string& EncryptionAlgorithm_Name(EncryptionAlgorithm value) {
+const ::google::protobuf::EnumDescriptor* CommandType_descriptor();
+inline const ::std::string& CommandType_Name(CommandType value) {
   return ::google::protobuf::internal::NameOfEnum(
-    EncryptionAlgorithm_descriptor(), value);
+    CommandType_descriptor(), value);
 }
-inline bool EncryptionAlgorithm_Parse(
-    const ::std::string& name, EncryptionAlgorithm* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<EncryptionAlgorithm>(
-    EncryptionAlgorithm_descriptor(), name, value);
+inline bool CommandType_Parse(
+    const ::std::string& name, CommandType* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<CommandType>(
+    CommandType_descriptor(), name, value);
 }
 enum FileType {
   NULL6 = 0,
@@ -221,6 +205,28 @@ inline bool FileType_Parse(
     const ::std::string& name, FileType* value) {
   return ::google::protobuf::internal::ParseNamedEnum<FileType>(
     FileType_descriptor(), name, value);
+}
+enum UserRole {
+  NULL7 = 0,
+  USER = 1,
+  ADMIN = 2,
+  UserRole_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
+  UserRole_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+};
+bool UserRole_IsValid(int value);
+const UserRole UserRole_MIN = NULL7;
+const UserRole UserRole_MAX = ADMIN;
+const int UserRole_ARRAYSIZE = UserRole_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* UserRole_descriptor();
+inline const ::std::string& UserRole_Name(UserRole value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    UserRole_descriptor(), value);
+}
+inline bool UserRole_Parse(
+    const ::std::string& name, UserRole* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<UserRole>(
+    UserRole_descriptor(), name, value);
 }
 enum ResponseType {
   NULL5 = 0,
@@ -249,6 +255,28 @@ inline bool ResponseType_Parse(
     const ::std::string& name, ResponseType* value) {
   return ::google::protobuf::internal::ParseNamedEnum<ResponseType>(
     ResponseType_descriptor(), name, value);
+}
+enum EncryptionAlgorithm {
+  NULL4 = 0,
+  NOENCRYPTION = 1,
+  CAESAR = 2,
+  EncryptionAlgorithm_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
+  EncryptionAlgorithm_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+};
+bool EncryptionAlgorithm_IsValid(int value);
+const EncryptionAlgorithm EncryptionAlgorithm_MIN = NULL4;
+const EncryptionAlgorithm EncryptionAlgorithm_MAX = CAESAR;
+const int EncryptionAlgorithm_ARRAYSIZE = EncryptionAlgorithm_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* EncryptionAlgorithm_descriptor();
+inline const ::std::string& EncryptionAlgorithm_Name(EncryptionAlgorithm value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    EncryptionAlgorithm_descriptor(), value);
+}
+inline bool EncryptionAlgorithm_Parse(
+    const ::std::string& name, EncryptionAlgorithm* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<EncryptionAlgorithm>(
+    EncryptionAlgorithm_descriptor(), name, value);
 }
 // ===================================================================
 
@@ -425,6 +453,149 @@ class Param : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
 };
 // -------------------------------------------------------------------
 
+class EncodedMessage : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:StorageCloud.EncodedMessage) */ {
+ public:
+  EncodedMessage();
+  virtual ~EncodedMessage();
+
+  EncodedMessage(const EncodedMessage& from);
+
+  inline EncodedMessage& operator=(const EncodedMessage& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  EncodedMessage(EncodedMessage&& from) noexcept
+    : EncodedMessage() {
+    *this = ::std::move(from);
+  }
+
+  inline EncodedMessage& operator=(EncodedMessage&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const EncodedMessage& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const EncodedMessage* internal_default_instance() {
+    return reinterpret_cast<const EncodedMessage*>(
+               &_EncodedMessage_default_instance_);
+  }
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    1;
+
+  void Swap(EncodedMessage* other);
+  friend void swap(EncodedMessage& a, EncodedMessage& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline EncodedMessage* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  EncodedMessage* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const EncodedMessage& from);
+  void MergeFrom(const EncodedMessage& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(EncodedMessage* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // bytes hash = 3;
+  void clear_hash();
+  static const int kHashFieldNumber = 3;
+  const ::std::string& hash() const;
+  void set_hash(const ::std::string& value);
+  #if LANG_CXX11
+  void set_hash(::std::string&& value);
+  #endif
+  void set_hash(const char* value);
+  void set_hash(const void* value, size_t size);
+  ::std::string* mutable_hash();
+  ::std::string* release_hash();
+  void set_allocated_hash(::std::string* hash);
+
+  // bytes data = 5;
+  void clear_data();
+  static const int kDataFieldNumber = 5;
+  const ::std::string& data() const;
+  void set_data(const ::std::string& value);
+  #if LANG_CXX11
+  void set_data(::std::string&& value);
+  #endif
+  void set_data(const char* value);
+  void set_data(const void* value, size_t size);
+  ::std::string* mutable_data();
+  ::std::string* release_data();
+  void set_allocated_data(::std::string* data);
+
+  // uint64 dataSize = 1;
+  void clear_datasize();
+  static const int kDataSizeFieldNumber = 1;
+  ::google::protobuf::uint64 datasize() const;
+  void set_datasize(::google::protobuf::uint64 value);
+
+  // .StorageCloud.HashAlgorithm hashAlgorithm = 2;
+  void clear_hashalgorithm();
+  static const int kHashAlgorithmFieldNumber = 2;
+  ::StorageCloud::HashAlgorithm hashalgorithm() const;
+  void set_hashalgorithm(::StorageCloud::HashAlgorithm value);
+
+  // .StorageCloud.MessageType type = 4;
+  void clear_type();
+  static const int kTypeFieldNumber = 4;
+  ::StorageCloud::MessageType type() const;
+  void set_type(::StorageCloud::MessageType value);
+
+  // @@protoc_insertion_point(class_scope:StorageCloud.EncodedMessage)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr hash_;
+  ::google::protobuf::internal::ArenaStringPtr data_;
+  ::google::protobuf::uint64 datasize_;
+  int hashalgorithm_;
+  int type_;
+  mutable int _cached_size_;
+  friend struct ::protobuf_messages_2eproto::TableStruct;
+  friend void ::protobuf_messages_2eproto::InitDefaultsEncodedMessageImpl();
+};
+// -------------------------------------------------------------------
+
 class Command : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:StorageCloud.Command) */ {
  public:
   Command();
@@ -460,7 +631,7 @@ class Command : public ::google::protobuf::Message /* @@protoc_insertion_point(c
                &_Command_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    1;
+    2;
 
   void Swap(Command* other);
   friend void swap(Command& a, Command& b) {
@@ -575,248 +746,6 @@ class Command : public ::google::protobuf::Message /* @@protoc_insertion_point(c
 };
 // -------------------------------------------------------------------
 
-class EncodedMessage : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:StorageCloud.EncodedMessage) */ {
- public:
-  EncodedMessage();
-  virtual ~EncodedMessage();
-
-  EncodedMessage(const EncodedMessage& from);
-
-  inline EncodedMessage& operator=(const EncodedMessage& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  #if LANG_CXX11
-  EncodedMessage(EncodedMessage&& from) noexcept
-    : EncodedMessage() {
-    *this = ::std::move(from);
-  }
-
-  inline EncodedMessage& operator=(EncodedMessage&& from) noexcept {
-    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
-      if (this != &from) InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-  #endif
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const EncodedMessage& default_instance();
-
-  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const EncodedMessage* internal_default_instance() {
-    return reinterpret_cast<const EncodedMessage*>(
-               &_EncodedMessage_default_instance_);
-  }
-  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    2;
-
-  void Swap(EncodedMessage* other);
-  friend void swap(EncodedMessage& a, EncodedMessage& b) {
-    a.Swap(&b);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline EncodedMessage* New() const PROTOBUF_FINAL { return New(NULL); }
-
-  EncodedMessage* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
-  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void CopyFrom(const EncodedMessage& from);
-  void MergeFrom(const EncodedMessage& from);
-  void Clear() PROTOBUF_FINAL;
-  bool IsInitialized() const PROTOBUF_FINAL;
-
-  size_t ByteSizeLong() const PROTOBUF_FINAL;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
-      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
-  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const PROTOBUF_FINAL;
-  void InternalSwap(EncodedMessage* other);
-  private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
-    return NULL;
-  }
-  inline void* MaybeArenaPtr() const {
-    return NULL;
-  }
-  public:
-
-  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // bytes hash = 3;
-  void clear_hash();
-  static const int kHashFieldNumber = 3;
-  const ::std::string& hash() const;
-  void set_hash(const ::std::string& value);
-  #if LANG_CXX11
-  void set_hash(::std::string&& value);
-  #endif
-  void set_hash(const char* value);
-  void set_hash(const void* value, size_t size);
-  ::std::string* mutable_hash();
-  ::std::string* release_hash();
-  void set_allocated_hash(::std::string* hash);
-
-  // bytes data = 5;
-  void clear_data();
-  static const int kDataFieldNumber = 5;
-  const ::std::string& data() const;
-  void set_data(const ::std::string& value);
-  #if LANG_CXX11
-  void set_data(::std::string&& value);
-  #endif
-  void set_data(const char* value);
-  void set_data(const void* value, size_t size);
-  ::std::string* mutable_data();
-  ::std::string* release_data();
-  void set_allocated_data(::std::string* data);
-
-  // uint64 dataSize = 1;
-  void clear_datasize();
-  static const int kDataSizeFieldNumber = 1;
-  ::google::protobuf::uint64 datasize() const;
-  void set_datasize(::google::protobuf::uint64 value);
-
-  // .StorageCloud.HashAlgorithm hashAlgorithm = 2;
-  void clear_hashalgorithm();
-  static const int kHashAlgorithmFieldNumber = 2;
-  ::StorageCloud::HashAlgorithm hashalgorithm() const;
-  void set_hashalgorithm(::StorageCloud::HashAlgorithm value);
-
-  // .StorageCloud.MessageType type = 4;
-  void clear_type();
-  static const int kTypeFieldNumber = 4;
-  ::StorageCloud::MessageType type() const;
-  void set_type(::StorageCloud::MessageType value);
-
-  // @@protoc_insertion_point(class_scope:StorageCloud.EncodedMessage)
- private:
-
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::internal::ArenaStringPtr hash_;
-  ::google::protobuf::internal::ArenaStringPtr data_;
-  ::google::protobuf::uint64 datasize_;
-  int hashalgorithm_;
-  int type_;
-  mutable int _cached_size_;
-  friend struct ::protobuf_messages_2eproto::TableStruct;
-  friend void ::protobuf_messages_2eproto::InitDefaultsEncodedMessageImpl();
-};
-// -------------------------------------------------------------------
-
-class Handshake : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:StorageCloud.Handshake) */ {
- public:
-  Handshake();
-  virtual ~Handshake();
-
-  Handshake(const Handshake& from);
-
-  inline Handshake& operator=(const Handshake& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  #if LANG_CXX11
-  Handshake(Handshake&& from) noexcept
-    : Handshake() {
-    *this = ::std::move(from);
-  }
-
-  inline Handshake& operator=(Handshake&& from) noexcept {
-    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
-      if (this != &from) InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-  #endif
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const Handshake& default_instance();
-
-  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const Handshake* internal_default_instance() {
-    return reinterpret_cast<const Handshake*>(
-               &_Handshake_default_instance_);
-  }
-  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    3;
-
-  void Swap(Handshake* other);
-  friend void swap(Handshake& a, Handshake& b) {
-    a.Swap(&b);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline Handshake* New() const PROTOBUF_FINAL { return New(NULL); }
-
-  Handshake* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
-  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void CopyFrom(const Handshake& from);
-  void MergeFrom(const Handshake& from);
-  void Clear() PROTOBUF_FINAL;
-  bool IsInitialized() const PROTOBUF_FINAL;
-
-  size_t ByteSizeLong() const PROTOBUF_FINAL;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
-      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
-  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const PROTOBUF_FINAL;
-  void InternalSwap(Handshake* other);
-  private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
-    return NULL;
-  }
-  inline void* MaybeArenaPtr() const {
-    return NULL;
-  }
-  public:
-
-  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // .StorageCloud.EncryptionAlgorithm encryptionAlgorithm = 1;
-  void clear_encryptionalgorithm();
-  static const int kEncryptionAlgorithmFieldNumber = 1;
-  ::StorageCloud::EncryptionAlgorithm encryptionalgorithm() const;
-  void set_encryptionalgorithm(::StorageCloud::EncryptionAlgorithm value);
-
-  // @@protoc_insertion_point(class_scope:StorageCloud.Handshake)
- private:
-
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  int encryptionalgorithm_;
-  mutable int _cached_size_;
-  friend struct ::protobuf_messages_2eproto::TableStruct;
-  friend void ::protobuf_messages_2eproto::InitDefaultsHandshakeImpl();
-};
-// -------------------------------------------------------------------
-
 class File : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:StorageCloud.File) */ {
  public:
   File();
@@ -852,7 +781,7 @@ class File : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
                &_File_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    4;
+    3;
 
   void Swap(File* other);
   friend void swap(File& a, File& b) {
@@ -988,6 +917,263 @@ class File : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
 };
 // -------------------------------------------------------------------
 
+class Handshake : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:StorageCloud.Handshake) */ {
+ public:
+  Handshake();
+  virtual ~Handshake();
+
+  Handshake(const Handshake& from);
+
+  inline Handshake& operator=(const Handshake& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  Handshake(Handshake&& from) noexcept
+    : Handshake() {
+    *this = ::std::move(from);
+  }
+
+  inline Handshake& operator=(Handshake&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Handshake& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const Handshake* internal_default_instance() {
+    return reinterpret_cast<const Handshake*>(
+               &_Handshake_default_instance_);
+  }
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    4;
+
+  void Swap(Handshake* other);
+  friend void swap(Handshake& a, Handshake& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline Handshake* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  Handshake* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const Handshake& from);
+  void MergeFrom(const Handshake& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(Handshake* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // .StorageCloud.EncryptionAlgorithm encryptionAlgorithm = 1;
+  void clear_encryptionalgorithm();
+  static const int kEncryptionAlgorithmFieldNumber = 1;
+  ::StorageCloud::EncryptionAlgorithm encryptionalgorithm() const;
+  void set_encryptionalgorithm(::StorageCloud::EncryptionAlgorithm value);
+
+  // @@protoc_insertion_point(class_scope:StorageCloud.Handshake)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  int encryptionalgorithm_;
+  mutable int _cached_size_;
+  friend struct ::protobuf_messages_2eproto::TableStruct;
+  friend void ::protobuf_messages_2eproto::InitDefaultsHandshakeImpl();
+};
+// -------------------------------------------------------------------
+
+class User : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:StorageCloud.User) */ {
+ public:
+  User();
+  virtual ~User();
+
+  User(const User& from);
+
+  inline User& operator=(const User& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  User(User&& from) noexcept
+    : User() {
+    *this = ::std::move(from);
+  }
+
+  inline User& operator=(User&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const User& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const User* internal_default_instance() {
+    return reinterpret_cast<const User*>(
+               &_User_default_instance_);
+  }
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    5;
+
+  void Swap(User* other);
+  friend void swap(User& a, User& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline User* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  User* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const User& from);
+  void MergeFrom(const User& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(User* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // string username = 1;
+  void clear_username();
+  static const int kUsernameFieldNumber = 1;
+  const ::std::string& username() const;
+  void set_username(const ::std::string& value);
+  #if LANG_CXX11
+  void set_username(::std::string&& value);
+  #endif
+  void set_username(const char* value);
+  void set_username(const char* value, size_t size);
+  ::std::string* mutable_username();
+  ::std::string* release_username();
+  void set_allocated_username(::std::string* username);
+
+  // string firstName = 2;
+  void clear_firstname();
+  static const int kFirstNameFieldNumber = 2;
+  const ::std::string& firstname() const;
+  void set_firstname(const ::std::string& value);
+  #if LANG_CXX11
+  void set_firstname(::std::string&& value);
+  #endif
+  void set_firstname(const char* value);
+  void set_firstname(const char* value, size_t size);
+  ::std::string* mutable_firstname();
+  ::std::string* release_firstname();
+  void set_allocated_firstname(::std::string* firstname);
+
+  // string lastName = 3;
+  void clear_lastname();
+  static const int kLastNameFieldNumber = 3;
+  const ::std::string& lastname() const;
+  void set_lastname(const ::std::string& value);
+  #if LANG_CXX11
+  void set_lastname(::std::string&& value);
+  #endif
+  void set_lastname(const char* value);
+  void set_lastname(const char* value, size_t size);
+  ::std::string* mutable_lastname();
+  ::std::string* release_lastname();
+  void set_allocated_lastname(::std::string* lastname);
+
+  // uint64 capacity = 5;
+  void clear_capacity();
+  static const int kCapacityFieldNumber = 5;
+  ::google::protobuf::uint64 capacity() const;
+  void set_capacity(::google::protobuf::uint64 value);
+
+  // uint64 usedSpace = 6;
+  void clear_usedspace();
+  static const int kUsedSpaceFieldNumber = 6;
+  ::google::protobuf::uint64 usedspace() const;
+  void set_usedspace(::google::protobuf::uint64 value);
+
+  // .StorageCloud.UserRole role = 4;
+  void clear_role();
+  static const int kRoleFieldNumber = 4;
+  ::StorageCloud::UserRole role() const;
+  void set_role(::StorageCloud::UserRole value);
+
+  // @@protoc_insertion_point(class_scope:StorageCloud.User)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr username_;
+  ::google::protobuf::internal::ArenaStringPtr firstname_;
+  ::google::protobuf::internal::ArenaStringPtr lastname_;
+  ::google::protobuf::uint64 capacity_;
+  ::google::protobuf::uint64 usedspace_;
+  int role_;
+  mutable int _cached_size_;
+  friend struct ::protobuf_messages_2eproto::TableStruct;
+  friend void ::protobuf_messages_2eproto::InitDefaultsUserImpl();
+};
+// -------------------------------------------------------------------
+
 class ServerResponse : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:StorageCloud.ServerResponse) */ {
  public:
   ServerResponse();
@@ -1023,7 +1209,7 @@ class ServerResponse : public ::google::protobuf::Message /* @@protoc_insertion_
                &_ServerResponse_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    5;
+    6;
 
   void Swap(ServerResponse* other);
   friend void swap(ServerResponse& a, ServerResponse& b) {
@@ -1116,9 +1302,21 @@ class ServerResponse : public ::google::protobuf::Message /* @@protoc_insertion_
   const ::google::protobuf::RepeatedPtrField< ::StorageCloud::File >&
       filelist() const;
 
-  // bytes data = 5;
+  // repeated .StorageCloud.User userList = 5;
+  int userlist_size() const;
+  void clear_userlist();
+  static const int kUserListFieldNumber = 5;
+  const ::StorageCloud::User& userlist(int index) const;
+  ::StorageCloud::User* mutable_userlist(int index);
+  ::StorageCloud::User* add_userlist();
+  ::google::protobuf::RepeatedPtrField< ::StorageCloud::User >*
+      mutable_userlist();
+  const ::google::protobuf::RepeatedPtrField< ::StorageCloud::User >&
+      userlist() const;
+
+  // bytes data = 6;
   void clear_data();
-  static const int kDataFieldNumber = 5;
+  static const int kDataFieldNumber = 6;
   const ::std::string& data() const;
   void set_data(const ::std::string& value);
   #if LANG_CXX11
@@ -1143,6 +1341,7 @@ class ServerResponse : public ::google::protobuf::Message /* @@protoc_insertion_
   ::google::protobuf::RepeatedPtrField< ::StorageCloud::Param > params_;
   ::google::protobuf::RepeatedPtrField< ::std::string> list_;
   ::google::protobuf::RepeatedPtrField< ::StorageCloud::File > filelist_;
+  ::google::protobuf::RepeatedPtrField< ::StorageCloud::User > userlist_;
   ::google::protobuf::internal::ArenaStringPtr data_;
   int type_;
   mutable int _cached_size_;
@@ -1443,6 +1642,158 @@ inline Param::ValueCase Param::value_case() const {
 }
 // -------------------------------------------------------------------
 
+// EncodedMessage
+
+// uint64 dataSize = 1;
+inline void EncodedMessage::clear_datasize() {
+  datasize_ = GOOGLE_ULONGLONG(0);
+}
+inline ::google::protobuf::uint64 EncodedMessage::datasize() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.EncodedMessage.dataSize)
+  return datasize_;
+}
+inline void EncodedMessage::set_datasize(::google::protobuf::uint64 value) {
+  
+  datasize_ = value;
+  // @@protoc_insertion_point(field_set:StorageCloud.EncodedMessage.dataSize)
+}
+
+// .StorageCloud.HashAlgorithm hashAlgorithm = 2;
+inline void EncodedMessage::clear_hashalgorithm() {
+  hashalgorithm_ = 0;
+}
+inline ::StorageCloud::HashAlgorithm EncodedMessage::hashalgorithm() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.EncodedMessage.hashAlgorithm)
+  return static_cast< ::StorageCloud::HashAlgorithm >(hashalgorithm_);
+}
+inline void EncodedMessage::set_hashalgorithm(::StorageCloud::HashAlgorithm value) {
+  
+  hashalgorithm_ = value;
+  // @@protoc_insertion_point(field_set:StorageCloud.EncodedMessage.hashAlgorithm)
+}
+
+// bytes hash = 3;
+inline void EncodedMessage::clear_hash() {
+  hash_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& EncodedMessage::hash() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.EncodedMessage.hash)
+  return hash_.GetNoArena();
+}
+inline void EncodedMessage::set_hash(const ::std::string& value) {
+  
+  hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:StorageCloud.EncodedMessage.hash)
+}
+#if LANG_CXX11
+inline void EncodedMessage::set_hash(::std::string&& value) {
+  
+  hash_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:StorageCloud.EncodedMessage.hash)
+}
+#endif
+inline void EncodedMessage::set_hash(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:StorageCloud.EncodedMessage.hash)
+}
+inline void EncodedMessage::set_hash(const void* value, size_t size) {
+  
+  hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:StorageCloud.EncodedMessage.hash)
+}
+inline ::std::string* EncodedMessage::mutable_hash() {
+  
+  // @@protoc_insertion_point(field_mutable:StorageCloud.EncodedMessage.hash)
+  return hash_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* EncodedMessage::release_hash() {
+  // @@protoc_insertion_point(field_release:StorageCloud.EncodedMessage.hash)
+  
+  return hash_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void EncodedMessage::set_allocated_hash(::std::string* hash) {
+  if (hash != NULL) {
+    
+  } else {
+    
+  }
+  hash_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), hash);
+  // @@protoc_insertion_point(field_set_allocated:StorageCloud.EncodedMessage.hash)
+}
+
+// .StorageCloud.MessageType type = 4;
+inline void EncodedMessage::clear_type() {
+  type_ = 0;
+}
+inline ::StorageCloud::MessageType EncodedMessage::type() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.EncodedMessage.type)
+  return static_cast< ::StorageCloud::MessageType >(type_);
+}
+inline void EncodedMessage::set_type(::StorageCloud::MessageType value) {
+  
+  type_ = value;
+  // @@protoc_insertion_point(field_set:StorageCloud.EncodedMessage.type)
+}
+
+// bytes data = 5;
+inline void EncodedMessage::clear_data() {
+  data_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& EncodedMessage::data() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.EncodedMessage.data)
+  return data_.GetNoArena();
+}
+inline void EncodedMessage::set_data(const ::std::string& value) {
+  
+  data_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:StorageCloud.EncodedMessage.data)
+}
+#if LANG_CXX11
+inline void EncodedMessage::set_data(::std::string&& value) {
+  
+  data_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:StorageCloud.EncodedMessage.data)
+}
+#endif
+inline void EncodedMessage::set_data(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  data_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:StorageCloud.EncodedMessage.data)
+}
+inline void EncodedMessage::set_data(const void* value, size_t size) {
+  
+  data_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:StorageCloud.EncodedMessage.data)
+}
+inline ::std::string* EncodedMessage::mutable_data() {
+  
+  // @@protoc_insertion_point(field_mutable:StorageCloud.EncodedMessage.data)
+  return data_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* EncodedMessage::release_data() {
+  // @@protoc_insertion_point(field_release:StorageCloud.EncodedMessage.data)
+  
+  return data_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void EncodedMessage::set_allocated_data(::std::string* data) {
+  if (data != NULL) {
+    
+  } else {
+    
+  }
+  data_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), data);
+  // @@protoc_insertion_point(field_set_allocated:StorageCloud.EncodedMessage.data)
+}
+
+// -------------------------------------------------------------------
+
 // Command
 
 // .StorageCloud.CommandType type = 1;
@@ -1609,176 +1960,6 @@ inline void Command::set_allocated_data(::std::string* data) {
   }
   data_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), data);
   // @@protoc_insertion_point(field_set_allocated:StorageCloud.Command.data)
-}
-
-// -------------------------------------------------------------------
-
-// EncodedMessage
-
-// uint64 dataSize = 1;
-inline void EncodedMessage::clear_datasize() {
-  datasize_ = GOOGLE_ULONGLONG(0);
-}
-inline ::google::protobuf::uint64 EncodedMessage::datasize() const {
-  // @@protoc_insertion_point(field_get:StorageCloud.EncodedMessage.dataSize)
-  return datasize_;
-}
-inline void EncodedMessage::set_datasize(::google::protobuf::uint64 value) {
-  
-  datasize_ = value;
-  // @@protoc_insertion_point(field_set:StorageCloud.EncodedMessage.dataSize)
-}
-
-// .StorageCloud.HashAlgorithm hashAlgorithm = 2;
-inline void EncodedMessage::clear_hashalgorithm() {
-  hashalgorithm_ = 0;
-}
-inline ::StorageCloud::HashAlgorithm EncodedMessage::hashalgorithm() const {
-  // @@protoc_insertion_point(field_get:StorageCloud.EncodedMessage.hashAlgorithm)
-  return static_cast< ::StorageCloud::HashAlgorithm >(hashalgorithm_);
-}
-inline void EncodedMessage::set_hashalgorithm(::StorageCloud::HashAlgorithm value) {
-  
-  hashalgorithm_ = value;
-  // @@protoc_insertion_point(field_set:StorageCloud.EncodedMessage.hashAlgorithm)
-}
-
-// bytes hash = 3;
-inline void EncodedMessage::clear_hash() {
-  hash_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& EncodedMessage::hash() const {
-  // @@protoc_insertion_point(field_get:StorageCloud.EncodedMessage.hash)
-  return hash_.GetNoArena();
-}
-inline void EncodedMessage::set_hash(const ::std::string& value) {
-  
-  hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:StorageCloud.EncodedMessage.hash)
-}
-#if LANG_CXX11
-inline void EncodedMessage::set_hash(::std::string&& value) {
-  
-  hash_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:StorageCloud.EncodedMessage.hash)
-}
-#endif
-inline void EncodedMessage::set_hash(const char* value) {
-  GOOGLE_DCHECK(value != NULL);
-  
-  hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:StorageCloud.EncodedMessage.hash)
-}
-inline void EncodedMessage::set_hash(const void* value, size_t size) {
-  
-  hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:StorageCloud.EncodedMessage.hash)
-}
-inline ::std::string* EncodedMessage::mutable_hash() {
-  
-  // @@protoc_insertion_point(field_mutable:StorageCloud.EncodedMessage.hash)
-  return hash_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* EncodedMessage::release_hash() {
-  // @@protoc_insertion_point(field_release:StorageCloud.EncodedMessage.hash)
-  
-  return hash_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void EncodedMessage::set_allocated_hash(::std::string* hash) {
-  if (hash != NULL) {
-    
-  } else {
-    
-  }
-  hash_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), hash);
-  // @@protoc_insertion_point(field_set_allocated:StorageCloud.EncodedMessage.hash)
-}
-
-// .StorageCloud.MessageType type = 4;
-inline void EncodedMessage::clear_type() {
-  type_ = 0;
-}
-inline ::StorageCloud::MessageType EncodedMessage::type() const {
-  // @@protoc_insertion_point(field_get:StorageCloud.EncodedMessage.type)
-  return static_cast< ::StorageCloud::MessageType >(type_);
-}
-inline void EncodedMessage::set_type(::StorageCloud::MessageType value) {
-  
-  type_ = value;
-  // @@protoc_insertion_point(field_set:StorageCloud.EncodedMessage.type)
-}
-
-// bytes data = 5;
-inline void EncodedMessage::clear_data() {
-  data_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& EncodedMessage::data() const {
-  // @@protoc_insertion_point(field_get:StorageCloud.EncodedMessage.data)
-  return data_.GetNoArena();
-}
-inline void EncodedMessage::set_data(const ::std::string& value) {
-  
-  data_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:StorageCloud.EncodedMessage.data)
-}
-#if LANG_CXX11
-inline void EncodedMessage::set_data(::std::string&& value) {
-  
-  data_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:StorageCloud.EncodedMessage.data)
-}
-#endif
-inline void EncodedMessage::set_data(const char* value) {
-  GOOGLE_DCHECK(value != NULL);
-  
-  data_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:StorageCloud.EncodedMessage.data)
-}
-inline void EncodedMessage::set_data(const void* value, size_t size) {
-  
-  data_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:StorageCloud.EncodedMessage.data)
-}
-inline ::std::string* EncodedMessage::mutable_data() {
-  
-  // @@protoc_insertion_point(field_mutable:StorageCloud.EncodedMessage.data)
-  return data_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* EncodedMessage::release_data() {
-  // @@protoc_insertion_point(field_release:StorageCloud.EncodedMessage.data)
-  
-  return data_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void EncodedMessage::set_allocated_data(::std::string* data) {
-  if (data != NULL) {
-    
-  } else {
-    
-  }
-  data_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), data);
-  // @@protoc_insertion_point(field_set_allocated:StorageCloud.EncodedMessage.data)
-}
-
-// -------------------------------------------------------------------
-
-// Handshake
-
-// .StorageCloud.EncryptionAlgorithm encryptionAlgorithm = 1;
-inline void Handshake::clear_encryptionalgorithm() {
-  encryptionalgorithm_ = 0;
-}
-inline ::StorageCloud::EncryptionAlgorithm Handshake::encryptionalgorithm() const {
-  // @@protoc_insertion_point(field_get:StorageCloud.Handshake.encryptionAlgorithm)
-  return static_cast< ::StorageCloud::EncryptionAlgorithm >(encryptionalgorithm_);
-}
-inline void Handshake::set_encryptionalgorithm(::StorageCloud::EncryptionAlgorithm value) {
-  
-  encryptionalgorithm_ = value;
-  // @@protoc_insertion_point(field_set:StorageCloud.Handshake.encryptionAlgorithm)
 }
 
 // -------------------------------------------------------------------
@@ -2018,6 +2199,229 @@ File::metadata() const {
 
 // -------------------------------------------------------------------
 
+// Handshake
+
+// .StorageCloud.EncryptionAlgorithm encryptionAlgorithm = 1;
+inline void Handshake::clear_encryptionalgorithm() {
+  encryptionalgorithm_ = 0;
+}
+inline ::StorageCloud::EncryptionAlgorithm Handshake::encryptionalgorithm() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.Handshake.encryptionAlgorithm)
+  return static_cast< ::StorageCloud::EncryptionAlgorithm >(encryptionalgorithm_);
+}
+inline void Handshake::set_encryptionalgorithm(::StorageCloud::EncryptionAlgorithm value) {
+  
+  encryptionalgorithm_ = value;
+  // @@protoc_insertion_point(field_set:StorageCloud.Handshake.encryptionAlgorithm)
+}
+
+// -------------------------------------------------------------------
+
+// User
+
+// string username = 1;
+inline void User::clear_username() {
+  username_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& User::username() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.User.username)
+  return username_.GetNoArena();
+}
+inline void User::set_username(const ::std::string& value) {
+  
+  username_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:StorageCloud.User.username)
+}
+#if LANG_CXX11
+inline void User::set_username(::std::string&& value) {
+  
+  username_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:StorageCloud.User.username)
+}
+#endif
+inline void User::set_username(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  username_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:StorageCloud.User.username)
+}
+inline void User::set_username(const char* value, size_t size) {
+  
+  username_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:StorageCloud.User.username)
+}
+inline ::std::string* User::mutable_username() {
+  
+  // @@protoc_insertion_point(field_mutable:StorageCloud.User.username)
+  return username_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* User::release_username() {
+  // @@protoc_insertion_point(field_release:StorageCloud.User.username)
+  
+  return username_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void User::set_allocated_username(::std::string* username) {
+  if (username != NULL) {
+    
+  } else {
+    
+  }
+  username_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), username);
+  // @@protoc_insertion_point(field_set_allocated:StorageCloud.User.username)
+}
+
+// string firstName = 2;
+inline void User::clear_firstname() {
+  firstname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& User::firstname() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.User.firstName)
+  return firstname_.GetNoArena();
+}
+inline void User::set_firstname(const ::std::string& value) {
+  
+  firstname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:StorageCloud.User.firstName)
+}
+#if LANG_CXX11
+inline void User::set_firstname(::std::string&& value) {
+  
+  firstname_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:StorageCloud.User.firstName)
+}
+#endif
+inline void User::set_firstname(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  firstname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:StorageCloud.User.firstName)
+}
+inline void User::set_firstname(const char* value, size_t size) {
+  
+  firstname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:StorageCloud.User.firstName)
+}
+inline ::std::string* User::mutable_firstname() {
+  
+  // @@protoc_insertion_point(field_mutable:StorageCloud.User.firstName)
+  return firstname_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* User::release_firstname() {
+  // @@protoc_insertion_point(field_release:StorageCloud.User.firstName)
+  
+  return firstname_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void User::set_allocated_firstname(::std::string* firstname) {
+  if (firstname != NULL) {
+    
+  } else {
+    
+  }
+  firstname_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), firstname);
+  // @@protoc_insertion_point(field_set_allocated:StorageCloud.User.firstName)
+}
+
+// string lastName = 3;
+inline void User::clear_lastname() {
+  lastname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& User::lastname() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.User.lastName)
+  return lastname_.GetNoArena();
+}
+inline void User::set_lastname(const ::std::string& value) {
+  
+  lastname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:StorageCloud.User.lastName)
+}
+#if LANG_CXX11
+inline void User::set_lastname(::std::string&& value) {
+  
+  lastname_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:StorageCloud.User.lastName)
+}
+#endif
+inline void User::set_lastname(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  lastname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:StorageCloud.User.lastName)
+}
+inline void User::set_lastname(const char* value, size_t size) {
+  
+  lastname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:StorageCloud.User.lastName)
+}
+inline ::std::string* User::mutable_lastname() {
+  
+  // @@protoc_insertion_point(field_mutable:StorageCloud.User.lastName)
+  return lastname_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* User::release_lastname() {
+  // @@protoc_insertion_point(field_release:StorageCloud.User.lastName)
+  
+  return lastname_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void User::set_allocated_lastname(::std::string* lastname) {
+  if (lastname != NULL) {
+    
+  } else {
+    
+  }
+  lastname_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), lastname);
+  // @@protoc_insertion_point(field_set_allocated:StorageCloud.User.lastName)
+}
+
+// .StorageCloud.UserRole role = 4;
+inline void User::clear_role() {
+  role_ = 0;
+}
+inline ::StorageCloud::UserRole User::role() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.User.role)
+  return static_cast< ::StorageCloud::UserRole >(role_);
+}
+inline void User::set_role(::StorageCloud::UserRole value) {
+  
+  role_ = value;
+  // @@protoc_insertion_point(field_set:StorageCloud.User.role)
+}
+
+// uint64 capacity = 5;
+inline void User::clear_capacity() {
+  capacity_ = GOOGLE_ULONGLONG(0);
+}
+inline ::google::protobuf::uint64 User::capacity() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.User.capacity)
+  return capacity_;
+}
+inline void User::set_capacity(::google::protobuf::uint64 value) {
+  
+  capacity_ = value;
+  // @@protoc_insertion_point(field_set:StorageCloud.User.capacity)
+}
+
+// uint64 usedSpace = 6;
+inline void User::clear_usedspace() {
+  usedspace_ = GOOGLE_ULONGLONG(0);
+}
+inline ::google::protobuf::uint64 User::usedspace() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.User.usedSpace)
+  return usedspace_;
+}
+inline void User::set_usedspace(::google::protobuf::uint64 value) {
+  
+  usedspace_ = value;
+  // @@protoc_insertion_point(field_set:StorageCloud.User.usedSpace)
+}
+
+// -------------------------------------------------------------------
+
 // ServerResponse
 
 // .StorageCloud.ResponseType type = 1;
@@ -2163,7 +2567,37 @@ ServerResponse::filelist() const {
   return filelist_;
 }
 
-// bytes data = 5;
+// repeated .StorageCloud.User userList = 5;
+inline int ServerResponse::userlist_size() const {
+  return userlist_.size();
+}
+inline void ServerResponse::clear_userlist() {
+  userlist_.Clear();
+}
+inline const ::StorageCloud::User& ServerResponse::userlist(int index) const {
+  // @@protoc_insertion_point(field_get:StorageCloud.ServerResponse.userList)
+  return userlist_.Get(index);
+}
+inline ::StorageCloud::User* ServerResponse::mutable_userlist(int index) {
+  // @@protoc_insertion_point(field_mutable:StorageCloud.ServerResponse.userList)
+  return userlist_.Mutable(index);
+}
+inline ::StorageCloud::User* ServerResponse::add_userlist() {
+  // @@protoc_insertion_point(field_add:StorageCloud.ServerResponse.userList)
+  return userlist_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::StorageCloud::User >*
+ServerResponse::mutable_userlist() {
+  // @@protoc_insertion_point(field_mutable_list:StorageCloud.ServerResponse.userList)
+  return &userlist_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::StorageCloud::User >&
+ServerResponse::userlist() const {
+  // @@protoc_insertion_point(field_list:StorageCloud.ServerResponse.userList)
+  return userlist_;
+}
+
+// bytes data = 6;
 inline void ServerResponse::clear_data() {
   data_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -2229,6 +2663,8 @@ inline void ServerResponse::set_allocated_data(::std::string* data) {
 
 // -------------------------------------------------------------------
 
+// -------------------------------------------------------------------
+
 
 // @@protoc_insertion_point(namespace_scope)
 
@@ -2237,11 +2673,6 @@ inline void ServerResponse::set_allocated_data(::std::string* data) {
 namespace google {
 namespace protobuf {
 
-template <> struct is_proto_enum< ::StorageCloud::CommandType> : ::google::protobuf::internal::true_type {};
-template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::CommandType>() {
-  return ::StorageCloud::CommandType_descriptor();
-}
 template <> struct is_proto_enum< ::StorageCloud::HashAlgorithm> : ::google::protobuf::internal::true_type {};
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::HashAlgorithm>() {
@@ -2252,20 +2683,30 @@ template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::MessageType>() {
   return ::StorageCloud::MessageType_descriptor();
 }
-template <> struct is_proto_enum< ::StorageCloud::EncryptionAlgorithm> : ::google::protobuf::internal::true_type {};
+template <> struct is_proto_enum< ::StorageCloud::CommandType> : ::google::protobuf::internal::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::EncryptionAlgorithm>() {
-  return ::StorageCloud::EncryptionAlgorithm_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::CommandType>() {
+  return ::StorageCloud::CommandType_descriptor();
 }
 template <> struct is_proto_enum< ::StorageCloud::FileType> : ::google::protobuf::internal::true_type {};
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::FileType>() {
   return ::StorageCloud::FileType_descriptor();
 }
+template <> struct is_proto_enum< ::StorageCloud::UserRole> : ::google::protobuf::internal::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::UserRole>() {
+  return ::StorageCloud::UserRole_descriptor();
+}
 template <> struct is_proto_enum< ::StorageCloud::ResponseType> : ::google::protobuf::internal::true_type {};
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::ResponseType>() {
   return ::StorageCloud::ResponseType_descriptor();
+}
+template <> struct is_proto_enum< ::StorageCloud::EncryptionAlgorithm> : ::google::protobuf::internal::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::StorageCloud::EncryptionAlgorithm>() {
+  return ::StorageCloud::EncryptionAlgorithm_descriptor();
 }
 
 }  // namespace protobuf
