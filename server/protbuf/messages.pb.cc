@@ -28,26 +28,31 @@ class ParamDefaultTypeInternal {
   ::google::protobuf::int64 iparamval_;
   ::google::protobuf::internal::ArenaStringPtr bparamval_;
 } _Param_default_instance_;
-class CommandDefaultTypeInternal {
- public:
-  ::google::protobuf::internal::ExplicitlyConstructed<Command>
-      _instance;
-} _Command_default_instance_;
 class EncodedMessageDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<EncodedMessage>
       _instance;
 } _EncodedMessage_default_instance_;
-class HandshakeDefaultTypeInternal {
+class CommandDefaultTypeInternal {
  public:
-  ::google::protobuf::internal::ExplicitlyConstructed<Handshake>
+  ::google::protobuf::internal::ExplicitlyConstructed<Command>
       _instance;
-} _Handshake_default_instance_;
+} _Command_default_instance_;
 class FileDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<File>
       _instance;
 } _File_default_instance_;
+class HandshakeDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<Handshake>
+      _instance;
+} _Handshake_default_instance_;
+class UserDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<User>
+      _instance;
+} _User_default_instance_;
 class ServerResponseDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<ServerResponse>
@@ -76,28 +81,6 @@ void InitDefaultsParam() {
   ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsParamImpl);
 }
 
-void InitDefaultsCommandImpl() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
-#else
-  ::google::protobuf::internal::InitProtobufDefaults();
-#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  protobuf_messages_2eproto::InitDefaultsParam();
-  {
-    void* ptr = &::StorageCloud::_Command_default_instance_;
-    new (ptr) ::StorageCloud::Command();
-    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::StorageCloud::Command::InitAsDefaultInstance();
-}
-
-void InitDefaultsCommand() {
-  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
-  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsCommandImpl);
-}
-
 void InitDefaultsEncodedMessageImpl() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -119,7 +102,7 @@ void InitDefaultsEncodedMessage() {
   ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsEncodedMessageImpl);
 }
 
-void InitDefaultsHandshakeImpl() {
+void InitDefaultsCommandImpl() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
 #ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
@@ -127,17 +110,18 @@ void InitDefaultsHandshakeImpl() {
 #else
   ::google::protobuf::internal::InitProtobufDefaults();
 #endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  protobuf_messages_2eproto::InitDefaultsParam();
   {
-    void* ptr = &::StorageCloud::_Handshake_default_instance_;
-    new (ptr) ::StorageCloud::Handshake();
+    void* ptr = &::StorageCloud::_Command_default_instance_;
+    new (ptr) ::StorageCloud::Command();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::StorageCloud::Handshake::InitAsDefaultInstance();
+  ::StorageCloud::Command::InitAsDefaultInstance();
 }
 
-void InitDefaultsHandshake() {
+void InitDefaultsCommand() {
   static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
-  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsHandshakeImpl);
+  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsCommandImpl);
 }
 
 void InitDefaultsFileImpl() {
@@ -162,6 +146,48 @@ void InitDefaultsFile() {
   ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsFileImpl);
 }
 
+void InitDefaultsHandshakeImpl() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
+#else
+  ::google::protobuf::internal::InitProtobufDefaults();
+#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  {
+    void* ptr = &::StorageCloud::_Handshake_default_instance_;
+    new (ptr) ::StorageCloud::Handshake();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::StorageCloud::Handshake::InitAsDefaultInstance();
+}
+
+void InitDefaultsHandshake() {
+  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
+  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsHandshakeImpl);
+}
+
+void InitDefaultsUserImpl() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
+#else
+  ::google::protobuf::internal::InitProtobufDefaults();
+#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  {
+    void* ptr = &::StorageCloud::_User_default_instance_;
+    new (ptr) ::StorageCloud::User();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::StorageCloud::User::InitAsDefaultInstance();
+}
+
+void InitDefaultsUser() {
+  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
+  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsUserImpl);
+}
+
 void InitDefaultsServerResponseImpl() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -172,6 +198,7 @@ void InitDefaultsServerResponseImpl() {
 #endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
   protobuf_messages_2eproto::InitDefaultsParam();
   protobuf_messages_2eproto::InitDefaultsFile();
+  protobuf_messages_2eproto::InitDefaultsUser();
   {
     void* ptr = &::StorageCloud::_ServerResponse_default_instance_;
     new (ptr) ::StorageCloud::ServerResponse();
@@ -185,8 +212,8 @@ void InitDefaultsServerResponse() {
   ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsServerResponseImpl);
 }
 
-::google::protobuf::Metadata file_level_metadata[6];
-const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[5];
+::google::protobuf::Metadata file_level_metadata[7];
+const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[7];
 
 const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
@@ -200,15 +227,6 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   offsetof(::StorageCloud::ParamDefaultTypeInternal, bparamval_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::Param, value_),
   ~0u,  // no _has_bits_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::Command, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::Command, type_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::Command, params_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::Command, list_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::Command, data_),
-  ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::EncodedMessage, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
@@ -219,19 +237,43 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::EncodedMessage, type_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::EncodedMessage, data_),
   ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::Command, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::Command, type_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::Command, params_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::Command, list_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::Command, data_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, filename_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, filetype_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, size_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, hash_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, owner_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, creationdate_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, metadata_),
+  ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::Handshake, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::Handshake, encryptionalgorithm_),
   ~0u,  // no _has_bits_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::User, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, name_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, size_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::User, username_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::User, firstname_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::User, lastname_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::User, role_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::User, capacity_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::User, usedspace_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::ServerResponse, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -241,23 +283,26 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::ServerResponse, params_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::ServerResponse, list_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::ServerResponse, filelist_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::ServerResponse, userlist_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::ServerResponse, data_),
 };
 static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::StorageCloud::Param)},
-  { 10, -1, sizeof(::StorageCloud::Command)},
-  { 19, -1, sizeof(::StorageCloud::EncodedMessage)},
-  { 29, -1, sizeof(::StorageCloud::Handshake)},
-  { 35, -1, sizeof(::StorageCloud::File)},
-  { 43, -1, sizeof(::StorageCloud::ServerResponse)},
+  { 10, -1, sizeof(::StorageCloud::EncodedMessage)},
+  { 20, -1, sizeof(::StorageCloud::Command)},
+  { 29, -1, sizeof(::StorageCloud::File)},
+  { 41, -1, sizeof(::StorageCloud::Handshake)},
+  { 47, -1, sizeof(::StorageCloud::User)},
+  { 58, -1, sizeof(::StorageCloud::ServerResponse)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&::StorageCloud::_Param_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&::StorageCloud::_Command_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::StorageCloud::_EncodedMessage_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&::StorageCloud::_Handshake_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::StorageCloud::_Command_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::StorageCloud::_File_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::StorageCloud::_Handshake_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::StorageCloud::_User_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::StorageCloud::_ServerResponse_default_instance_),
 };
 
@@ -277,7 +322,7 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 6);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 7);
 }
 
 void AddDescriptorsImpl() {
@@ -286,36 +331,53 @@ void AddDescriptorsImpl() {
       "\n\016messages.proto\022\014StorageCloud\"`\n\005Param\022"
       "\017\n\007paramId\030\001 \001(\t\022\023\n\tSParamVal\030\002 \001(\tH\000\022\023\n"
       "\tIParamVal\030\003 \001(\003H\000\022\023\n\tBParamVal\030\004 \001(\014H\000B"
-      "\007\n\005value\"s\n\007Command\022\'\n\004type\030\001 \001(\0162\031.Stor"
-      "ageCloud.CommandType\022#\n\006params\030\002 \003(\0132\023.S"
-      "torageCloud.Param\022\014\n\004list\030\003 \003(\t\022\014\n\004data\030"
-      "\004 \001(\014\"\233\001\n\016EncodedMessage\022\020\n\010dataSize\030\001 \001"
-      "(\004\0222\n\rhashAlgorithm\030\002 \001(\0162\033.StorageCloud"
-      ".HashAlgorithm\022\014\n\004hash\030\003 \001(\014\022\'\n\004type\030\004 \001"
-      "(\0162\031.StorageCloud.MessageType\022\014\n\004data\030\005 "
-      "\001(\014\"K\n\tHandshake\022>\n\023encryptionAlgorithm\030"
-      "\001 \001(\0162!.StorageCloud.EncryptionAlgorithm"
-      "\"I\n\004File\022\014\n\004name\030\001 \001(\t\022\014\n\004size\030\002 \001(\003\022%\n\010"
-      "metadata\030\003 \003(\0132\023.StorageCloud.Param\"\241\001\n\016"
-      "ServerResponse\022(\n\004type\030\001 \001(\0162\032.StorageCl"
-      "oud.ResponseType\022#\n\006params\030\002 \003(\0132\023.Stora"
-      "geCloud.Param\022\014\n\004list\030\003 \003(\t\022$\n\010fileList\030"
-      "\004 \003(\0132\022.StorageCloud.File\022\014\n\004data\030\005 \001(\014*"
-      "h\n\013CommandType\022\t\n\005NULL1\020\000\022\t\n\005LOGIN\020\001\022\013\n\007"
-      "RELOGIN\020\002\022\n\n\006LOGOUT\020\003\022\014\n\010REGISTER\020\004\022\014\n\010G"
-      "ET_STAT\020\005\022\016\n\nLIST_FILES\020\006*[\n\rHashAlgorit"
-      "hm\022\t\n\005NULL2\020\000\022\014\n\010H_NOHASH\020\001\022\014\n\010H_SHA256\020"
-      "\002\022\014\n\010H_SHA512\020\003\022\n\n\006H_SHA1\020\004\022\t\n\005H_MD5\020\005*I"
-      "\n\013MessageType\022\t\n\005NULL3\020\000\022\013\n\007COMMAND\020\001\022\023\n"
-      "\017SERVER_RESPONSE\020\002\022\r\n\tHANDSHAKE\020\003*>\n\023Enc"
-      "ryptionAlgorithm\022\t\n\005NULL4\020\000\022\020\n\014NOENCRYPT"
-      "ION\020\001\022\n\n\006CAESAR\020\002*u\n\014ResponseType\022\t\n\005NUL"
-      "L5\020\000\022\006\n\002OK\020\001\022\t\n\005ERROR\020\002\022\n\n\006LOGGED\020\003\022\010\n\004S"
-      "TAT\020\004\022\t\n\005FILES\020\005\022\n\n\006SHARED\020\006\022\014\n\010SRV_DATA"
-      "\020\007\022\014\n\010CAN_SEND\020\010b\006proto3"
+      "\007\n\005value\"\233\001\n\016EncodedMessage\022\020\n\010dataSize\030"
+      "\001 \001(\004\0222\n\rhashAlgorithm\030\002 \001(\0162\033.StorageCl"
+      "oud.HashAlgorithm\022\014\n\004hash\030\003 \001(\014\022\'\n\004type\030"
+      "\004 \001(\0162\031.StorageCloud.MessageType\022\014\n\004data"
+      "\030\005 \001(\014\"s\n\007Command\022\'\n\004type\030\001 \001(\0162\031.Storag"
+      "eCloud.CommandType\022#\n\006params\030\002 \003(\0132\023.Sto"
+      "rageCloud.Param\022\014\n\004list\030\003 \003(\t\022\014\n\004data\030\004 "
+      "\001(\014\"\252\001\n\004File\022\020\n\010filename\030\001 \001(\t\022(\n\010filety"
+      "pe\030\002 \001(\0162\026.StorageCloud.FileType\022\014\n\004size"
+      "\030\003 \001(\004\022\014\n\004hash\030\004 \001(\014\022\r\n\005owner\030\005 \001(\t\022\024\n\014c"
+      "reationDate\030\006 \001(\004\022%\n\010metadata\030\007 \003(\0132\023.St"
+      "orageCloud.Param\"K\n\tHandshake\022>\n\023encrypt"
+      "ionAlgorithm\030\001 \001(\0162!.StorageCloud.Encryp"
+      "tionAlgorithm\"\210\001\n\004User\022\020\n\010username\030\001 \001(\t"
+      "\022\021\n\tfirstName\030\002 \001(\t\022\020\n\010lastName\030\003 \001(\t\022$\n"
+      "\004role\030\004 \001(\0162\026.StorageCloud.UserRole\022\020\n\010c"
+      "apacity\030\005 \001(\004\022\021\n\tusedSpace\030\006 \001(\004\"\307\001\n\016Ser"
+      "verResponse\022(\n\004type\030\001 \001(\0162\032.StorageCloud"
+      ".ResponseType\022#\n\006params\030\002 \003(\0132\023.StorageC"
+      "loud.Param\022\014\n\004list\030\003 \003(\t\022$\n\010fileList\030\004 \003"
+      "(\0132\022.StorageCloud.File\022$\n\010userList\030\005 \003(\013"
+      "2\022.StorageCloud.User\022\014\n\004data\030\006 \001(\014*[\n\rHa"
+      "shAlgorithm\022\t\n\005NULL2\020\000\022\014\n\010H_NOHASH\020\001\022\014\n\010"
+      "H_SHA256\020\002\022\014\n\010H_SHA512\020\003\022\n\n\006H_SHA1\020\004\022\t\n\005"
+      "H_MD5\020\005*I\n\013MessageType\022\t\n\005NULL3\020\000\022\013\n\007COM"
+      "MAND\020\001\022\023\n\017SERVER_RESPONSE\020\002\022\r\n\tHANDSHAKE"
+      "\020\003*\373\002\n\013CommandType\022\t\n\005NULL1\020\000\022\t\n\005LOGIN\020\001"
+      "\022\013\n\007RELOGIN\020\002\022\n\n\006LOGOUT\020\003\022\014\n\010REGISTER\020\004\022"
+      "\014\n\010GET_STAT\020\005\022\016\n\nLIST_FILES\020\006\022\t\n\005MKDIR\020\007"
+      "\022\n\n\006DELETE\020\010\022\n\n\006RENAME\020\t\022\t\n\005SHARE\020\n\022\016\n\nS"
+      "HARE_INFO\020\013\022\010\n\004MOVE\020\014\022\014\n\010DOWNLOAD\020\r\022\014\n\010M"
+      "ETADATA\020\016\022\014\n\010USR_DATA\020\017\022\013\n\007UNSHARE\020\020\022\017\n\013"
+      "DELETE_USER\020\021\022\024\n\020CHANGE_USER_PASS\020\022\022\r\n\tU"
+      "SER_STAT\020\023\022\023\n\017LIST_USER_FILES\020\024\022\024\n\020DELET"
+      "E_USER_FILE\020\025\022\021\n\rADMIN_UNSHARE\020\026\022\024\n\020ADMI"
+      "N_SHARE_INFO\020\027\022\010\n\004WARN\020\030*.\n\010FileType\022\t\n\005"
+      "NULL6\020\000\022\010\n\004FILE\020\001\022\r\n\tDIRECTORY\020\002**\n\010User"
+      "Role\022\t\n\005NULL7\020\000\022\010\n\004USER\020\001\022\t\n\005ADMIN\020\002*u\n\014"
+      "ResponseType\022\t\n\005NULL5\020\000\022\006\n\002OK\020\001\022\t\n\005ERROR"
+      "\020\002\022\n\n\006LOGGED\020\003\022\010\n\004STAT\020\004\022\t\n\005FILES\020\005\022\n\n\006S"
+      "HARED\020\006\022\014\n\010SRV_DATA\020\007\022\014\n\010CAN_SEND\020\010*>\n\023E"
+      "ncryptionAlgorithm\022\t\n\005NULL4\020\000\022\020\n\014NOENCRY"
+      "PTION\020\001\022\n\n\006CAESAR\020\002B+\n\'com.github.mikee2"
+      "509.storagecloud.protoP\001b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1184);
+      descriptor, 1872);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "messages.proto", &protobuf_RegisterTypes);
 }
@@ -332,28 +394,9 @@ struct StaticDescriptorInitializer {
 } static_descriptor_initializer;
 }  // namespace protobuf_messages_2eproto
 namespace StorageCloud {
-const ::google::protobuf::EnumDescriptor* CommandType_descriptor() {
-  protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_messages_2eproto::file_level_enum_descriptors[0];
-}
-bool CommandType_IsValid(int value) {
-  switch (value) {
-    case 0:
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-      return true;
-    default:
-      return false;
-  }
-}
-
 const ::google::protobuf::EnumDescriptor* HashAlgorithm_descriptor() {
   protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_messages_2eproto::file_level_enum_descriptors[1];
+  return protobuf_messages_2eproto::file_level_enum_descriptors[0];
 }
 bool HashAlgorithm_IsValid(int value) {
   switch (value) {
@@ -371,7 +414,7 @@ bool HashAlgorithm_IsValid(int value) {
 
 const ::google::protobuf::EnumDescriptor* MessageType_descriptor() {
   protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_messages_2eproto::file_level_enum_descriptors[2];
+  return protobuf_messages_2eproto::file_level_enum_descriptors[1];
 }
 bool MessageType_IsValid(int value) {
   switch (value) {
@@ -385,11 +428,63 @@ bool MessageType_IsValid(int value) {
   }
 }
 
-const ::google::protobuf::EnumDescriptor* EncryptionAlgorithm_descriptor() {
+const ::google::protobuf::EnumDescriptor* CommandType_descriptor() {
+  protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_messages_2eproto::file_level_enum_descriptors[2];
+}
+bool CommandType_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+    case 9:
+    case 10:
+    case 11:
+    case 12:
+    case 13:
+    case 14:
+    case 15:
+    case 16:
+    case 17:
+    case 18:
+    case 19:
+    case 20:
+    case 21:
+    case 22:
+    case 23:
+    case 24:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::google::protobuf::EnumDescriptor* FileType_descriptor() {
   protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
   return protobuf_messages_2eproto::file_level_enum_descriptors[3];
 }
-bool EncryptionAlgorithm_IsValid(int value) {
+bool FileType_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::google::protobuf::EnumDescriptor* UserRole_descriptor() {
+  protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_messages_2eproto::file_level_enum_descriptors[4];
+}
+bool UserRole_IsValid(int value) {
   switch (value) {
     case 0:
     case 1:
@@ -402,7 +497,7 @@ bool EncryptionAlgorithm_IsValid(int value) {
 
 const ::google::protobuf::EnumDescriptor* ResponseType_descriptor() {
   protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_messages_2eproto::file_level_enum_descriptors[4];
+  return protobuf_messages_2eproto::file_level_enum_descriptors[5];
 }
 bool ResponseType_IsValid(int value) {
   switch (value) {
@@ -415,6 +510,21 @@ bool ResponseType_IsValid(int value) {
     case 6:
     case 7:
     case 8:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::google::protobuf::EnumDescriptor* EncryptionAlgorithm_descriptor() {
+  protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_messages_2eproto::file_level_enum_descriptors[6];
+}
+bool EncryptionAlgorithm_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
       return true;
     default:
       return false;
@@ -866,383 +976,6 @@ void Param::InternalSwap(Param* other) {
 
 // ===================================================================
 
-void Command::InitAsDefaultInstance() {
-}
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int Command::kTypeFieldNumber;
-const int Command::kParamsFieldNumber;
-const int Command::kListFieldNumber;
-const int Command::kDataFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
-
-Command::Command()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    ::protobuf_messages_2eproto::InitDefaultsCommand();
-  }
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:StorageCloud.Command)
-}
-Command::Command(const Command& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      params_(from.params_),
-      list_(from.list_),
-      _cached_size_(0) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  data_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.data().size() > 0) {
-    data_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.data_);
-  }
-  type_ = from.type_;
-  // @@protoc_insertion_point(copy_constructor:StorageCloud.Command)
-}
-
-void Command::SharedCtor() {
-  data_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  type_ = 0;
-  _cached_size_ = 0;
-}
-
-Command::~Command() {
-  // @@protoc_insertion_point(destructor:StorageCloud.Command)
-  SharedDtor();
-}
-
-void Command::SharedDtor() {
-  data_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-
-void Command::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* Command::descriptor() {
-  ::protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_messages_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
-}
-
-const Command& Command::default_instance() {
-  ::protobuf_messages_2eproto::InitDefaultsCommand();
-  return *internal_default_instance();
-}
-
-Command* Command::New(::google::protobuf::Arena* arena) const {
-  Command* n = new Command;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
-
-void Command::Clear() {
-// @@protoc_insertion_point(message_clear_start:StorageCloud.Command)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  params_.Clear();
-  list_.Clear();
-  data_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  type_ = 0;
-  _internal_metadata_.Clear();
-}
-
-bool Command::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:StorageCloud.Command)
-  for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .StorageCloud.CommandType type = 1;
-      case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
-          int value;
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
-                 input, &value)));
-          set_type(static_cast< ::StorageCloud::CommandType >(value));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // repeated .StorageCloud.Param params = 2;
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(input, add_params()));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // repeated string list = 3;
-      case 3: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->add_list()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->list(this->list_size() - 1).data(),
-            static_cast<int>(this->list(this->list_size() - 1).length()),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "StorageCloud.Command.list"));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // bytes data = 4;
-      case 4: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
-                input, this->mutable_data()));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, _internal_metadata_.mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:StorageCloud.Command)
-  return true;
-failure:
-  // @@protoc_insertion_point(parse_failure:StorageCloud.Command)
-  return false;
-#undef DO_
-}
-
-void Command::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:StorageCloud.Command)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // .StorageCloud.CommandType type = 1;
-  if (this->type() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteEnum(
-      1, this->type(), output);
-  }
-
-  // repeated .StorageCloud.Param params = 2;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->params_size()); i < n; i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2, this->params(static_cast<int>(i)), output);
-  }
-
-  // repeated string list = 3;
-  for (int i = 0, n = this->list_size(); i < n; i++) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->list(i).data(), static_cast<int>(this->list(i).length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "StorageCloud.Command.list");
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      3, this->list(i), output);
-  }
-
-  // bytes data = 4;
-  if (this->data().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
-      4, this->data(), output);
-  }
-
-  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
-  }
-  // @@protoc_insertion_point(serialize_end:StorageCloud.Command)
-}
-
-::google::protobuf::uint8* Command::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  (void)deterministic; // Unused
-  // @@protoc_insertion_point(serialize_to_array_start:StorageCloud.Command)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // .StorageCloud.CommandType type = 1;
-  if (this->type() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
-      1, this->type(), target);
-  }
-
-  // repeated .StorageCloud.Param params = 2;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->params_size()); i < n; i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageToArray(
-        2, this->params(static_cast<int>(i)), deterministic, target);
-  }
-
-  // repeated string list = 3;
-  for (int i = 0, n = this->list_size(); i < n; i++) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->list(i).data(), static_cast<int>(this->list(i).length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "StorageCloud.Command.list");
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteStringToArray(3, this->list(i), target);
-  }
-
-  // bytes data = 4;
-  if (this->data().size() > 0) {
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
-        4, this->data(), target);
-  }
-
-  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:StorageCloud.Command)
-  return target;
-}
-
-size_t Command::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:StorageCloud.Command)
-  size_t total_size = 0;
-
-  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
-  }
-  // repeated .StorageCloud.Param params = 2;
-  {
-    unsigned int count = static_cast<unsigned int>(this->params_size());
-    total_size += 1UL * count;
-    for (unsigned int i = 0; i < count; i++) {
-      total_size +=
-        ::google::protobuf::internal::WireFormatLite::MessageSize(
-          this->params(static_cast<int>(i)));
-    }
-  }
-
-  // repeated string list = 3;
-  total_size += 1 *
-      ::google::protobuf::internal::FromIntSize(this->list_size());
-  for (int i = 0, n = this->list_size(); i < n; i++) {
-    total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
-      this->list(i));
-  }
-
-  // bytes data = 4;
-  if (this->data().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::BytesSize(
-        this->data());
-  }
-
-  // .StorageCloud.CommandType type = 1;
-  if (this->type() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
-  }
-
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = cached_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void Command::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:StorageCloud.Command)
-  GOOGLE_DCHECK_NE(&from, this);
-  const Command* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const Command>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:StorageCloud.Command)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:StorageCloud.Command)
-    MergeFrom(*source);
-  }
-}
-
-void Command::MergeFrom(const Command& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:StorageCloud.Command)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  params_.MergeFrom(from.params_);
-  list_.MergeFrom(from.list_);
-  if (from.data().size() > 0) {
-
-    data_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.data_);
-  }
-  if (from.type() != 0) {
-    set_type(from.type());
-  }
-}
-
-void Command::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:StorageCloud.Command)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void Command::CopyFrom(const Command& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:StorageCloud.Command)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool Command::IsInitialized() const {
-  return true;
-}
-
-void Command::Swap(Command* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
-void Command::InternalSwap(Command* other) {
-  using std::swap;
-  params_.InternalSwap(&other->params_);
-  list_.InternalSwap(&other->list_);
-  data_.Swap(&other->data_);
-  swap(type_, other->type_);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
-  swap(_cached_size_, other->_cached_size_);
-}
-
-::google::protobuf::Metadata Command::GetMetadata() const {
-  protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_messages_2eproto::file_level_metadata[kIndexInFileMessages];
-}
-
-
-// ===================================================================
-
 void EncodedMessage::InitAsDefaultInstance() {
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
@@ -1653,6 +1386,902 @@ void EncodedMessage::InternalSwap(EncodedMessage* other) {
 
 // ===================================================================
 
+void Command::InitAsDefaultInstance() {
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Command::kTypeFieldNumber;
+const int Command::kParamsFieldNumber;
+const int Command::kListFieldNumber;
+const int Command::kDataFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Command::Command()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    ::protobuf_messages_2eproto::InitDefaultsCommand();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:StorageCloud.Command)
+}
+Command::Command(const Command& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      params_(from.params_),
+      list_(from.list_),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  data_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.data().size() > 0) {
+    data_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.data_);
+  }
+  type_ = from.type_;
+  // @@protoc_insertion_point(copy_constructor:StorageCloud.Command)
+}
+
+void Command::SharedCtor() {
+  data_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  type_ = 0;
+  _cached_size_ = 0;
+}
+
+Command::~Command() {
+  // @@protoc_insertion_point(destructor:StorageCloud.Command)
+  SharedDtor();
+}
+
+void Command::SharedDtor() {
+  data_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void Command::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* Command::descriptor() {
+  ::protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_messages_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const Command& Command::default_instance() {
+  ::protobuf_messages_2eproto::InitDefaultsCommand();
+  return *internal_default_instance();
+}
+
+Command* Command::New(::google::protobuf::Arena* arena) const {
+  Command* n = new Command;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Command::Clear() {
+// @@protoc_insertion_point(message_clear_start:StorageCloud.Command)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  params_.Clear();
+  list_.Clear();
+  data_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  type_ = 0;
+  _internal_metadata_.Clear();
+}
+
+bool Command::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:StorageCloud.Command)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // .StorageCloud.CommandType type = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          set_type(static_cast< ::StorageCloud::CommandType >(value));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated .StorageCloud.Param params = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(input, add_params()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated string list = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->add_list()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->list(this->list_size() - 1).data(),
+            static_cast<int>(this->list(this->list_size() - 1).length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "StorageCloud.Command.list"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // bytes data = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_data()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:StorageCloud.Command)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:StorageCloud.Command)
+  return false;
+#undef DO_
+}
+
+void Command::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:StorageCloud.Command)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .StorageCloud.CommandType type = 1;
+  if (this->type() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      1, this->type(), output);
+  }
+
+  // repeated .StorageCloud.Param params = 2;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->params_size()); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2, this->params(static_cast<int>(i)), output);
+  }
+
+  // repeated string list = 3;
+  for (int i = 0, n = this->list_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->list(i).data(), static_cast<int>(this->list(i).length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "StorageCloud.Command.list");
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      3, this->list(i), output);
+  }
+
+  // bytes data = 4;
+  if (this->data().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
+      4, this->data(), output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:StorageCloud.Command)
+}
+
+::google::protobuf::uint8* Command::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:StorageCloud.Command)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .StorageCloud.CommandType type = 1;
+  if (this->type() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      1, this->type(), target);
+  }
+
+  // repeated .StorageCloud.Param params = 2;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->params_size()); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        2, this->params(static_cast<int>(i)), deterministic, target);
+  }
+
+  // repeated string list = 3;
+  for (int i = 0, n = this->list_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->list(i).data(), static_cast<int>(this->list(i).length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "StorageCloud.Command.list");
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteStringToArray(3, this->list(i), target);
+  }
+
+  // bytes data = 4;
+  if (this->data().size() > 0) {
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
+        4, this->data(), target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:StorageCloud.Command)
+  return target;
+}
+
+size_t Command::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:StorageCloud.Command)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // repeated .StorageCloud.Param params = 2;
+  {
+    unsigned int count = static_cast<unsigned int>(this->params_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->params(static_cast<int>(i)));
+    }
+  }
+
+  // repeated string list = 3;
+  total_size += 1 *
+      ::google::protobuf::internal::FromIntSize(this->list_size());
+  for (int i = 0, n = this->list_size(); i < n; i++) {
+    total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
+      this->list(i));
+  }
+
+  // bytes data = 4;
+  if (this->data().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::BytesSize(
+        this->data());
+  }
+
+  // .StorageCloud.CommandType type = 1;
+  if (this->type() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Command::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:StorageCloud.Command)
+  GOOGLE_DCHECK_NE(&from, this);
+  const Command* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const Command>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:StorageCloud.Command)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:StorageCloud.Command)
+    MergeFrom(*source);
+  }
+}
+
+void Command::MergeFrom(const Command& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:StorageCloud.Command)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  params_.MergeFrom(from.params_);
+  list_.MergeFrom(from.list_);
+  if (from.data().size() > 0) {
+
+    data_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.data_);
+  }
+  if (from.type() != 0) {
+    set_type(from.type());
+  }
+}
+
+void Command::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:StorageCloud.Command)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Command::CopyFrom(const Command& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:StorageCloud.Command)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Command::IsInitialized() const {
+  return true;
+}
+
+void Command::Swap(Command* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Command::InternalSwap(Command* other) {
+  using std::swap;
+  params_.InternalSwap(&other->params_);
+  list_.InternalSwap(&other->list_);
+  data_.Swap(&other->data_);
+  swap(type_, other->type_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata Command::GetMetadata() const {
+  protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_messages_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
+void File::InitAsDefaultInstance() {
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int File::kFilenameFieldNumber;
+const int File::kFiletypeFieldNumber;
+const int File::kSizeFieldNumber;
+const int File::kHashFieldNumber;
+const int File::kOwnerFieldNumber;
+const int File::kCreationDateFieldNumber;
+const int File::kMetadataFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+File::File()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    ::protobuf_messages_2eproto::InitDefaultsFile();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:StorageCloud.File)
+}
+File::File(const File& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      metadata_(from.metadata_),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  filename_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.filename().size() > 0) {
+    filename_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.filename_);
+  }
+  hash_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.hash().size() > 0) {
+    hash_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.hash_);
+  }
+  owner_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.owner().size() > 0) {
+    owner_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.owner_);
+  }
+  ::memcpy(&size_, &from.size_,
+    static_cast<size_t>(reinterpret_cast<char*>(&filetype_) -
+    reinterpret_cast<char*>(&size_)) + sizeof(filetype_));
+  // @@protoc_insertion_point(copy_constructor:StorageCloud.File)
+}
+
+void File::SharedCtor() {
+  filename_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  hash_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  owner_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&size_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&filetype_) -
+      reinterpret_cast<char*>(&size_)) + sizeof(filetype_));
+  _cached_size_ = 0;
+}
+
+File::~File() {
+  // @@protoc_insertion_point(destructor:StorageCloud.File)
+  SharedDtor();
+}
+
+void File::SharedDtor() {
+  filename_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  hash_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  owner_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void File::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* File::descriptor() {
+  ::protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_messages_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const File& File::default_instance() {
+  ::protobuf_messages_2eproto::InitDefaultsFile();
+  return *internal_default_instance();
+}
+
+File* File::New(::google::protobuf::Arena* arena) const {
+  File* n = new File;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void File::Clear() {
+// @@protoc_insertion_point(message_clear_start:StorageCloud.File)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  metadata_.Clear();
+  filename_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  hash_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  owner_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&size_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&filetype_) -
+      reinterpret_cast<char*>(&size_)) + sizeof(filetype_));
+  _internal_metadata_.Clear();
+}
+
+bool File::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:StorageCloud.File)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // string filename = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_filename()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->filename().data(), static_cast<int>(this->filename().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "StorageCloud.File.filename"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .StorageCloud.FileType filetype = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          set_filetype(static_cast< ::StorageCloud::FileType >(value));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint64 size = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
+                 input, &size_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // bytes hash = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_hash()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string owner = 5;
+      case 5: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(42u /* 42 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_owner()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->owner().data(), static_cast<int>(this->owner().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "StorageCloud.File.owner"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint64 creationDate = 6;
+      case 6: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(48u /* 48 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
+                 input, &creationdate_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated .StorageCloud.Param metadata = 7;
+      case 7: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(58u /* 58 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(input, add_metadata()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:StorageCloud.File)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:StorageCloud.File)
+  return false;
+#undef DO_
+}
+
+void File::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:StorageCloud.File)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string filename = 1;
+  if (this->filename().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->filename().data(), static_cast<int>(this->filename().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "StorageCloud.File.filename");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->filename(), output);
+  }
+
+  // .StorageCloud.FileType filetype = 2;
+  if (this->filetype() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      2, this->filetype(), output);
+  }
+
+  // uint64 size = 3;
+  if (this->size() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(3, this->size(), output);
+  }
+
+  // bytes hash = 4;
+  if (this->hash().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
+      4, this->hash(), output);
+  }
+
+  // string owner = 5;
+  if (this->owner().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->owner().data(), static_cast<int>(this->owner().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "StorageCloud.File.owner");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      5, this->owner(), output);
+  }
+
+  // uint64 creationDate = 6;
+  if (this->creationdate() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(6, this->creationdate(), output);
+  }
+
+  // repeated .StorageCloud.Param metadata = 7;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->metadata_size()); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      7, this->metadata(static_cast<int>(i)), output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:StorageCloud.File)
+}
+
+::google::protobuf::uint8* File::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:StorageCloud.File)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string filename = 1;
+  if (this->filename().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->filename().data(), static_cast<int>(this->filename().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "StorageCloud.File.filename");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->filename(), target);
+  }
+
+  // .StorageCloud.FileType filetype = 2;
+  if (this->filetype() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      2, this->filetype(), target);
+  }
+
+  // uint64 size = 3;
+  if (this->size() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(3, this->size(), target);
+  }
+
+  // bytes hash = 4;
+  if (this->hash().size() > 0) {
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
+        4, this->hash(), target);
+  }
+
+  // string owner = 5;
+  if (this->owner().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->owner().data(), static_cast<int>(this->owner().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "StorageCloud.File.owner");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        5, this->owner(), target);
+  }
+
+  // uint64 creationDate = 6;
+  if (this->creationdate() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(6, this->creationdate(), target);
+  }
+
+  // repeated .StorageCloud.Param metadata = 7;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->metadata_size()); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        7, this->metadata(static_cast<int>(i)), deterministic, target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:StorageCloud.File)
+  return target;
+}
+
+size_t File::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:StorageCloud.File)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // repeated .StorageCloud.Param metadata = 7;
+  {
+    unsigned int count = static_cast<unsigned int>(this->metadata_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->metadata(static_cast<int>(i)));
+    }
+  }
+
+  // string filename = 1;
+  if (this->filename().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->filename());
+  }
+
+  // bytes hash = 4;
+  if (this->hash().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::BytesSize(
+        this->hash());
+  }
+
+  // string owner = 5;
+  if (this->owner().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->owner());
+  }
+
+  // uint64 size = 3;
+  if (this->size() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt64Size(
+        this->size());
+  }
+
+  // uint64 creationDate = 6;
+  if (this->creationdate() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt64Size(
+        this->creationdate());
+  }
+
+  // .StorageCloud.FileType filetype = 2;
+  if (this->filetype() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::EnumSize(this->filetype());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void File::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:StorageCloud.File)
+  GOOGLE_DCHECK_NE(&from, this);
+  const File* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const File>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:StorageCloud.File)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:StorageCloud.File)
+    MergeFrom(*source);
+  }
+}
+
+void File::MergeFrom(const File& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:StorageCloud.File)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  metadata_.MergeFrom(from.metadata_);
+  if (from.filename().size() > 0) {
+
+    filename_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.filename_);
+  }
+  if (from.hash().size() > 0) {
+
+    hash_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.hash_);
+  }
+  if (from.owner().size() > 0) {
+
+    owner_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.owner_);
+  }
+  if (from.size() != 0) {
+    set_size(from.size());
+  }
+  if (from.creationdate() != 0) {
+    set_creationdate(from.creationdate());
+  }
+  if (from.filetype() != 0) {
+    set_filetype(from.filetype());
+  }
+}
+
+void File::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:StorageCloud.File)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void File::CopyFrom(const File& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:StorageCloud.File)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool File::IsInitialized() const {
+  return true;
+}
+
+void File::Swap(File* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void File::InternalSwap(File* other) {
+  using std::swap;
+  metadata_.InternalSwap(&other->metadata_);
+  filename_.Swap(&other->filename_);
+  hash_.Swap(&other->hash_);
+  owner_.Swap(&other->owner_);
+  swap(size_, other->size_);
+  swap(creationdate_, other->creationdate_);
+  swap(filetype_, other->filetype_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata File::GetMetadata() const {
+  protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_messages_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
 void Handshake::InitAsDefaultInstance() {
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
@@ -1893,131 +2522,202 @@ void Handshake::InternalSwap(Handshake* other) {
 
 // ===================================================================
 
-void File::InitAsDefaultInstance() {
+void User::InitAsDefaultInstance() {
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int File::kNameFieldNumber;
-const int File::kSizeFieldNumber;
-const int File::kMetadataFieldNumber;
+const int User::kUsernameFieldNumber;
+const int User::kFirstNameFieldNumber;
+const int User::kLastNameFieldNumber;
+const int User::kRoleFieldNumber;
+const int User::kCapacityFieldNumber;
+const int User::kUsedSpaceFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
-File::File()
+User::User()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    ::protobuf_messages_2eproto::InitDefaultsFile();
+    ::protobuf_messages_2eproto::InitDefaultsUser();
   }
   SharedCtor();
-  // @@protoc_insertion_point(constructor:StorageCloud.File)
+  // @@protoc_insertion_point(constructor:StorageCloud.User)
 }
-File::File(const File& from)
+User::User(const User& from)
   : ::google::protobuf::Message(),
       _internal_metadata_(NULL),
-      metadata_(from.metadata_),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.name().size() > 0) {
-    name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
+  username_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.username().size() > 0) {
+    username_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.username_);
   }
-  size_ = from.size_;
-  // @@protoc_insertion_point(copy_constructor:StorageCloud.File)
+  firstname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.firstname().size() > 0) {
+    firstname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.firstname_);
+  }
+  lastname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.lastname().size() > 0) {
+    lastname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.lastname_);
+  }
+  ::memcpy(&capacity_, &from.capacity_,
+    static_cast<size_t>(reinterpret_cast<char*>(&role_) -
+    reinterpret_cast<char*>(&capacity_)) + sizeof(role_));
+  // @@protoc_insertion_point(copy_constructor:StorageCloud.User)
 }
 
-void File::SharedCtor() {
-  name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  size_ = GOOGLE_LONGLONG(0);
+void User::SharedCtor() {
+  username_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  firstname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  lastname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&capacity_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&role_) -
+      reinterpret_cast<char*>(&capacity_)) + sizeof(role_));
   _cached_size_ = 0;
 }
 
-File::~File() {
-  // @@protoc_insertion_point(destructor:StorageCloud.File)
+User::~User() {
+  // @@protoc_insertion_point(destructor:StorageCloud.User)
   SharedDtor();
 }
 
-void File::SharedDtor() {
-  name_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+void User::SharedDtor() {
+  username_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  firstname_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  lastname_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
-void File::SetCachedSize(int size) const {
+void User::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* File::descriptor() {
+const ::google::protobuf::Descriptor* User::descriptor() {
   ::protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
   return ::protobuf_messages_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
 }
 
-const File& File::default_instance() {
-  ::protobuf_messages_2eproto::InitDefaultsFile();
+const User& User::default_instance() {
+  ::protobuf_messages_2eproto::InitDefaultsUser();
   return *internal_default_instance();
 }
 
-File* File::New(::google::protobuf::Arena* arena) const {
-  File* n = new File;
+User* User::New(::google::protobuf::Arena* arena) const {
+  User* n = new User;
   if (arena != NULL) {
     arena->Own(n);
   }
   return n;
 }
 
-void File::Clear() {
-// @@protoc_insertion_point(message_clear_start:StorageCloud.File)
+void User::Clear() {
+// @@protoc_insertion_point(message_clear_start:StorageCloud.User)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  metadata_.Clear();
-  name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  size_ = GOOGLE_LONGLONG(0);
+  username_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  firstname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  lastname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&capacity_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&role_) -
+      reinterpret_cast<char*>(&capacity_)) + sizeof(role_));
   _internal_metadata_.Clear();
 }
 
-bool File::MergePartialFromCodedStream(
+bool User::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:StorageCloud.File)
+  // @@protoc_insertion_point(parse_start:StorageCloud.User)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // string name = 1;
+      // string username = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_name()));
+                input, this->mutable_username()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->name().data(), static_cast<int>(this->name().length()),
+            this->username().data(), static_cast<int>(this->username().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "StorageCloud.File.name"));
+            "StorageCloud.User.username"));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // int64 size = 2;
+      // string firstName = 2;
       case 2: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &size_)));
+            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_firstname()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->firstname().data(), static_cast<int>(this->firstname().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "StorageCloud.User.firstName"));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // repeated .StorageCloud.Param metadata = 3;
+      // string lastName = 3;
       case 3: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(input, add_metadata()));
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_lastname()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->lastname().data(), static_cast<int>(this->lastname().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "StorageCloud.User.lastName"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .StorageCloud.UserRole role = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(32u /* 32 & 0xFF */)) {
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          set_role(static_cast< ::StorageCloud::UserRole >(value));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint64 capacity = 5;
+      case 5: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(40u /* 40 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
+                 input, &capacity_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint64 usedSpace = 6;
+      case 6: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(48u /* 48 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
+                 input, &usedspace_)));
         } else {
           goto handle_unusual;
         }
@@ -2036,90 +2736,139 @@ bool File::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:StorageCloud.File)
+  // @@protoc_insertion_point(parse_success:StorageCloud.User)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:StorageCloud.File)
+  // @@protoc_insertion_point(parse_failure:StorageCloud.User)
   return false;
 #undef DO_
 }
 
-void File::SerializeWithCachedSizes(
+void User::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:StorageCloud.File)
+  // @@protoc_insertion_point(serialize_start:StorageCloud.User)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string name = 1;
-  if (this->name().size() > 0) {
+  // string username = 1;
+  if (this->username().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->name().data(), static_cast<int>(this->name().length()),
+      this->username().data(), static_cast<int>(this->username().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "StorageCloud.File.name");
+      "StorageCloud.User.username");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->name(), output);
+      1, this->username(), output);
   }
 
-  // int64 size = 2;
-  if (this->size() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(2, this->size(), output);
+  // string firstName = 2;
+  if (this->firstname().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->firstname().data(), static_cast<int>(this->firstname().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "StorageCloud.User.firstName");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      2, this->firstname(), output);
   }
 
-  // repeated .StorageCloud.Param metadata = 3;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->metadata_size()); i < n; i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3, this->metadata(static_cast<int>(i)), output);
+  // string lastName = 3;
+  if (this->lastname().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->lastname().data(), static_cast<int>(this->lastname().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "StorageCloud.User.lastName");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      3, this->lastname(), output);
+  }
+
+  // .StorageCloud.UserRole role = 4;
+  if (this->role() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      4, this->role(), output);
+  }
+
+  // uint64 capacity = 5;
+  if (this->capacity() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(5, this->capacity(), output);
+  }
+
+  // uint64 usedSpace = 6;
+  if (this->usedspace() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(6, this->usedspace(), output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
   }
-  // @@protoc_insertion_point(serialize_end:StorageCloud.File)
+  // @@protoc_insertion_point(serialize_end:StorageCloud.User)
 }
 
-::google::protobuf::uint8* File::InternalSerializeWithCachedSizesToArray(
+::google::protobuf::uint8* User::InternalSerializeWithCachedSizesToArray(
     bool deterministic, ::google::protobuf::uint8* target) const {
   (void)deterministic; // Unused
-  // @@protoc_insertion_point(serialize_to_array_start:StorageCloud.File)
+  // @@protoc_insertion_point(serialize_to_array_start:StorageCloud.User)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string name = 1;
-  if (this->name().size() > 0) {
+  // string username = 1;
+  if (this->username().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->name().data(), static_cast<int>(this->name().length()),
+      this->username().data(), static_cast<int>(this->username().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "StorageCloud.File.name");
+      "StorageCloud.User.username");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->name(), target);
+        1, this->username(), target);
   }
 
-  // int64 size = 2;
-  if (this->size() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(2, this->size(), target);
+  // string firstName = 2;
+  if (this->firstname().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->firstname().data(), static_cast<int>(this->firstname().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "StorageCloud.User.firstName");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->firstname(), target);
   }
 
-  // repeated .StorageCloud.Param metadata = 3;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->metadata_size()); i < n; i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageToArray(
-        3, this->metadata(static_cast<int>(i)), deterministic, target);
+  // string lastName = 3;
+  if (this->lastname().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->lastname().data(), static_cast<int>(this->lastname().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "StorageCloud.User.lastName");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->lastname(), target);
+  }
+
+  // .StorageCloud.UserRole role = 4;
+  if (this->role() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      4, this->role(), target);
+  }
+
+  // uint64 capacity = 5;
+  if (this->capacity() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(5, this->capacity(), target);
+  }
+
+  // uint64 usedSpace = 6;
+  if (this->usedspace() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(6, this->usedspace(), target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:StorageCloud.File)
+  // @@protoc_insertion_point(serialize_to_array_end:StorageCloud.User)
   return target;
 }
 
-size_t File::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:StorageCloud.File)
+size_t User::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:StorageCloud.User)
   size_t total_size = 0;
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -2127,29 +2876,45 @@ size_t File::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  // repeated .StorageCloud.Param metadata = 3;
-  {
-    unsigned int count = static_cast<unsigned int>(this->metadata_size());
-    total_size += 1UL * count;
-    for (unsigned int i = 0; i < count; i++) {
-      total_size +=
-        ::google::protobuf::internal::WireFormatLite::MessageSize(
-          this->metadata(static_cast<int>(i)));
-    }
-  }
-
-  // string name = 1;
-  if (this->name().size() > 0) {
+  // string username = 1;
+  if (this->username().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->name());
+        this->username());
   }
 
-  // int64 size = 2;
-  if (this->size() != 0) {
+  // string firstName = 2;
+  if (this->firstname().size() > 0) {
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
-        this->size());
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->firstname());
+  }
+
+  // string lastName = 3;
+  if (this->lastname().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->lastname());
+  }
+
+  // uint64 capacity = 5;
+  if (this->capacity() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt64Size(
+        this->capacity());
+  }
+
+  // uint64 usedSpace = 6;
+  if (this->usedspace() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt64Size(
+        this->usedspace());
+  }
+
+  // .StorageCloud.UserRole role = 4;
+  if (this->role() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::EnumSize(this->role());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -2159,70 +2924,86 @@ size_t File::ByteSizeLong() const {
   return total_size;
 }
 
-void File::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:StorageCloud.File)
+void User::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:StorageCloud.User)
   GOOGLE_DCHECK_NE(&from, this);
-  const File* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const File>(
+  const User* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const User>(
           &from);
   if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:StorageCloud.File)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:StorageCloud.User)
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:StorageCloud.File)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:StorageCloud.User)
     MergeFrom(*source);
   }
 }
 
-void File::MergeFrom(const File& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:StorageCloud.File)
+void User::MergeFrom(const User& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:StorageCloud.User)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  metadata_.MergeFrom(from.metadata_);
-  if (from.name().size() > 0) {
+  if (from.username().size() > 0) {
 
-    name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
+    username_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.username_);
   }
-  if (from.size() != 0) {
-    set_size(from.size());
+  if (from.firstname().size() > 0) {
+
+    firstname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.firstname_);
+  }
+  if (from.lastname().size() > 0) {
+
+    lastname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.lastname_);
+  }
+  if (from.capacity() != 0) {
+    set_capacity(from.capacity());
+  }
+  if (from.usedspace() != 0) {
+    set_usedspace(from.usedspace());
+  }
+  if (from.role() != 0) {
+    set_role(from.role());
   }
 }
 
-void File::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:StorageCloud.File)
+void User::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:StorageCloud.User)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void File::CopyFrom(const File& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:StorageCloud.File)
+void User::CopyFrom(const User& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:StorageCloud.User)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool File::IsInitialized() const {
+bool User::IsInitialized() const {
   return true;
 }
 
-void File::Swap(File* other) {
+void User::Swap(User* other) {
   if (other == this) return;
   InternalSwap(other);
 }
-void File::InternalSwap(File* other) {
+void User::InternalSwap(User* other) {
   using std::swap;
-  metadata_.InternalSwap(&other->metadata_);
-  name_.Swap(&other->name_);
-  swap(size_, other->size_);
+  username_.Swap(&other->username_);
+  firstname_.Swap(&other->firstname_);
+  lastname_.Swap(&other->lastname_);
+  swap(capacity_, other->capacity_);
+  swap(usedspace_, other->usedspace_);
+  swap(role_, other->role_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);
 }
 
-::google::protobuf::Metadata File::GetMetadata() const {
+::google::protobuf::Metadata User::GetMetadata() const {
   protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
   return ::protobuf_messages_2eproto::file_level_metadata[kIndexInFileMessages];
 }
@@ -2237,6 +3018,7 @@ const int ServerResponse::kTypeFieldNumber;
 const int ServerResponse::kParamsFieldNumber;
 const int ServerResponse::kListFieldNumber;
 const int ServerResponse::kFileListFieldNumber;
+const int ServerResponse::kUserListFieldNumber;
 const int ServerResponse::kDataFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -2254,6 +3036,7 @@ ServerResponse::ServerResponse(const ServerResponse& from)
       params_(from.params_),
       list_(from.list_),
       filelist_(from.filelist_),
+      userlist_(from.userlist_),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   data_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
@@ -2311,6 +3094,7 @@ void ServerResponse::Clear() {
   params_.Clear();
   list_.Clear();
   filelist_.Clear();
+  userlist_.Clear();
   data_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   type_ = 0;
   _internal_metadata_.Clear();
@@ -2380,10 +3164,21 @@ bool ServerResponse::MergePartialFromCodedStream(
         break;
       }
 
-      // bytes data = 5;
+      // repeated .StorageCloud.User userList = 5;
       case 5: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(42u /* 42 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(input, add_userlist()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // bytes data = 6;
+      case 6: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(50u /* 50 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
                 input, this->mutable_data()));
         } else {
@@ -2448,10 +3243,17 @@ void ServerResponse::SerializeWithCachedSizes(
       4, this->filelist(static_cast<int>(i)), output);
   }
 
-  // bytes data = 5;
+  // repeated .StorageCloud.User userList = 5;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->userlist_size()); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      5, this->userlist(static_cast<int>(i)), output);
+  }
+
+  // bytes data = 6;
   if (this->data().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
-      5, this->data(), output);
+      6, this->data(), output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -2500,11 +3302,19 @@ void ServerResponse::SerializeWithCachedSizes(
         4, this->filelist(static_cast<int>(i)), deterministic, target);
   }
 
-  // bytes data = 5;
+  // repeated .StorageCloud.User userList = 5;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->userlist_size()); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        5, this->userlist(static_cast<int>(i)), deterministic, target);
+  }
+
+  // bytes data = 6;
   if (this->data().size() > 0) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
-        5, this->data(), target);
+        6, this->data(), target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -2554,7 +3364,18 @@ size_t ServerResponse::ByteSizeLong() const {
     }
   }
 
-  // bytes data = 5;
+  // repeated .StorageCloud.User userList = 5;
+  {
+    unsigned int count = static_cast<unsigned int>(this->userlist_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->userlist(static_cast<int>(i)));
+    }
+  }
+
+  // bytes data = 6;
   if (this->data().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::BytesSize(
@@ -2599,6 +3420,7 @@ void ServerResponse::MergeFrom(const ServerResponse& from) {
   params_.MergeFrom(from.params_);
   list_.MergeFrom(from.list_);
   filelist_.MergeFrom(from.filelist_);
+  userlist_.MergeFrom(from.userlist_);
   if (from.data().size() > 0) {
 
     data_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.data_);
@@ -2635,6 +3457,7 @@ void ServerResponse::InternalSwap(ServerResponse* other) {
   params_.InternalSwap(&other->params_);
   list_.InternalSwap(&other->list_);
   filelist_.InternalSwap(&other->filelist_);
+  userlist_.InternalSwap(&other->userlist_);
   data_.Swap(&other->data_);
   swap(type_, other->type_);
   _internal_metadata_.Swap(&other->_internal_metadata_);

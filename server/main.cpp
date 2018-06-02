@@ -25,6 +25,24 @@ void sig_handler(int signo)
 }
 
 void process(int sock, connection* conn) {
+
+    int optval = 1;
+    socklen_t optlen = sizeof(optval);
+
+    setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, &optval, optlen);
+
+    optval = 2;
+
+    setsockopt(sock, IPPROTO_TCP, TCP_KEEPCNT, &optval, optlen);
+
+    optval = 10;
+
+    setsockopt(sock, IPPROTO_TCP, TCP_KEEPIDLE, &optval, optlen);
+
+    optval = 5;
+
+    setsockopt(sock, IPPROTO_TCP, TCP_KEEPINTVL, &optval, optlen);
+
     Client client(sock, conn, &should_exit, &logger);
 
     client.loop();
@@ -45,7 +63,8 @@ void server() {
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == -1) {
         logger.err("server", "error while opening stream socket", errno);
-        exit(1);
+        should_exit = true;
+        return;
     }
 
     /* dowiaz adres do gniazda */
@@ -55,14 +74,16 @@ void server() {
     server.sin_port = htons(52137);
     if (bind(sock, (struct sockaddr *) &server, sizeof server) == -1) {
         logger.err("server", "error while binding stream socket", errno);
-        exit(1);
+        should_exit = true;
+        return;
     }
 
     /* wydrukuj na konsoli przydzielony port */
     length = sizeof(server);
     if (getsockname(sock,(struct sockaddr *) &server, &length) == -1) {
         logger.err("server", "getting socket name", errno);
-        exit(1);
+        should_exit = true;
+        return;
     }
     logger.info("server", "Socket port #" + to_string(ntohs(server.sin_port)));
 
@@ -168,7 +189,7 @@ int main(int argc, char **argv) {
 //    fields.emplace_back("surname");
 //    fields.emplace_back("name");
 
-    cout<<"XD:"<<endl;
+//    cout<<"XD:"<<endl;
 
 
 
@@ -181,39 +202,62 @@ int main(int argc, char **argv) {
 //        }
 //    }
 
-    cout<<":XD"<<endl;
-
-    map<string, bsoncxx::types::value> elMi;
-
-    elMi.emplace("username", bsoncxx::types::value{bsoncxx::types::b_utf8{"miloszXD"}});
-    elMi.emplace("name", bsoncxx::types::value{bsoncxx::types::b_utf8{"MiloszTest"}});
-    elMi.emplace("surname", bsoncxx::types::value{bsoncxx::types::b_utf8{"SuRnAmE"}});
-    elMi.emplace("password", bsoncxx::types::value{bsoncxx::types::b_utf8{"safepasswd"}});
-
-    bsoncxx::oid i_id;
+//    cout<<":XD"<<endl;
+//
+//    map<string, bsoncxx::types::value> elMi;
+//
+//    elMi.emplace("username", bsoncxx::types::value{bsoncxx::types::b_utf8{"miloszXD"}});
+//    elMi.emplace("name", bsoncxx::types::value{bsoncxx::types::b_utf8{"MiloszTest"}});
+//    elMi.emplace("surname", bsoncxx::types::value{bsoncxx::types::b_utf8{"SuRnAmE"}});
+//    elMi.emplace("password", bsoncxx::types::value{bsoncxx::types::b_utf8{"safepasswd"}});
+//
+//    bsoncxx::oid i_id;
 
     //db.insertDoc("users", i_id, elMi);
 
     //cout<<"inserted id: "<<i_id.to_string()<<endl;
 
-    string tmpi = "WELP";
+//    string tmpi = "WELP";
 
 //    db.setField("users", "testField", allUsers[0].id, tmpi);
 
 
     string u_name = "miloszXD";
     User u(u_name, u_m);
-    cout<<(u.getName(u_name) ? "got user name" : "error while getting user name")<<endl;
-
-    cout<<"received user name: "<<u_name<<" ("<<u_name.size()<<")"<<endl;
-
     string passwd = "nicepasswd";
+    string newSid;
+    u.loginByPassword(passwd, newSid);
+
+    UFile f;
+    f.filename = "/dir/dir23/file24.test";
+    f.size = 254345;
+    f.creation_date = time(0);
+    f.type = FILE_REGULAR;
+
+    string s_tmp("/dir/dir23");
+
+    vector<UFile> fields;
+
+    u.listFilesinPath(s_tmp, fields);
+
+    for(auto&& file: fields) {
+        logger.info("FILES", file.filename + " " + file.owner_name);
+    }
+
+//    u.addFile(f);
+
+//    cout<<(u.getName(u_name) ? "got user name" : "error while getting user name")<<endl;
+//
+//    cout<<"received user name: "<<u_name<<" ("<<u_name.size()<<")"<<endl;
+//
+//    string passwd = "nicepasswd";
 
 //    u.setPassword(passwd);
 
-    string newSid;
+//    string newSid;
 
-    cout<<(u.loginByPassword(passwd, newSid) ? "passwd ok" : "passwd wrong")<<" sid: "<<newSid<<endl;
+//    cout<<(u.loginByPassword(passwd, newSid) ? "passwd ok" : "passwd wrong")<<" sid: "<<newSid<<endl;
+
 
     while(!should_exit) {
         c = getch();
@@ -265,3 +309,15 @@ int main(int argc, char **argv) {
     logger.~Logger();
     return 0;
 }
+
+/**
+
+ filename
+hash
+size
+creationDate
+owner
+isComplete
+lastValid
+
+ **/
