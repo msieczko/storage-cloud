@@ -2,6 +2,15 @@ syntax = "proto3";
 
 package StorageCloud;
 
+message Param {
+    string paramId = 1;
+    oneof value {
+        string SParamVal = 2;
+        int64 IParamVal = 3;
+        bytes BParamVal = 4;
+    }
+}
+
 option java_package = "com.github.mikee2509.storagecloud.proto";
 option java_multiple_files = true;
 
@@ -44,24 +53,46 @@ enum CommandType {
     REGISTER = 4;
     GET_STAT = 5;
     LIST_FILES = 6;
-    // TODO uzupelnic wszystkie typy
+    MKDIR = 7;
+    DELETE = 8;
+    RENAME = 9;
+    SHARE = 10;
+    SHARE_INFO = 11;
+    MOVE = 12;
+    DOWNLOAD = 13;
+    METADATA = 14;
+    USR_DATA = 15;
+    UNSHARE = 16;
+    DELETE_USER = 17;
+    CHANGE_USER_PASS = 18;
+    USER_STAT = 19;
+    LIST_USER_FILES = 20;
+    DELETE_USER_FILE = 21;
+    ADMIN_UNSHARE = 22;
+    ADMIN_SHARE_INFO = 23;
+    WARN = 24;
 }
 
-message Param {
-    string paramId = 1;
-    oneof value {
-        string SParamVal = 2;
-        int64 IParamVal = 3;
-        bytes BParamVal = 4;
-    }
+enum FileType {
+    NULL6 = 0;
+    FILE = 1;
+    DIRECTORY = 2;
 }
 
-message ServerResponse {
-    ResponseType type = 1;
-    repeated Param params = 2;
-    repeated string list = 3;
-    repeated File fileList = 4;
-    bytes data = 5;
+message File {
+    string filename = 1; //with path
+    FileType filetype = 2;
+    uint64 size = 3; //for directory it's files count inside
+    bytes hash = 4; // empty for directory
+    string owner = 5;
+    uint64 creationDate = 6;
+    repeated Param metadata = 7;
+}
+
+enum UserRole {
+    NULL7 = 0;
+    USER = 1;
+    ADMIN = 2;
 }
 
 enum ResponseType {
@@ -76,12 +107,6 @@ enum ResponseType {
     CAN_SEND = 8;
 }
 
-message File {
-    string name = 1;
-    int64 size = 2;
-    repeated Param metadata = 3;
-}
-
 message Handshake {
     EncryptionAlgorithm encryptionAlgorithm = 1;
 }
@@ -90,4 +115,22 @@ enum EncryptionAlgorithm {
     NULL4 = 0;
     NOENCRYPTION = 1;
     CAESAR = 2;
+}
+
+message User {
+    string username = 1;
+    string firstName = 2;
+    string lastName = 3;
+    UserRole role = 4;
+    uint64 capacity = 5;
+    uint64 usedSpace = 6;
+}
+
+message ServerResponse {
+    ResponseType type = 1;
+    repeated Param params = 2;
+    repeated string list = 3;
+    repeated File fileList = 4;
+    repeated User userList = 5;
+    bytes data = 6;
 }

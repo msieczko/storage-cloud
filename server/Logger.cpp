@@ -109,6 +109,21 @@ void Logger::err(const string& author, const string& body, int errn) {
 }
 
 void Logger::add_message(MessageLevel lvl, const string& author, const string& body) {
+    if(body.find('\n') != string::npos) {
+        std::stringstream ss(body);
+        std::string line;
+
+        if (!body.empty())
+        {
+            while(std::getline(ss,line,'\n')){
+                if(!line.empty()) {
+                    add_message(lvl, author, line);
+                }
+            }
+        }
+
+        return;
+    }
     Msg msg;
     msg.level = lvl;
     msg.author = author;
