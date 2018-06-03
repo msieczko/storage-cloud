@@ -185,6 +185,7 @@ bool User::addFileChunk(const string& chunk) {
     }
 
     return user_manager.validateFile(currentInFile);
+    //TODO dodac usuwanie jak nie pyknie
 }
 
 bool User::isAdmin() {
@@ -343,26 +344,33 @@ bool UserManager::registerUser(UDetails& user, const string& password, bool& use
     doc.append(kvp("username", toUTF8(user.username)));
     doc.append(kvp("name", toUTF8(user.name)));
     doc.append(kvp("surname", toUTF8(user.surname)));
-    doc.append(kvp("totalStorage", toINT64(defaultStorage)));
-    doc.append(kvp("freeStorage", toINT64(defaultStorage)));
     doc.append(kvp("role", toINT64(user.role)));
 
-    string homeDir = "/" + user.username;
+    if(user.role != USER_ADMIN) {
+        doc.append(kvp("totalStorage", toINT64(defaultStorage)));
+        doc.append(kvp("freeStorage", toINT64(defaultStorage)));
 
-    doc.append(kvp("homeDir", toUTF8(homeDir)));
+        string homeDir = "/" + user.username;
 
-    string fullPath = root_path + homeDir;
+        doc.append(kvp("homeDir", toUTF8(homeDir)));
 
-    int mkdir_res = mkdir(fullPath.c_str(), S_IRWXU);
+        string fullPath = root_path + homeDir;
 
-    if(mkdir_res != 0) {
-        logger.err(l_id, "error while trying to mkdir " + fullPath + " for new user");
-        return false;
+        int mkdir_res = mkdir(fullPath.c_str(), S_IRWXU);
+
+        if(mkdir_res != 0) {
+            logger.err(l_id, "error while trying to mkdir " + fullPath + " for new user");
+            return false;
+        }
+    } else {
+        doc.append(kvp("totalStorage", toINT64(0)));
+        doc.append(kvp("freeStorage", toINT64(0)));
+        doc.append(kvp("homeDir", ""));
     }
 
     oid tmp_id;
 
-    if(!db.insertDoc("files", tmp_id, doc)) {
+    if(!db.insertDoc("users", tmp_id, doc)) {
         return false;
     }
 

@@ -222,27 +222,27 @@ int main(int argc, char **argv) {
 //    db.setField("users", "testField", allUsers[0].id, tmpi);
 
 
-    string u_name = "miloszXD";
-    User u(u_name, u_m);
-    string passwd = "nicepasswd";
-    string newSid;
-    u.loginByPassword(passwd, newSid);
-
-    UFile f;
-    f.filename = "/dir/dir23/file24.test";
-    f.size = 254345;
-    f.creation_date = time(0);
-    f.type = FILE_REGULAR;
-
-    string s_tmp("/dir/dir23");
-
-    vector<UFile> fields;
-
-    u.listFilesinPath(s_tmp, fields);
-
-    for(auto&& file: fields) {
-        logger.info("FILES", file.filename + " " + file.owner_name);
-    }
+//    string u_name = "miloszXD";
+//    User u(u_name, u_m);
+//    string passwd = "nicepasswd";
+//    string newSid;
+//    u.loginByPassword(passwd, newSid);
+//
+//    UFile f;
+//    f.filename = "/dir/dir23/file24.test";
+//    f.size = 254345;
+//    f.creation_date = time(0);
+//    f.type = FILE_REGULAR;
+//
+//    string s_tmp("/dir/dir23");
+//
+//    vector<UFile> fields;
+//
+//    u.listFilesinPath(s_tmp, fields);
+//
+//    for(auto&& file: fields) {
+//        logger.info("FILES", file.filename + " " + file.owner_name);
+//    }
 
 //    u.addFile(f);
 
@@ -258,6 +258,13 @@ int main(int argc, char **argv) {
 
 //    cout<<(u.loginByPassword(passwd, newSid) ? "passwd ok" : "passwd wrong")<<" sid: "<<newSid<<endl;
 
+//    bool xd_ok;
+//    UDetails tmp_u;
+//    tmp_u.surname = "Nazwisko";
+//    tmp_u.name = "MiłoszTest";
+//    tmp_u.username = "miloszXD";
+//    tmp_u.role = USER_ADMIN;
+//    UserManager::getInstance().registerUser(tmp_u, passwd, xd_ok);
 
     while(!should_exit) {
         c = getch();
