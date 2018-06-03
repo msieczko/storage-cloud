@@ -306,5 +306,90 @@ bool Client::processCommand(Command* cmd) {
         }
 
         sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::LIST_USERS) {
+        if(!(u.isAdmin())) {
+            resError(res, "Not enough permissions", "tried to list users, but was not logged as admin");
+        } else {
+            vector<UDetails> userDetails;
+            if(UserManager::getInstance().listAllUsers(userDetails)) {
+                for(auto& user: userDetails) {
+                    UserDetails* tmp = res.add_userlist();
+                    tmp->set_firstname(user.name);
+                    tmp->set_lastname(user.surname);
+                    tmp->set_role(user.role == USER_ADMIN ? UserRole::ADMIN : UserRole::USER);
+                    tmp->set_totalspace(user.totalSpace);
+                    tmp->set_usedspace(user.usedSpace);
+                    tmp->set_username(user.username);
+                }
+            } else {
+                resError(res, "Error occured", "tried to list users, but error occured");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::REGISTER) {
+        string username, passwd, name, surname;
+        uint8_t validFields = 0;
+
+        for(auto& param: cmd->params()) {
+            if(param.paramid() == "username") {
+                username = param.sparamval();
+                validFields++;
+            } else if(param.paramid() == "pass") {
+                passwd = param.sparamval();
+                validFields++;
+            } else if(param.paramid() == "first_name") {
+                name = param.sparamval();
+                validFields++;
+            } else if(param.paramid() == "last_name") {
+                surname = param.sparamval();
+                validFields++;
+            }
+        }
+
+        if(validFields == 4) {
+            bool paramsOk = true;
+            if(username.size() < 2) {
+                paramsOk = false;
+                resError(res, "Username too short", "tried to register, but provided too short username");
+            }
+
+            if(paramsOk && passwd.size() < 7) {
+                paramsOk = false;
+                resError(res, "Password too short", "tried to register, but provided too short password");
+            }
+
+            if(paramsOk && name.size() < 3) {
+                paramsOk = false;
+                resError(res, "First name too short", "tried to register, but provided too short name");
+            }
+
+            if(paramsOk && surname.size() < 3) {
+                paramsOk = false;
+                resError(res, "Last name too short", "tried to register, but provided too short surname");
+            }
+
+            if(paramsOk) {
+                UDetails u_d;
+                u_d.username = username;
+                u_d.name = name;
+                u_d.surname = surname;
+
+                bool usernameTaken = false;
+                if(!UserManager::getInstance().registerUser(u_d, passwd, usernameTaken)) {
+                    if(usernameTaken) {
+                        resError(res, "Username already taken", "tried to register, but provided not unique username");
+                    } else {
+                        resError(res, "Error occured", "tried to register, but internal error occured");
+                    }
+                } else {
+                    res.set_type(ResponseType::OK);
+                }
+            }
+        } else {
+            resError(res, "Wrong command format", "tried to register, but command format was wrong");
+        }
+
+        sendServerResponse(&res);
     }
 }

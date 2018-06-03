@@ -53,8 +53,8 @@ void InitDefaultsFileImpl();
 void InitDefaultsFile();
 void InitDefaultsHandshakeImpl();
 void InitDefaultsHandshake();
-void InitDefaultsUserImpl();
-void InitDefaultsUser();
+void InitDefaultsUserDetailsImpl();
+void InitDefaultsUserDetails();
 void InitDefaultsServerResponseImpl();
 void InitDefaultsServerResponse();
 inline void InitDefaults() {
@@ -63,7 +63,7 @@ inline void InitDefaults() {
   InitDefaultsCommand();
   InitDefaultsFile();
   InitDefaultsHandshake();
-  InitDefaultsUser();
+  InitDefaultsUserDetails();
   InitDefaultsServerResponse();
 }
 }  // namespace protobuf_messages_2eproto
@@ -86,9 +86,9 @@ extern ParamDefaultTypeInternal _Param_default_instance_;
 class ServerResponse;
 class ServerResponseDefaultTypeInternal;
 extern ServerResponseDefaultTypeInternal _ServerResponse_default_instance_;
-class User;
-class UserDefaultTypeInternal;
-extern UserDefaultTypeInternal _User_default_instance_;
+class UserDetails;
+class UserDetailsDefaultTypeInternal;
+extern UserDetailsDefaultTypeInternal _UserDetails_default_instance_;
 }  // namespace StorageCloud
 namespace StorageCloud {
 
@@ -166,12 +166,13 @@ enum CommandType {
   ADMIN_UNSHARE = 22,
   ADMIN_SHARE_INFO = 23,
   WARN = 24,
+  LIST_USERS = 25,
   CommandType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   CommandType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool CommandType_IsValid(int value);
 const CommandType CommandType_MIN = NULL1;
-const CommandType CommandType_MAX = WARN;
+const CommandType CommandType_MAX = LIST_USERS;
 const int CommandType_ARRAYSIZE = CommandType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* CommandType_descriptor();
@@ -1016,24 +1017,24 @@ class Handshake : public ::google::protobuf::Message /* @@protoc_insertion_point
 };
 // -------------------------------------------------------------------
 
-class User : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:StorageCloud.User) */ {
+class UserDetails : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:StorageCloud.UserDetails) */ {
  public:
-  User();
-  virtual ~User();
+  UserDetails();
+  virtual ~UserDetails();
 
-  User(const User& from);
+  UserDetails(const UserDetails& from);
 
-  inline User& operator=(const User& from) {
+  inline UserDetails& operator=(const UserDetails& from) {
     CopyFrom(from);
     return *this;
   }
   #if LANG_CXX11
-  User(User&& from) noexcept
-    : User() {
+  UserDetails(UserDetails&& from) noexcept
+    : UserDetails() {
     *this = ::std::move(from);
   }
 
-  inline User& operator=(User&& from) noexcept {
+  inline UserDetails& operator=(UserDetails&& from) noexcept {
     if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
       if (this != &from) InternalSwap(&from);
     } else {
@@ -1043,30 +1044,30 @@ class User : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   }
   #endif
   static const ::google::protobuf::Descriptor* descriptor();
-  static const User& default_instance();
+  static const UserDetails& default_instance();
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const User* internal_default_instance() {
-    return reinterpret_cast<const User*>(
-               &_User_default_instance_);
+  static inline const UserDetails* internal_default_instance() {
+    return reinterpret_cast<const UserDetails*>(
+               &_UserDetails_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
     5;
 
-  void Swap(User* other);
-  friend void swap(User& a, User& b) {
+  void Swap(UserDetails* other);
+  friend void swap(UserDetails& a, UserDetails& b) {
     a.Swap(&b);
   }
 
   // implements Message ----------------------------------------------
 
-  inline User* New() const PROTOBUF_FINAL { return New(NULL); }
+  inline UserDetails* New() const PROTOBUF_FINAL { return New(NULL); }
 
-  User* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  UserDetails* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
   void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
   void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void CopyFrom(const User& from);
-  void MergeFrom(const User& from);
+  void CopyFrom(const UserDetails& from);
+  void MergeFrom(const UserDetails& from);
   void Clear() PROTOBUF_FINAL;
   bool IsInitialized() const PROTOBUF_FINAL;
 
@@ -1082,7 +1083,7 @@ class User : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const PROTOBUF_FINAL;
-  void InternalSwap(User* other);
+  void InternalSwap(UserDetails* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return NULL;
@@ -1140,11 +1141,11 @@ class User : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   ::std::string* release_lastname();
   void set_allocated_lastname(::std::string* lastname);
 
-  // uint64 capacity = 5;
-  void clear_capacity();
-  static const int kCapacityFieldNumber = 5;
-  ::google::protobuf::uint64 capacity() const;
-  void set_capacity(::google::protobuf::uint64 value);
+  // uint64 totalSpace = 5;
+  void clear_totalspace();
+  static const int kTotalSpaceFieldNumber = 5;
+  ::google::protobuf::uint64 totalspace() const;
+  void set_totalspace(::google::protobuf::uint64 value);
 
   // uint64 usedSpace = 6;
   void clear_usedspace();
@@ -1158,19 +1159,19 @@ class User : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   ::StorageCloud::UserRole role() const;
   void set_role(::StorageCloud::UserRole value);
 
-  // @@protoc_insertion_point(class_scope:StorageCloud.User)
+  // @@protoc_insertion_point(class_scope:StorageCloud.UserDetails)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::internal::ArenaStringPtr username_;
   ::google::protobuf::internal::ArenaStringPtr firstname_;
   ::google::protobuf::internal::ArenaStringPtr lastname_;
-  ::google::protobuf::uint64 capacity_;
+  ::google::protobuf::uint64 totalspace_;
   ::google::protobuf::uint64 usedspace_;
   int role_;
   mutable int _cached_size_;
   friend struct ::protobuf_messages_2eproto::TableStruct;
-  friend void ::protobuf_messages_2eproto::InitDefaultsUserImpl();
+  friend void ::protobuf_messages_2eproto::InitDefaultsUserDetailsImpl();
 };
 // -------------------------------------------------------------------
 
@@ -1302,16 +1303,16 @@ class ServerResponse : public ::google::protobuf::Message /* @@protoc_insertion_
   const ::google::protobuf::RepeatedPtrField< ::StorageCloud::File >&
       filelist() const;
 
-  // repeated .StorageCloud.User userList = 5;
+  // repeated .StorageCloud.UserDetails userList = 5;
   int userlist_size() const;
   void clear_userlist();
   static const int kUserListFieldNumber = 5;
-  const ::StorageCloud::User& userlist(int index) const;
-  ::StorageCloud::User* mutable_userlist(int index);
-  ::StorageCloud::User* add_userlist();
-  ::google::protobuf::RepeatedPtrField< ::StorageCloud::User >*
+  const ::StorageCloud::UserDetails& userlist(int index) const;
+  ::StorageCloud::UserDetails* mutable_userlist(int index);
+  ::StorageCloud::UserDetails* add_userlist();
+  ::google::protobuf::RepeatedPtrField< ::StorageCloud::UserDetails >*
       mutable_userlist();
-  const ::google::protobuf::RepeatedPtrField< ::StorageCloud::User >&
+  const ::google::protobuf::RepeatedPtrField< ::StorageCloud::UserDetails >&
       userlist() const;
 
   // bytes data = 6;
@@ -1341,7 +1342,7 @@ class ServerResponse : public ::google::protobuf::Message /* @@protoc_insertion_
   ::google::protobuf::RepeatedPtrField< ::StorageCloud::Param > params_;
   ::google::protobuf::RepeatedPtrField< ::std::string> list_;
   ::google::protobuf::RepeatedPtrField< ::StorageCloud::File > filelist_;
-  ::google::protobuf::RepeatedPtrField< ::StorageCloud::User > userlist_;
+  ::google::protobuf::RepeatedPtrField< ::StorageCloud::UserDetails > userlist_;
   ::google::protobuf::internal::ArenaStringPtr data_;
   int type_;
   mutable int _cached_size_;
@@ -2217,207 +2218,207 @@ inline void Handshake::set_encryptionalgorithm(::StorageCloud::EncryptionAlgorit
 
 // -------------------------------------------------------------------
 
-// User
+// UserDetails
 
 // string username = 1;
-inline void User::clear_username() {
+inline void UserDetails::clear_username() {
   username_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& User::username() const {
-  // @@protoc_insertion_point(field_get:StorageCloud.User.username)
+inline const ::std::string& UserDetails::username() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.UserDetails.username)
   return username_.GetNoArena();
 }
-inline void User::set_username(const ::std::string& value) {
+inline void UserDetails::set_username(const ::std::string& value) {
   
   username_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:StorageCloud.User.username)
+  // @@protoc_insertion_point(field_set:StorageCloud.UserDetails.username)
 }
 #if LANG_CXX11
-inline void User::set_username(::std::string&& value) {
+inline void UserDetails::set_username(::std::string&& value) {
   
   username_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:StorageCloud.User.username)
+  // @@protoc_insertion_point(field_set_rvalue:StorageCloud.UserDetails.username)
 }
 #endif
-inline void User::set_username(const char* value) {
+inline void UserDetails::set_username(const char* value) {
   GOOGLE_DCHECK(value != NULL);
   
   username_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:StorageCloud.User.username)
+  // @@protoc_insertion_point(field_set_char:StorageCloud.UserDetails.username)
 }
-inline void User::set_username(const char* value, size_t size) {
+inline void UserDetails::set_username(const char* value, size_t size) {
   
   username_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:StorageCloud.User.username)
+  // @@protoc_insertion_point(field_set_pointer:StorageCloud.UserDetails.username)
 }
-inline ::std::string* User::mutable_username() {
+inline ::std::string* UserDetails::mutable_username() {
   
-  // @@protoc_insertion_point(field_mutable:StorageCloud.User.username)
+  // @@protoc_insertion_point(field_mutable:StorageCloud.UserDetails.username)
   return username_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* User::release_username() {
-  // @@protoc_insertion_point(field_release:StorageCloud.User.username)
+inline ::std::string* UserDetails::release_username() {
+  // @@protoc_insertion_point(field_release:StorageCloud.UserDetails.username)
   
   return username_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void User::set_allocated_username(::std::string* username) {
+inline void UserDetails::set_allocated_username(::std::string* username) {
   if (username != NULL) {
     
   } else {
     
   }
   username_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), username);
-  // @@protoc_insertion_point(field_set_allocated:StorageCloud.User.username)
+  // @@protoc_insertion_point(field_set_allocated:StorageCloud.UserDetails.username)
 }
 
 // string firstName = 2;
-inline void User::clear_firstname() {
+inline void UserDetails::clear_firstname() {
   firstname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& User::firstname() const {
-  // @@protoc_insertion_point(field_get:StorageCloud.User.firstName)
+inline const ::std::string& UserDetails::firstname() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.UserDetails.firstName)
   return firstname_.GetNoArena();
 }
-inline void User::set_firstname(const ::std::string& value) {
+inline void UserDetails::set_firstname(const ::std::string& value) {
   
   firstname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:StorageCloud.User.firstName)
+  // @@protoc_insertion_point(field_set:StorageCloud.UserDetails.firstName)
 }
 #if LANG_CXX11
-inline void User::set_firstname(::std::string&& value) {
+inline void UserDetails::set_firstname(::std::string&& value) {
   
   firstname_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:StorageCloud.User.firstName)
+  // @@protoc_insertion_point(field_set_rvalue:StorageCloud.UserDetails.firstName)
 }
 #endif
-inline void User::set_firstname(const char* value) {
+inline void UserDetails::set_firstname(const char* value) {
   GOOGLE_DCHECK(value != NULL);
   
   firstname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:StorageCloud.User.firstName)
+  // @@protoc_insertion_point(field_set_char:StorageCloud.UserDetails.firstName)
 }
-inline void User::set_firstname(const char* value, size_t size) {
+inline void UserDetails::set_firstname(const char* value, size_t size) {
   
   firstname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:StorageCloud.User.firstName)
+  // @@protoc_insertion_point(field_set_pointer:StorageCloud.UserDetails.firstName)
 }
-inline ::std::string* User::mutable_firstname() {
+inline ::std::string* UserDetails::mutable_firstname() {
   
-  // @@protoc_insertion_point(field_mutable:StorageCloud.User.firstName)
+  // @@protoc_insertion_point(field_mutable:StorageCloud.UserDetails.firstName)
   return firstname_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* User::release_firstname() {
-  // @@protoc_insertion_point(field_release:StorageCloud.User.firstName)
+inline ::std::string* UserDetails::release_firstname() {
+  // @@protoc_insertion_point(field_release:StorageCloud.UserDetails.firstName)
   
   return firstname_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void User::set_allocated_firstname(::std::string* firstname) {
+inline void UserDetails::set_allocated_firstname(::std::string* firstname) {
   if (firstname != NULL) {
     
   } else {
     
   }
   firstname_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), firstname);
-  // @@protoc_insertion_point(field_set_allocated:StorageCloud.User.firstName)
+  // @@protoc_insertion_point(field_set_allocated:StorageCloud.UserDetails.firstName)
 }
 
 // string lastName = 3;
-inline void User::clear_lastname() {
+inline void UserDetails::clear_lastname() {
   lastname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& User::lastname() const {
-  // @@protoc_insertion_point(field_get:StorageCloud.User.lastName)
+inline const ::std::string& UserDetails::lastname() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.UserDetails.lastName)
   return lastname_.GetNoArena();
 }
-inline void User::set_lastname(const ::std::string& value) {
+inline void UserDetails::set_lastname(const ::std::string& value) {
   
   lastname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:StorageCloud.User.lastName)
+  // @@protoc_insertion_point(field_set:StorageCloud.UserDetails.lastName)
 }
 #if LANG_CXX11
-inline void User::set_lastname(::std::string&& value) {
+inline void UserDetails::set_lastname(::std::string&& value) {
   
   lastname_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:StorageCloud.User.lastName)
+  // @@protoc_insertion_point(field_set_rvalue:StorageCloud.UserDetails.lastName)
 }
 #endif
-inline void User::set_lastname(const char* value) {
+inline void UserDetails::set_lastname(const char* value) {
   GOOGLE_DCHECK(value != NULL);
   
   lastname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:StorageCloud.User.lastName)
+  // @@protoc_insertion_point(field_set_char:StorageCloud.UserDetails.lastName)
 }
-inline void User::set_lastname(const char* value, size_t size) {
+inline void UserDetails::set_lastname(const char* value, size_t size) {
   
   lastname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:StorageCloud.User.lastName)
+  // @@protoc_insertion_point(field_set_pointer:StorageCloud.UserDetails.lastName)
 }
-inline ::std::string* User::mutable_lastname() {
+inline ::std::string* UserDetails::mutable_lastname() {
   
-  // @@protoc_insertion_point(field_mutable:StorageCloud.User.lastName)
+  // @@protoc_insertion_point(field_mutable:StorageCloud.UserDetails.lastName)
   return lastname_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* User::release_lastname() {
-  // @@protoc_insertion_point(field_release:StorageCloud.User.lastName)
+inline ::std::string* UserDetails::release_lastname() {
+  // @@protoc_insertion_point(field_release:StorageCloud.UserDetails.lastName)
   
   return lastname_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void User::set_allocated_lastname(::std::string* lastname) {
+inline void UserDetails::set_allocated_lastname(::std::string* lastname) {
   if (lastname != NULL) {
     
   } else {
     
   }
   lastname_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), lastname);
-  // @@protoc_insertion_point(field_set_allocated:StorageCloud.User.lastName)
+  // @@protoc_insertion_point(field_set_allocated:StorageCloud.UserDetails.lastName)
 }
 
 // .StorageCloud.UserRole role = 4;
-inline void User::clear_role() {
+inline void UserDetails::clear_role() {
   role_ = 0;
 }
-inline ::StorageCloud::UserRole User::role() const {
-  // @@protoc_insertion_point(field_get:StorageCloud.User.role)
+inline ::StorageCloud::UserRole UserDetails::role() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.UserDetails.role)
   return static_cast< ::StorageCloud::UserRole >(role_);
 }
-inline void User::set_role(::StorageCloud::UserRole value) {
+inline void UserDetails::set_role(::StorageCloud::UserRole value) {
   
   role_ = value;
-  // @@protoc_insertion_point(field_set:StorageCloud.User.role)
+  // @@protoc_insertion_point(field_set:StorageCloud.UserDetails.role)
 }
 
-// uint64 capacity = 5;
-inline void User::clear_capacity() {
-  capacity_ = GOOGLE_ULONGLONG(0);
+// uint64 totalSpace = 5;
+inline void UserDetails::clear_totalspace() {
+  totalspace_ = GOOGLE_ULONGLONG(0);
 }
-inline ::google::protobuf::uint64 User::capacity() const {
-  // @@protoc_insertion_point(field_get:StorageCloud.User.capacity)
-  return capacity_;
+inline ::google::protobuf::uint64 UserDetails::totalspace() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.UserDetails.totalSpace)
+  return totalspace_;
 }
-inline void User::set_capacity(::google::protobuf::uint64 value) {
+inline void UserDetails::set_totalspace(::google::protobuf::uint64 value) {
   
-  capacity_ = value;
-  // @@protoc_insertion_point(field_set:StorageCloud.User.capacity)
+  totalspace_ = value;
+  // @@protoc_insertion_point(field_set:StorageCloud.UserDetails.totalSpace)
 }
 
 // uint64 usedSpace = 6;
-inline void User::clear_usedspace() {
+inline void UserDetails::clear_usedspace() {
   usedspace_ = GOOGLE_ULONGLONG(0);
 }
-inline ::google::protobuf::uint64 User::usedspace() const {
-  // @@protoc_insertion_point(field_get:StorageCloud.User.usedSpace)
+inline ::google::protobuf::uint64 UserDetails::usedspace() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.UserDetails.usedSpace)
   return usedspace_;
 }
-inline void User::set_usedspace(::google::protobuf::uint64 value) {
+inline void UserDetails::set_usedspace(::google::protobuf::uint64 value) {
   
   usedspace_ = value;
-  // @@protoc_insertion_point(field_set:StorageCloud.User.usedSpace)
+  // @@protoc_insertion_point(field_set:StorageCloud.UserDetails.usedSpace)
 }
 
 // -------------------------------------------------------------------
@@ -2567,31 +2568,31 @@ ServerResponse::filelist() const {
   return filelist_;
 }
 
-// repeated .StorageCloud.User userList = 5;
+// repeated .StorageCloud.UserDetails userList = 5;
 inline int ServerResponse::userlist_size() const {
   return userlist_.size();
 }
 inline void ServerResponse::clear_userlist() {
   userlist_.Clear();
 }
-inline const ::StorageCloud::User& ServerResponse::userlist(int index) const {
+inline const ::StorageCloud::UserDetails& ServerResponse::userlist(int index) const {
   // @@protoc_insertion_point(field_get:StorageCloud.ServerResponse.userList)
   return userlist_.Get(index);
 }
-inline ::StorageCloud::User* ServerResponse::mutable_userlist(int index) {
+inline ::StorageCloud::UserDetails* ServerResponse::mutable_userlist(int index) {
   // @@protoc_insertion_point(field_mutable:StorageCloud.ServerResponse.userList)
   return userlist_.Mutable(index);
 }
-inline ::StorageCloud::User* ServerResponse::add_userlist() {
+inline ::StorageCloud::UserDetails* ServerResponse::add_userlist() {
   // @@protoc_insertion_point(field_add:StorageCloud.ServerResponse.userList)
   return userlist_.Add();
 }
-inline ::google::protobuf::RepeatedPtrField< ::StorageCloud::User >*
+inline ::google::protobuf::RepeatedPtrField< ::StorageCloud::UserDetails >*
 ServerResponse::mutable_userlist() {
   // @@protoc_insertion_point(field_mutable_list:StorageCloud.ServerResponse.userList)
   return &userlist_;
 }
-inline const ::google::protobuf::RepeatedPtrField< ::StorageCloud::User >&
+inline const ::google::protobuf::RepeatedPtrField< ::StorageCloud::UserDetails >&
 ServerResponse::userlist() const {
   // @@protoc_insertion_point(field_list:StorageCloud.ServerResponse.userList)
   return userlist_;

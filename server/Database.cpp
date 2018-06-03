@@ -181,7 +181,8 @@ bool Database::getId(string&& colName, string&& fieldName, const string& fieldVa
     }
 }
 
-bool Database::getFields(string&& colName, bsoncxx::oid id, map<string, bsoncxx::document::element>& elements) {
+// get fields values described in map
+bool Database::getFields(string&& colName, bsoncxx::oid id, map<string, bsoncxx::types::value>& elements) {
     auto doc = bsoncxx::builder::basic::document{};
     doc.append(kvp("_id", 0));
 
@@ -208,13 +209,10 @@ bool Database::getFields(string&& colName, bsoncxx::oid id, map<string, bsoncxx:
         }
 
         for(auto val: (*doc_i)) {
-            if(elements.find(bsoncxx::string::to_string(val.key())) == elements.end()) {
-                // should not ever happen
-                logger->log(l_id, "getFields got element that was not requested");
-                return false;
+            string key = bsoncxx::string::to_string(val.key());
+            if (key != "_id") {
+                elements.emplace(key, val.get_value());
             }
-
-            elements[bsoncxx::string::to_string(val.key())] = val;
         }
         return true;
     } catch (const std::exception& ex) {
@@ -226,7 +224,7 @@ bool Database::getFields(string&& colName, bsoncxx::oid id, map<string, bsoncxx:
     }
 }
 
-bool Database::getFields(string&& colName, vector<string>& fields, map<bsoncxx::oid, map<string, bsoncxx::document::element> >& elements) {
+bool Database::getFields(string&& colName, vector<string>& fields, map<bsoncxx::oid, map<string, bsoncxx::types::value> >& elements) {
     auto doc = bsoncxx::builder::basic::document{};
 
     for(const auto &name: fields) {
@@ -259,12 +257,12 @@ bool Database::getFields(string&& colName, vector<string>& fields, map<bsoncxx::
 
             bsoncxx::oid id = t_id.get_oid().value;
 
-            elements.emplace(id, map<string, bsoncxx::document::element>{});
+            elements.emplace(id, map<string, bsoncxx::types::value>{});
 
             for (auto val: doc_v) {
                 string key = bsoncxx::string::to_string(val.key());
                 if (key != "_id") {
-                    elements[id].emplace(key, val);
+                    elements[id].emplace(key, val.get_value());
                 }
             }
         }
@@ -283,7 +281,7 @@ bool Database::getFields(string&& colName, vector<string>& fields, map<bsoncxx::
     }
 }
 
-bool Database::getFields(string&& colName, bsoncxx::document::value&& doc, vector<string>& fields, map<string, map<string, bsoncxx::document::element> >& elements) {
+bool Database::getFields(string&& colName, bsoncxx::document::value&& doc, vector<string>& fields, map<string, map<string, bsoncxx::types::value> >& elements) {
     auto odoc = bsoncxx::builder::basic::document{};
 
     for(const auto &name: fields) {
@@ -316,12 +314,12 @@ bool Database::getFields(string&& colName, bsoncxx::document::value&& doc, vecto
 
             string id = bsoncxx::string::to_string(t_id.get_utf8().value);
 
-            elements.emplace(id, map<string, bsoncxx::document::element>{});
+            elements.emplace(id, map<string, bsoncxx::types::value>{});
 
             for (auto val: doc_v) {
                 string key = bsoncxx::string::to_string(val.key());
 //                if (key != "_id") {
-                    elements[id].emplace(key, val);
+                    elements[id].emplace(key, val.get_value());
 //                }
             }
         }
@@ -341,7 +339,7 @@ bool Database::getFields(string&& colName, bsoncxx::document::value&& doc, vecto
 //    return false;
 }
 
-bool Database::getFieldsAdvanced(string&& colName, mongocxx::pipeline& stages, vector<string>& fields, map<string, map<string, bsoncxx::document::element> >& elements) {
+bool Database::getFieldsAdvanced(string&& colName, mongocxx::pipeline& stages, vector<string>& fields, map<string, map<string, bsoncxx::types::value> >& elements) {
     auto odoc = bsoncxx::builder::basic::document{};
 
     for(const auto &name: fields) {
@@ -374,12 +372,12 @@ bool Database::getFieldsAdvanced(string&& colName, mongocxx::pipeline& stages, v
 
             string id = bsoncxx::string::to_string(t_id.get_utf8().value);
 
-            elements.emplace(id, map<string, bsoncxx::document::element>{});
+            elements.emplace(id, map<string, bsoncxx::types::value>{});
 
-            for (auto val: doc_v) {
+            for (bsoncxx::v_noabi::document::element val: doc_v) {
                 string key = bsoncxx::string::to_string(val.key());
 //                if (key != "_id") {
-                elements[id].emplace(key, val);
+                elements[id].emplace(key, val.get_value());
 //                }
             }
         }
@@ -502,6 +500,19 @@ bool Database::countField(string&& colName, string&& fieldName, const string& fi
         return false;
     } catch (...) {
         logger->err(l_id, "error while counting string fields: unknown error");
+        return false;
+    }
+}
+
+bool Database::countField(string&& colName, string&& fieldName, const string& fieldVal, uint64_t& res) {
+    try {
+        res = (uint64_t) db[colName].count(make_document(kvp(fieldName, fieldVal)));
+        return true;
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while simple counting string fields: " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while simple counting string fields: unknown error");
         return false;
     }
 }

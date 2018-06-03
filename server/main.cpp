@@ -165,7 +165,7 @@ int main(int argc, char **argv) {
 
     logger.set_input_string(&cmd);
 
-    UserManager u_m = UserManager::getInstance(&db);
+    UserManager u_m = UserManager::getInstance(&db, &logger);
 
 //    vector<User> allUsers;
 //    db.listUsers(allUsers);
@@ -280,11 +280,16 @@ int main(int argc, char **argv) {
                 logger.info("main", "Available commands:\n  exit - closes server\n  list - lists active connections");
             } else if (cmd == "users") {
                 logger.info("main", "All users:");
-                vector<string> users;
+                vector<UDetails> users;
                 u_m.listAllUsers(users);
 
                 for(auto& usr: users) {
-                    logger.info("main", "> " + usr);
+                    logger.info("main/users", usr.username);
+                    logger.info("main/users", "|-> " + usr.name);
+                    logger.info("main/users", "|-> " + usr.surname);
+                    logger.info("main/users", string("|-> ") + (usr.role == USER_ADMIN ? "admin" : "regular user"));
+                    logger.info("main/users", "|-> total space:" + to_string(usr.totalSpace) + "B");
+                    logger.info("main/users", "'-> used space: " + to_string(usr.usedSpace) + "B");
                 }
             } else {
                 logger.warn("main", "Unknown command, try help");

@@ -19,6 +19,9 @@
 
 #define FILE_HASH_SIZE SHA_DIGEST_LENGTH
 
+#define USER_USER 1
+#define USER_ADMIN 2
+
 using bsoncxx::oid;
 using std::vector;
 
@@ -36,6 +39,15 @@ struct UFile {
     string owner_name;
     uint8_t type;
     string realPath;
+};
+
+struct UDetails {
+    string name;
+    string surname;
+    string username;
+    uint8_t role;
+    uint64_t totalSpace;
+    uint64_t usedSpace;
 };
 
 class User {
@@ -69,21 +81,40 @@ public:
     bool isCurrentInFileValid();
     uint8_t addFile(UFile&);
     bool addFileChunk(const string&);
+    bool getUserDetails(UDetails&);
+    bool isAdmin();
+    bool getRole(uint8_t&);
+    bool getCapacity(uint64_t&);
+    bool getFreeSpace(uint64_t&);
 };
 
 class UserManager {
 private:
     Database& db;
+    Logger& logger;
     string root_path = "/storage";
+    uint64_t defaultStorage = 10*1024*1024*1024ull;
 
-    explicit UserManager(Database&);
-    string mapToString(std::map<string, bsoncxx::document::element>&);
+    string l_id = "UserManager";
+
+    explicit UserManager(Database&, Logger&);
+    bool parseUserDetails(std::map<string, bsoncxx::types::value>&, UDetails&);
+    bool getPasswdHash(oid&, string&);
+
+    bsoncxx::types::b_utf8 toUTF8(string&);
+    bsoncxx::types::b_int64 toINT64(uint64_t i);
+    bsoncxx::types::b_date currDate();
+    bsoncxx::types::b_oid toOID(oid);
+    bsoncxx::types::b_bool toBool(bool);
+    bsoncxx::types::b_binary toBinary(string&);
+
+//    string mapToString(std::map<string, bsoncxx::document::element>&);
 public:
     bool getName(oid&, string&);
     bool getSurname(oid&, string&);
     bool getHomeDir(oid&, string&);
-    bool getPasswdHash(oid&, string&);
-    bool setPasswdHash(oid&, string&);
+    bool checkPasswd(oid&, string&);
+    bool setPasswd(oid&, const string&);
     bool setName(oid&, string&);
     bool addSid(oid&, string&);
     bool checkSid(oid&, string&);
@@ -91,7 +122,13 @@ public:
     bool yourFileIsDir(oid &, const string &);
     bool getUserId(const string& username, oid& id);
     bool removeSid(oid&, string&);
-    bool listAllUsers(std::vector<string>&);
+    bool listAllUsers(std::vector<UDetails>&);
+    bool getUserDetails(oid, UDetails&);
+    bool isAdmin();
+    bool getUserRole(oid&, uint8_t&);
+    bool getTotalSpace(oid&, uint64_t&);
+    bool getFreeSpace(oid&, uint64_t&);
+    bool registerUser(UDetails&, const string&, bool&);
 
     bool listFilesinPath(oid&, const string&, vector<UFile>&);
     bool addNewFile(oid&, UFile&, string&, oid&);
@@ -99,9 +136,9 @@ public:
     bool addFileChunk(UFile&, const string&);
     bool validateFile(UFile&);
 
-    static UserManager& getInstance(Database* db = nullptr)
+    static UserManager& getInstance(Database* db = nullptr, Logger* logger = nullptr)
     {
-        static UserManager instance(*db);
+        static UserManager instance(*db, *logger);
         return instance;
     }
 };
