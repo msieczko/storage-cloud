@@ -71,6 +71,7 @@ enum CommandType {
     ADMIN_UNSHARE = 22;
     ADMIN_SHARE_INFO = 23;
     WARN = 24;
+    LIST_USERS = 25;
 }
 
 enum FileType {
@@ -117,12 +118,12 @@ enum EncryptionAlgorithm {
     CAESAR = 2;
 }
 
-message User {
+message UserDetails {
     string username = 1;
     string firstName = 2;
     string lastName = 3;
     UserRole role = 4;
-    uint64 capacity = 5;
+    uint64 totalSpace = 5;
     uint64 usedSpace = 6;
 }
 
@@ -131,6 +132,6 @@ message ServerResponse {
     repeated Param params = 2;
     repeated string list = 3;
     repeated File fileList = 4;
-    repeated User userList = 5;
+    repeated UserDetails userList = 5;
     bytes data = 6;
 }
