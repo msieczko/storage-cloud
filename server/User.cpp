@@ -309,6 +309,7 @@ bool UserManager::parseUserDetails(map<string, bsoncxx::types::value>& usr, UDet
         tmp_u.totalSpace = (uint64_t) usr.find("totalSpace")->second.get_int64().value;
         uint64_t freeSpace = (uint64_t) usr.find("freeSpace")->second.get_int64().value;
         tmp_u.usedSpace = tmp_u.totalSpace - freeSpace;
+        logger.log("Freespace", std::to_string(usr.find("totalSpace")->second.get_int64().value));
     } catch (const std::exception& ex) {
         logger.err(l_id, "error while parsing user details: " + string(ex.what()));
         return false;
@@ -347,8 +348,8 @@ bool UserManager::registerUser(UDetails& user, const string& password, bool& use
     doc.append(kvp("role", toINT64(user.role)));
 
     if(user.role != USER_ADMIN) {
-        doc.append(kvp("totalStorage", toINT64(defaultStorage)));
-        doc.append(kvp("freeStorage", toINT64(defaultStorage)));
+        doc.append(kvp("totalSpace", toINT64(defaultStorage)));
+        doc.append(kvp("freeSpace", toINT64(defaultStorage)));
 
         string homeDir = "/" + user.username;
 
@@ -363,8 +364,8 @@ bool UserManager::registerUser(UDetails& user, const string& password, bool& use
             return false;
         }
     } else {
-        doc.append(kvp("totalStorage", toINT64(0)));
-        doc.append(kvp("freeStorage", toINT64(0)));
+        doc.append(kvp("totalSpace", toINT64(0)));
+        doc.append(kvp("freeSpace", toINT64(0)));
         doc.append(kvp("homeDir", ""));
     }
 

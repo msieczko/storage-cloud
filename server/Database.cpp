@@ -243,7 +243,8 @@ bool Database::getFields(string&& colName, vector<string>& fields, map<bsoncxx::
             notEmpty = true;
 
             //TODO check if id was passed as field
-            if (distance(doc_v.begin(), doc_v.end()) != fields.size() + 1) {
+            if ((distance(doc_v.begin(), doc_v.end()) != fields.size() + 1) && (distance(doc_v.begin(), doc_v.end()) != fields.size()) && (distance(doc_v.begin(), doc_v.end()) != fields.size() - 1)) {
+                logger->log(l_id, std::to_string(distance(doc_v.begin(), doc_v.end())) + " != " + std::to_string(fields.size()));
                 logger->log(l_id, "getFields got invalid fields count");
                 return false;
             }
