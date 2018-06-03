@@ -239,12 +239,13 @@ enum ResponseType {
   SHARED = 6,
   SRV_DATA = 7,
   CAN_SEND = 8,
+  USERS = 9,
   ResponseType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   ResponseType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool ResponseType_IsValid(int value);
 const ResponseType ResponseType_MIN = NULL5;
-const ResponseType ResponseType_MAX = CAN_SEND;
+const ResponseType ResponseType_MAX = USERS;
 const int ResponseType_ARRAYSIZE = ResponseType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* ResponseType_descriptor();

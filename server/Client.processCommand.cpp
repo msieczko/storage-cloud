@@ -321,6 +321,8 @@ bool Client::processCommand(Command* cmd) {
                     tmp->set_usedspace(user.usedSpace);
                     tmp->set_username(user.username);
                 }
+
+                res.set_type(ResponseType::USERS);
             } else {
                 resError(res, "Error occured", "tried to list users, but error occured");
             }
@@ -388,6 +390,102 @@ bool Client::processCommand(Command* cmd) {
             }
         } else {
             resError(res, "Wrong command format", "tried to register, but command format was wrong");
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::LIST_USER_FILES) {
+        if(!(u.isAdmin())) {
+            resError(res, "Not enough permissions", "tried to list user files, but was not logged as admin");
+        } else {
+            string username, path;
+            uint8_t validFields = 0;
+
+            for(auto& param: cmd->params()) {
+                if(param.paramid() == "username") {
+                    username = param.sparamval();
+                    validFields++;
+                } else if(param.paramid() == "path") {
+                    path = param.sparamval();
+                    validFields++;
+                }
+            }
+
+            if(validFields == 2 && !path.empty() && !username.empty()) {
+                vector<UFile> files;
+
+                if(!u.listUserFiles(username, path, files)) {
+                    resError(res, "Internal error occured", "tried to list user files, but internal error occured");
+                }
+
+                for(auto&& file: files) {
+                    File* tmp_file = res.add_filelist();
+                    tmp_file->set_filename(file.filename);
+                    tmp_file->set_filetype(file.type == FILE_REGULAR ? FileType::FILE : FileType::DIRECTORY);
+                    tmp_file->set_size(file.size);
+                    tmp_file->set_hash(file.hash);
+                    tmp_file->set_owner(file.owner_name);
+                    tmp_file->set_creationdate(file.creation_date);
+                }
+
+                res.set_type(ResponseType::FILES);
+            } else {
+                resError(res, "Wrong command format", "tried to list user files, but command format was wrong");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::GET_STAT) {
+        if(!(u.isValid() && u.isAuthorized())) {
+            resError(res, "You are not logged in", "tried to get stats, but was not logged in");
+        } else {
+            UDetails userDetails;
+            if(u.getYourStats(userDetails)) {
+                UserDetails* tmp = res.add_userlist();
+                tmp->set_firstname(userDetails.name);
+                tmp->set_lastname(userDetails.surname);
+                tmp->set_role(userDetails.role == USER_ADMIN ? UserRole::ADMIN : UserRole::USER);
+                tmp->set_totalspace(userDetails.totalSpace);
+                tmp->set_usedspace(userDetails.usedSpace);
+                tmp->set_username(userDetails.username);
+
+                res.set_type(ResponseType::STAT);
+            } else {
+                resError(res, "Error occured", "tried to list users, but error occured");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::DELETE_USER) {
+        if(!(u.isAdmin())) {
+            resError(res, "Not enough permissions", "tried to delete user, but was not logged as admin");
+        } else {
+            if(cmd->params_size() == 1 && cmd->params(0).paramid() == "username" && !cmd->params(0).sparamval().empty()) {
+                if(UserManager::getInstance().deleteUser(cmd->params(0).sparamval())) {
+                    res.set_type(ResponseType::OK);
+                } else {
+                    resError(res, "Error occured", "tried to delete user " + cmd->params(0).sparamval() + ", but error occured");
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to put data, but command format was wrong");
+            }
+
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::DELETE) {
+        if(!(u.isValid() && u.isAuthorized())) {
+            resError(res, "You are not logged in", "tried to get stats, but was not logged in");
+        } else {
+            if(cmd->params_size() == 1 && cmd->params(0).paramid() == "path" && !cmd->params(0).sparamval().empty()) {
+
+                if(u.deleteFile(cmd->params(0).sparamval())) {
+                    res.set_type(ResponseType::OK);
+                } else {
+                    resError(res, "Error occured", "tried to delete file " + cmd->params(0).sparamval() + ", but error occured");
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to delete file, but command format was wrong");
+            }
         }
 
         sendServerResponse(&res);

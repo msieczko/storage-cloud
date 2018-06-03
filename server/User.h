@@ -2,6 +2,7 @@
 #define SERVER_USER_H
 
 #include <openssl/rand.h>
+#include <ftw.h>
 
 #include "main.h"
 #include "Database.h"
@@ -81,11 +82,14 @@ public:
     bool isCurrentInFileValid();
     uint8_t addFile(UFile&);
     bool addFileChunk(const string&);
-    bool getUserDetails(UDetails&);
     bool isAdmin();
     bool getRole(uint8_t&);
     bool getCapacity(uint64_t&);
     bool getFreeSpace(uint64_t&);
+    bool getYourStats(UDetails&);
+    bool deleteFile(const string&);
+
+    bool listUserFiles(string&, string&, vector<UFile>&);
 };
 
 class UserManager {
@@ -124,17 +128,22 @@ public:
     bool removeSid(oid&, string&);
     bool listAllUsers(std::vector<UDetails>&);
     bool getUserDetails(oid, UDetails&);
-    bool isAdmin();
     bool getUserRole(oid&, uint8_t&);
     bool getTotalSpace(oid&, uint64_t&);
     bool getFreeSpace(oid&, uint64_t&);
     bool registerUser(UDetails&, const string&, bool&);
+    bool deleteFile(oid&, const string&);
+    bool deletePath(oid&, const string&);
 
     bool listFilesinPath(oid&, const string&, vector<UFile>&);
     bool addNewFile(oid&, UFile&, string&, oid&);
     bool getYourFileMetadata(oid&, const string&, UFile&);
     bool addFileChunk(UFile&, const string&);
     bool validateFile(UFile&);
+
+    bool runAsUser(string&, std::function<bool(oid&)>);
+
+    bool deleteUser(const string&);
 
     static UserManager& getInstance(Database* db = nullptr, Logger* logger = nullptr)
     {

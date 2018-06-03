@@ -106,6 +106,7 @@ enum ResponseType {
     SHARED = 6;
     SRV_DATA = 7;
     CAN_SEND = 8;
+    USERS = 9;
 }
 
 message Handshake {

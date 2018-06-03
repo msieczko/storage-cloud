@@ -445,10 +445,10 @@ bool Database::setField(string&& colName, string&& fieldName, bsoncxx::oid id, b
 }
 
 bool Database::incField(string&& colName, string&& fieldName, string&& idFieldName, bsoncxx::oid& id,
-                        string&& matchFieldName, string& matchFieldVal) {
+                        string&& matchFieldName, string& matchFieldVal, int64_t diff) {
     try {
         db[colName].update_one(make_document(kvp(idFieldName, id), kvp(matchFieldName, matchFieldVal)),
-                               make_document(kvp("$inc", make_document(kvp(fieldName, 1)))));
+                               make_document(kvp("$inc", make_document(kvp(fieldName, diff)))));
     } catch (const std::exception& ex) {
         logger->err(l_id, "error while incrementing field: " + string(ex.what()));
         return false;
@@ -533,6 +533,21 @@ bool Database::removeFieldFromArray(string&& colName, string&& arrayName, bsoncx
     return true;
 }
 
+bool Database::removeFieldFromArrays(string&& colName, string&& arrayName, string&& fullName, bsoncxx::document::value&& val) {
+    try {
+        db[colName].update_many(make_document(kvp(fullName, val)),
+                               make_document(kvp("$pull", make_document(kvp(arrayName, val)))));
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while removing field from arrays: " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while removing field from arrays: unknown error");
+        return false;
+    }
+
+    return true;
+}
+
 bool Database::pushValToArr(string&& colName, string&& arrayName, bsoncxx::oid id, bsoncxx::document::value&& val) {
     try {
         db[colName].update_one(make_document(kvp("_id", id)),
@@ -578,4 +593,62 @@ bsoncxx::types::b_binary Database::stringToBinary(string& str) {
     b_sid.bytes = (const uint8_t*) str.c_str();
     b_sid.size = (uint32_t) str.size();
     return b_sid;
+}
+
+bool Database::removeByOid(string&& colName, string&& fieldName, bsoncxx::oid& fieldValue) {
+    try {
+        db[colName].delete_many(make_document(kvp(fieldName, fieldValue)));
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while deleting by oid: " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while deleting by oid: unknown error");
+        return false;
+    }
+
+    return true;
+}
+
+bool Database::sumFieldAdvanced(string&& colName, string&& resFieldName, mongocxx::pipeline& stages, uint64_t& res) {
+    stages.project(make_document(kvp(resFieldName, 1)));
+
+    try {
+        auto cursor = db[colName].aggregate(stages);
+
+        auto doc_i = cursor.begin();
+
+        if (doc_i == cursor.end() || doc_i->empty()) {
+            logger->log(l_id, "sumFieldAdvanced got empty resultSet");
+            res = 0;
+            return true; // !!
+        }
+
+        auto val = doc_i->begin();
+
+        if (bsoncxx::string::to_string(val->key()) == resFieldName && val->type() == bsoncxx::type::k_int64) {
+            res = (uint64_t) val->get_int64().value;
+            return true;
+        }
+
+        return false;
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while summing field: " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while summing field: unknown error");
+        return false;
+    }
+}
+
+bool Database::deleteDocs(string&& colName, bsoncxx::document::value&& doc) {
+    try {
+       db[colName].delete_many(doc.view());
+       return true;
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while summing field: " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while summing field: unknown error");
+        return false;
+    }
 }

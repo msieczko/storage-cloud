@@ -224,6 +224,7 @@ int main(int argc, char **argv) {
 
 //    string u_name = "miloszXD";
 //    User u(u_name, u_m);
+
 //    string passwd = "nicepasswd";
 //    string newSid;
 //    u.loginByPassword(passwd, newSid);
@@ -265,6 +266,9 @@ int main(int argc, char **argv) {
 //    tmp_u.username = "miloszXD";
 //    tmp_u.role = USER_ADMIN;
 //    UserManager::getInstance().registerUser(tmp_u, passwd, xd_ok);
+
+    auto tmp_id = bsoncxx::oid{string("5b134cabe206a52f873c0d43")};
+//    UserManager::getInstance().deletePath(tmp_id, "/test_dirXD/lol3/lol");
 
     while(!should_exit) {
         c = getch();

@@ -369,16 +369,16 @@ void AddDescriptorsImpl() {
       "NSHARE\020\026\022\024\n\020ADMIN_SHARE_INFO\020\027\022\010\n\004WARN\020\030"
       "\022\016\n\nLIST_USERS\020\031*.\n\010FileType\022\t\n\005NULL6\020\000\022"
       "\010\n\004FILE\020\001\022\r\n\tDIRECTORY\020\002**\n\010UserRole\022\t\n\005"
-      "NULL7\020\000\022\010\n\004USER\020\001\022\t\n\005ADMIN\020\002*u\n\014Response"
-      "Type\022\t\n\005NULL5\020\000\022\006\n\002OK\020\001\022\t\n\005ERROR\020\002\022\n\n\006LO"
-      "GGED\020\003\022\010\n\004STAT\020\004\022\t\n\005FILES\020\005\022\n\n\006SHARED\020\006\022"
-      "\014\n\010SRV_DATA\020\007\022\014\n\010CAN_SEND\020\010*>\n\023Encryptio"
-      "nAlgorithm\022\t\n\005NULL4\020\000\022\020\n\014NOENCRYPTION\020\001\022"
-      "\n\n\006CAESAR\020\002B+\n\'com.github.mikee2509.stor"
-      "agecloud.protoP\001b\006proto3"
+      "NULL7\020\000\022\010\n\004USER\020\001\022\t\n\005ADMIN\020\002*\200\001\n\014Respons"
+      "eType\022\t\n\005NULL5\020\000\022\006\n\002OK\020\001\022\t\n\005ERROR\020\002\022\n\n\006L"
+      "OGGED\020\003\022\010\n\004STAT\020\004\022\t\n\005FILES\020\005\022\n\n\006SHARED\020\006"
+      "\022\014\n\010SRV_DATA\020\007\022\014\n\010CAN_SEND\020\010\022\t\n\005USERS\020\t*"
+      ">\n\023EncryptionAlgorithm\022\t\n\005NULL4\020\000\022\020\n\014NOE"
+      "NCRYPTION\020\001\022\n\n\006CAESAR\020\002B+\n\'com.github.mi"
+      "kee2509.storagecloud.protoP\001b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1904);
+      descriptor, 1916);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "messages.proto", &protobuf_RegisterTypes);
 }
@@ -512,6 +512,7 @@ bool ResponseType_IsValid(int value) {
     case 6:
     case 7:
     case 8:
+    case 9:
       return true;
     default:
       return false;

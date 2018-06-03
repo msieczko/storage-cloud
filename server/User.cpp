@@ -1,11 +1,8 @@
-//
-// Created by milosz on 24.05.18.
-//
-
 #include "User.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fstream>
+#include <functional>
 
 using namespace mongocxx;
 using std::map;
@@ -197,6 +194,31 @@ bool User::isAdmin() {
     }
 
     return false;
+}
+
+bool User::listUserFiles(string& username, string& path, vector<UFile>& files) { ;
+    return user_manager.runAsUser(username, [&path, &files, this](oid& id) -> bool {return user_manager.listFilesinPath(id, path, files);});
+}
+
+bool User::getYourStats(UDetails& stats) {
+    return user_manager.getUserDetails(id, stats);
+}
+
+bool User::deleteFile(const string& path) {
+    if(!user_manager.yourFileExists(id, path)) {
+        return false;
+    }
+
+    UFile file;
+    if(!user_manager.getYourFileMetadata(id, path, file)) {
+        return false;
+    }
+
+    if(file.type == FILE_REGULAR) {
+        return user_manager.deleteFile(id, path);
+    }
+
+    return user_manager.deletePath(id, path);
 }
 
 ///---------------------UserManager---------------------
@@ -727,6 +749,121 @@ bool UserManager::validateFile(UFile& file) {
     return true;
 }
 
+bool UserManager::runAsUser(string& username, std::function<bool(oid&)> fun) {
+    oid tmp_id;
+    if(!getUserId(username, tmp_id)) {
+        return false;
+    }
+
+    return fun(tmp_id);
+}
+
+static int rmFiles(const char *pathname, const struct stat *sbuf, int type, struct FTW *ftwb)
+{
+    if(remove(pathname) < 0)
+    {
+        perror("ERROR: remove");
+        return -1;
+    }
+    return 0;
+}
+
+bool UserManager::deleteUser(const string& username) {
+    oid id;
+    if(!getUserId(username, id)) {
+        return false;
+    }
+
+    string home_dir;
+
+    if(!getHomeDir(id, home_dir)) {
+        return false;
+    }
+
+    string realPath = root_path + home_dir;
+
+    if (nftw(realPath.c_str(), rmFiles, 10, FTW_DEPTH|FTW_MOUNT|FTW_PHYS) < 0)
+    {
+        return false;
+    }
+
+    db.removeByOid("files", "owner", id);
+    db.removeByOid("users", "_id", id);
+    db.removeFieldFromArrays("files", "sharedWith", "sharedWith.userId", make_document(kvp("userId", id)));
+
+    return true;
+}
+
+bool UserManager::deleteFile(oid& id, const string& path) {
+    UFile details;
+    if(!getYourFileMetadata(id, path, details)) {
+        return false;
+    }
+
+    string home_dir;
+
+    if(!getHomeDir(id, home_dir)) {
+        return false;
+    }
+
+    string realPath = root_path + home_dir + path;
+
+    remove(realPath.c_str());
+
+    db.removeByOid("files", "_id", details.id);
+
+    return true;
+}
+
+bool UserManager::deletePath(oid& id, const string& path) {
+    map<string, map<string, bsoncxx::types::value> > mmap;
+    vector<string> fields;
+    fields.emplace_back("totalSize");
+
+    string parsedPath = path;
+
+    if(parsedPath[parsedPath.size()-1] != '/') {
+        parsedPath.push_back('/');
+    }
+
+    mongocxx::pipeline stages;
+
+    stages.match(make_document(kvp("owner", id), kvp("type", FILE_REGULAR), kvp("filename", bsoncxx::types::b_regex("^"+parsedPath))));
+    stages.group(make_document(kvp("_id", bsoncxx::types::b_null{}), kvp("totalSize", make_document(kvp("$sum", "$size")))));
+    stages.project(make_document(kvp("_id", 0)));
+
+    uint64_t totalSize = 0;
+
+    if(!db.sumFieldAdvanced("files", "totalSize", stages, totalSize)) {
+        return false;
+    }
+
+    string home_dir;
+
+    if(!getHomeDir(id, home_dir)) {
+        return false;
+    }
+
+    parsedPath.pop_back();
+    string realPath = root_path + home_dir + parsedPath;
+
+    if (nftw(realPath.c_str(), rmFiles, 10, FTW_DEPTH | FTW_MOUNT | FTW_PHYS) < 0) {
+        return false;
+    }
+
+    db.deleteDocs("files", make_document(kvp("owner", id), kvp("filename", bsoncxx::types::b_regex("^"+parsedPath+"($|(/.+))"))));
+
+
+    string dir = parsedPath.substr(0, parsedPath.rfind('/'));
+
+    if(!dir.empty()) {
+        db.incField("files", "size", "owner", id, "filename", dir, -1);
+    }
+
+    // TODO update quota
+
+    return true;
+}
 /**
 
 db.getCollection('users').update(

@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
     cmd.set_type(StorageCloud::MKDIR);
     tmp_param = cmd.add_params();
     tmp_param->set_paramid("path");
-    tmp_param->set_sparamval("/test_dirXD/dirXDD");
+    tmp_param->set_sparamval("/test_dirXD/lol3/lol/XDDDD");
     delete data;
     data = new uint8_t[cmd.ByteSize()];
     cmd.SerializeToArray(data, cmd.ByteSize());
@@ -188,8 +188,8 @@ int main(int argc, char *argv[])
     cout<<"received response size: "<<rcv_siz<<endl;
 
 
-
-
+close(sock);
+return 0;
 
 
 
