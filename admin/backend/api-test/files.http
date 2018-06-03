@@ -1,0 +1,7 @@
+GET http://localhost:8080/api/files/mikee2509/photos
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json;charset=UTF-8
+Cookie: JSESSIONID=6D80FEA9FCB991DF208BBC95E1DE5A85
+
+###

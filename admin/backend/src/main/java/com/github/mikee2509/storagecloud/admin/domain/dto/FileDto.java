@@ -2,11 +2,14 @@ package com.github.mikee2509.storagecloud.admin.domain.dto;
 
 import com.github.mikee2509.storagecloud.proto.File;
 import com.github.mikee2509.storagecloud.proto.FileType;
-import com.github.mikee2509.storagecloud.proto.Param;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Builder
@@ -15,8 +18,8 @@ public class FileDto {
     private FileType fileType;
     private Long size;
     private String owner;
-    private Long creationDate;
-    private List<Param> metadata;
+    private LocalDateTime creationDate;
+    private List<ParamDto> metadata;
 
     public static FileDto from(File file) {
         return FileDto.builder()
@@ -24,8 +27,11 @@ public class FileDto {
                 .fileType(file.getFiletype())
                 .size(file.getSize())
                 .owner(file.getOwner())
-                .creationDate(file.getCreationDate())
-                .metadata(file.getMetadataList())
+                .creationDate(LocalDateTime.ofInstant(
+                        Instant.ofEpochMilli(file.getCreationDate()), ZoneId.systemDefault()))
+                .metadata(file.getMetadataList().stream()
+                        .map(ParamDto::from)
+                        .collect(Collectors.toList()))
                 .build();
     }
 }
