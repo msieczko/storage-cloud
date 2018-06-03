@@ -13,6 +13,8 @@ class UserConfiguration {
         return new MockUserService();
     }
 
+    @Bean
+    @Profile("default")
     UserService tcpUserService() {
         return new TcpUserService();
     }
