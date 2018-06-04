@@ -272,6 +272,8 @@ bool Database::getFields(string&& colName, bsoncxx::oid id, map<string, bsoncxx:
             return false;
         }
 
+        elements.clear();
+
         for(auto val: (*doc_i)) {
             string key = bsoncxx::string::to_string(val.key());
             if (key != "_id") {

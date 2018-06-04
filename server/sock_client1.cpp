@@ -87,10 +87,10 @@ int main(int argc, char *argv[])
     cmd.set_type(StorageCloud::LOGIN);
     StorageCloud::Param* tmp_param = cmd.add_params();
     tmp_param->set_paramid("username");
-    tmp_param->set_sparamval("admin");
+    tmp_param->set_sparamval("miloszXD");
     tmp_param = cmd.add_params();
     tmp_param->set_paramid("password");
-    tmp_param->set_sparamval("safepasswd");
+    tmp_param->set_sparamval("nicepasswd");
     uint8_t* data = new uint8_t[cmd.ByteSize()];
     cmd.SerializeToArray(data, cmd.ByteSize());
 
