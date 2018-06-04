@@ -187,7 +187,7 @@ bool User::addFileChunk(const string& chunk) {
 
 bool User::isAdmin() {
     if(valid && authorized) {
-        uint8_t role;
+        uint64_t role;
         if(user_manager.getUserRole(id, role) && role == USER_ADMIN) {
             return true;
         }
@@ -359,7 +359,7 @@ bool UserManager::setName(oid& id, string& res) {
     return db.setField("users", "name", id, res);
 }
 
-bool UserManager::getUserRole(oid& id, uint8_t& role) {
+bool UserManager::getUserRole(oid& id, uint64_t& role) {
     return db.getField("users", "role", id, (int64_t&)role);
 }
 

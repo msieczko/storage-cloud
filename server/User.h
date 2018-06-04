@@ -144,7 +144,7 @@ public:
     bool removeSid(oid&, string&);
     bool listAllUsers(std::vector<UDetails>&);
     bool getUserDetails(oid, UDetails&);
-    bool getUserRole(oid&, uint8_t&);
+    bool getUserRole(oid&, uint64_t&);
     bool getTotalSpace(oid&, uint64_t&);
     bool getFreeSpace(oid&, uint64_t&);
     bool registerUser(UDetails&, const string&, bool&);

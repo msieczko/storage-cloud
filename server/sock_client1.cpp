@@ -87,10 +87,10 @@ int main(int argc, char *argv[])
     cmd.set_type(StorageCloud::LOGIN);
     StorageCloud::Param* tmp_param = cmd.add_params();
     tmp_param->set_paramid("username");
-    tmp_param->set_sparamval("miloszXD");
+    tmp_param->set_sparamval("admin");
     tmp_param = cmd.add_params();
     tmp_param->set_paramid("password");
-    tmp_param->set_sparamval("nicepasswd");
+    tmp_param->set_sparamval("safepasswd");
     uint8_t* data = new uint8_t[cmd.ByteSize()];
     cmd.SerializeToArray(data, cmd.ByteSize());
 
@@ -128,54 +128,54 @@ int main(int argc, char *argv[])
 
 
 
+//    cmd.clear_params();
+//    cmd.set_type(StorageCloud::DOWNLOAD);
+//    tmp_param = cmd.add_params();
+//    tmp_param->set_paramid("file_path");
+//    tmp_param->set_sparamval("/test_dirXDD/test.xd");
+//    tmp_param = cmd.add_params();
+//    tmp_param->set_paramid("starting_chunk");
+//    tmp_param->set_iparamval(0);
+//    delete data;
+//    data = new uint8_t[cmd.ByteSize()];
+//    cmd.SerializeToArray(data, cmd.ByteSize());
+//
+//    cout<<"cmd size: "<<cmd.ByteSize()<<endl;
+//
+//    delete edata;
+//    edata = new uint8_t[cmd.ByteSize()];
+//
+//    SHA512(data, cmd.ByteSize(), hash);
+//
+//    encrypt(data, edata, cmd.ByteSize());
+//
+//    msg.set_hash((char*)hash, HASH_SIZE);
+//    msg.set_datasize(cmd.ByteSize());
+//    msg.set_data((char*)edata, cmd.ByteSize());
+//    msg.set_hashalgorithm(StorageCloud::H_SHA512);
+//    msg.set_type(StorageCloud::COMMAND);
+//
+//    msg.SerializeToArray(buf+4, 1020);
+//
+//    siz = msg.ByteSize() + 4;
+//
+//    cout<<"size: "<<siz<<" ("<<siz-4<<"+4)"<<endl;
+//
+//    buf[3] = siz & 0xFF;
+//    buf[2] = (siz >> 8) & 0xFF;
+//    buf[1] = (siz >> 16) & 0xFF;
+//    buf[0] = (siz >> 24) & 0xFF;
+//
+//    if (write( sock, buf, siz ) == -1)
+//        perror("writing on stream socket");
+//
+//    rcv_siz = (uint32_t) recv(sock, in_buf, 1024, NULL);
+//
+//    cout<<"received response size: "<<rcv_siz<<endl;
+
+
     cmd.clear_params();
-    cmd.set_type(StorageCloud::DOWNLOAD);
-    tmp_param = cmd.add_params();
-    tmp_param->set_paramid("file_path");
-    tmp_param->set_sparamval("/test_dirXDD/test.xd");
-    tmp_param = cmd.add_params();
-    tmp_param->set_paramid("starting_chunk");
-    tmp_param->set_iparamval(0);
-    delete data;
-    data = new uint8_t[cmd.ByteSize()];
-    cmd.SerializeToArray(data, cmd.ByteSize());
-
-    cout<<"cmd size: "<<cmd.ByteSize()<<endl;
-
-    delete edata;
-    edata = new uint8_t[cmd.ByteSize()];
-
-    SHA512(data, cmd.ByteSize(), hash);
-
-    encrypt(data, edata, cmd.ByteSize());
-
-    msg.set_hash((char*)hash, HASH_SIZE);
-    msg.set_datasize(cmd.ByteSize());
-    msg.set_data((char*)edata, cmd.ByteSize());
-    msg.set_hashalgorithm(StorageCloud::H_SHA512);
-    msg.set_type(StorageCloud::COMMAND);
-
-    msg.SerializeToArray(buf+4, 1020);
-
-    siz = msg.ByteSize() + 4;
-
-    cout<<"size: "<<siz<<" ("<<siz-4<<"+4)"<<endl;
-
-    buf[3] = siz & 0xFF;
-    buf[2] = (siz >> 8) & 0xFF;
-    buf[1] = (siz >> 16) & 0xFF;
-    buf[0] = (siz >> 24) & 0xFF;
-
-    if (write( sock, buf, siz ) == -1)
-        perror("writing on stream socket");
-
-    rcv_siz = (uint32_t) recv(sock, in_buf, 1024, NULL);
-
-    cout<<"received response size: "<<rcv_siz<<endl;
-
-
-    cmd.clear_params();
-    cmd.set_type(StorageCloud::C_DOWNLOAD);
+    cmd.set_type(StorageCloud::GET_STAT);
     delete data;
     data = new uint8_t[cmd.ByteSize()];
     cmd.SerializeToArray(data, cmd.ByteSize());
