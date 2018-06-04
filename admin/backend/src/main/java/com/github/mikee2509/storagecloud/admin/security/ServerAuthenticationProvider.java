@@ -1,7 +1,7 @@
 package com.github.mikee2509.storagecloud.admin.security;
 
-import com.github.mikee2509.storagecloud.admin.domain.security.UserAuthDetails;
-import com.github.mikee2509.storagecloud.proto.User;
+import com.github.mikee2509.storagecloud.admin.domain.security.SessionDetails;
+import com.github.mikee2509.storagecloud.proto.UserDetails;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,13 +20,13 @@ public class ServerAuthenticationProvider implements AuthenticationProvider {
         // LIST_USERS -> USERS [List<User>]
         // find current user in list
 
-        User user = User.newBuilder()
+        UserDetails user = UserDetails.newBuilder()
                 .setUsername(username)
                 .setFirstName("Michał")
                 .setLastName("Kowalski")
                 .build();
 
-        UserAuthDetails authDetails = UserAuthDetails.create(user, password);
+        SessionDetails authDetails = SessionDetails.create(user, password);
         return new UsernamePasswordAuthenticationToken(authDetails, null, authDetails.getAuthorities());
     }
 

@@ -1,26 +1,25 @@
 package com.github.mikee2509.storagecloud.admin.domain.security;
 
 import com.github.mikee2509.storagecloud.admin.domain.dto.UserDto;
-import com.github.mikee2509.storagecloud.proto.User;
+import com.github.mikee2509.storagecloud.proto.UserDetails;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class UserAuthDetails implements UserDetails {
+public class SessionDetails implements org.springframework.security.core.userdetails.UserDetails {
     private String username;
     private String password;
     private String firstName;
     private String lastName;
 
-    public static UserAuthDetails create(User user, String password) {
-        return new UserAuthDetails(
+    public static SessionDetails create(UserDetails user, String password) {
+        return new SessionDetails(
                 user.getUsername(),
                 password,
                 user.getFirstName(),
@@ -75,7 +74,7 @@ public class UserAuthDetails implements UserDetails {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserAuthDetails that = (UserAuthDetails) o;
+        SessionDetails that = (SessionDetails) o;
         return Objects.equals(username, that.username);
     }
 

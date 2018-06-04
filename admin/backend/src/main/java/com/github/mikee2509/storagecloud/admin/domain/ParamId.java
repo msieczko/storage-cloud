@@ -3,7 +3,8 @@ package com.github.mikee2509.storagecloud.admin.domain;
 public enum ParamId {
     SID,
     USERNAME,
-    PASSWORD;
+    PASSWORD,
+    PATH;
 
     @Override
     public String toString() {

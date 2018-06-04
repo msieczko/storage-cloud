@@ -2,7 +2,7 @@ package com.github.mikee2509.storagecloud.admin.security;
 
 import com.github.mikee2509.storagecloud.admin.domain.dto.AuthStatusDto;
 import com.github.mikee2509.storagecloud.admin.domain.dto.UserAuthDto;
-import com.github.mikee2509.storagecloud.admin.domain.security.UserAuthDetails;
+import com.github.mikee2509.storagecloud.admin.domain.security.SessionDetails;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,7 +56,7 @@ class AuthController {
             return AuthStatusDto.notAuthenticated();
         }
 
-        UserAuthDetails userAuthDetails = (UserAuthDetails) auth.getPrincipal();
-        return AuthStatusDto.authenticated(userAuthDetails.dto());
+        SessionDetails sessionDetails = (SessionDetails) auth.getPrincipal();
+        return AuthStatusDto.authenticated(sessionDetails.dto());
     }
 }

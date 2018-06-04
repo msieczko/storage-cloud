@@ -211,7 +211,7 @@ public class PacketBuilder {
                 }
 
                 private FileBuilder buildAndGetParent() {
-                    fileBuilder.addMetadata(paramBuilder.build());
+                    fileBuilder.addSharedWith(paramBuilder.build());
                     return FileBuilder.this;
                 }
             }

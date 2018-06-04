@@ -75,24 +75,26 @@ public class TcpClientTest {
         assertThat(serverResponse.getType()).isEqualTo(OK);
     }
 
+    private ServerResponse sendLogin() throws ServerResponseParserException, IOException {
+        ServerResponse serverResponse = client.sendPacket(loginPacket).parseServerResponse(E_ALGORITHM);
+        log.info(serverResponse.toString());
+        assertThat(serverResponse.getType() == LOGGED).isTrue();
+        return serverResponse;
+    }
+
+    private void sendLogout() throws ServerResponseParserException, IOException {
+        ServerResponse serverResponse = client.sendPacket(logoutPacket).parseServerResponse(E_ALGORITHM);
+        log.info(serverResponse.toString());
+        assertThat(serverResponse.getType()).isEqualTo(OK);
+    }
+
     @Test
     public void testLogin() throws IOException, ServerResponseParserException {
         client.openConnection();
 
         sendHandshake();
-
-        ServerResponse serverResponse = client.sendPacket(loginPacket).parseServerResponse(E_ALGORITHM);
-        log.info(serverResponse.toString());
-        ResponseType type = serverResponse.getType();
-        assertThat(type == OK || type == LOGGED).isTrue();
-
-        serverResponse = client.sendPacket(loginPacket).parseServerResponse(E_ALGORITHM);
-        log.info(serverResponse.toString());
-        assertThat(serverResponse.getType()).isEqualTo(LOGGED);
-
-        serverResponse = client.sendPacket(logoutPacket).parseServerResponse(E_ALGORITHM);
-        log.info(serverResponse.toString());
-        assertThat(serverResponse.getType()).isEqualTo(OK);
+        sendLogin();
+        sendLogout();
 
         client.closeConnection();
     }
@@ -122,11 +124,7 @@ public class TcpClientTest {
     public void testRelogin() throws IOException, ServerResponseParserException {
         client.openConnection();
         sendHandshake();
-
-        ServerResponse serverResponse = client.sendPacket(loginPacket).parseServerResponse(E_ALGORITHM);
-        log.info(serverResponse.toString());
-        ResponseType type = serverResponse.getType();
-        assertThat(type == OK || type == LOGGED).isTrue();
+        ServerResponse serverResponse = sendLogin();
 
         Optional<Param> sidOptional = serverResponse.getParamsList().stream()
                 .filter(param -> param.getParamId().equals(ParamId.SID.toString()))
@@ -152,10 +150,27 @@ public class TcpClientTest {
         log.info(serverResponse.toString());
         assertThat(serverResponse.getType()).isEqualTo(LOGGED);
 
-        serverResponse = client.sendPacket(logoutPacket).parseServerResponse(E_ALGORITHM);
-        log.info(serverResponse.toString());
-        assertThat(serverResponse.getType()).isEqualTo(OK);
+        sendLogout();
+        client.closeConnection();
+    }
 
+    @Test
+    public void testGetStat() throws IOException, ServerResponseParserException {
+        client.openConnection();
+        sendHandshake();
+        sendLogin();
+
+        Packet getStatPacket = Packet.builder()
+                .hashAlgorithm(H_ALGORITHM)
+                .command()
+                .type(CommandType.LIST_FILES)
+                .addParam(PATH.toString()).ofValue("/")
+                .build();
+
+        ServerResponse serverResponse = client.sendPacket(getStatPacket).parseServerResponse(E_ALGORITHM);
+        log.info(serverResponse.toString());
+
+        sendLogout();
         client.closeConnection();
     }
 }

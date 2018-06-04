@@ -19,7 +19,7 @@ public class FileDto {
     private Long size;
     private String owner;
     private LocalDateTime creationDate;
-    private List<ParamDto> metadata;
+    private List<ParamDto> sharedWith;
 
     public static FileDto from(File file) {
         return FileDto.builder()
@@ -29,7 +29,7 @@ public class FileDto {
                 .owner(file.getOwner())
                 .creationDate(LocalDateTime.ofInstant(
                         Instant.ofEpochMilli(file.getCreationDate()), ZoneId.systemDefault()))
-                .metadata(file.getMetadataList().stream()
+                .sharedWith(file.getSharedWithList().stream()
                         .map(ParamDto::from)
                         .collect(Collectors.toList()))
                 .build();
