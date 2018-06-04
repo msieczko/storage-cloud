@@ -306,5 +306,466 @@ bool Client::processCommand(Command* cmd) {
         }
 
         sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::LIST_USERS) {
+        if(!(u.isAdmin())) {
+            resError(res, "Not enough permissions", "tried to list users, but was not logged as admin");
+        } else {
+            vector<UDetails> userDetails;
+            if(UserManager::getInstance().listAllUsers(userDetails)) {
+                for(auto& user: userDetails) {
+                    UserDetails* tmp = res.add_userlist();
+                    tmp->set_firstname(user.name);
+                    tmp->set_lastname(user.surname);
+                    tmp->set_role(user.role == USER_ADMIN ? UserRole::ADMIN : UserRole::USER);
+                    tmp->set_totalspace(user.totalSpace);
+                    tmp->set_usedspace(user.usedSpace);
+                    tmp->set_username(user.username);
+                }
+
+                res.set_type(ResponseType::USERS);
+            } else {
+                resError(res, "Error occured", "tried to list users, but error occured");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::REGISTER) {
+        string username, passwd, name, surname;
+        uint8_t validFields = 0;
+
+        for(auto& param: cmd->params()) {
+            if(param.paramid() == "username") {
+                username = param.sparamval();
+                validFields++;
+            } else if(param.paramid() == "pass") {
+                passwd = param.sparamval();
+                validFields++;
+            } else if(param.paramid() == "first_name") {
+                name = param.sparamval();
+                validFields++;
+            } else if(param.paramid() == "last_name") {
+                surname = param.sparamval();
+                validFields++;
+            }
+        }
+
+        if(validFields == 4) {
+            bool paramsOk = true;
+            if(username.size() < 2) {
+                paramsOk = false;
+                resError(res, "Username too short", "tried to register, but provided too short username");
+            }
+
+            if(paramsOk && passwd.size() < 7) {
+                paramsOk = false;
+                resError(res, "Password too short", "tried to register, but provided too short password");
+            }
+
+            if(paramsOk && name.size() < 3) {
+                paramsOk = false;
+                resError(res, "First name too short", "tried to register, but provided too short name");
+            }
+
+            if(paramsOk && surname.size() < 3) {
+                paramsOk = false;
+                resError(res, "Last name too short", "tried to register, but provided too short surname");
+            }
+
+            if(paramsOk) {
+                UDetails u_d;
+                u_d.username = username;
+                u_d.name = name;
+                u_d.surname = surname;
+
+                bool usernameTaken = false;
+                if(!UserManager::getInstance().registerUser(u_d, passwd, usernameTaken)) {
+                    if(usernameTaken) {
+                        resError(res, "Username already taken", "tried to register, but provided not unique username");
+                    } else {
+                        resError(res, "Error occured", "tried to register, but internal error occured");
+                    }
+                } else {
+                    res.set_type(ResponseType::OK);
+                }
+            }
+        } else {
+            resError(res, "Wrong command format", "tried to register, but command format was wrong");
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::LIST_USER_FILES) {
+        if(!(u.isAdmin())) {
+            resError(res, "Not enough permissions", "tried to list user files, but was not logged as admin");
+        } else {
+            string username, path;
+            uint8_t validFields = 0;
+
+            for(auto& param: cmd->params()) {
+                if(param.paramid() == "username") {
+                    username = param.sparamval();
+                    validFields++;
+                } else if(param.paramid() == "path") {
+                    path = param.sparamval();
+                    validFields++;
+                }
+            }
+
+            if(validFields == 2 && !path.empty() && !username.empty()) {
+                vector<UFile> files;
+
+                if(!u.listUserFiles(username, path, files)) {
+                    resError(res, "Internal error occured", "tried to list user files, but internal error occured");
+                }
+
+                for(auto&& file: files) {
+                    File* tmp_file = res.add_filelist();
+                    tmp_file->set_filename(file.filename);
+                    tmp_file->set_filetype(file.type == FILE_REGULAR ? FileType::FILE : FileType::DIRECTORY);
+                    tmp_file->set_size(file.size);
+                    tmp_file->set_hash(file.hash);
+                    tmp_file->set_owner(file.owner_name);
+                    tmp_file->set_creationdate(file.creation_date);
+                }
+
+                res.set_type(ResponseType::FILES);
+            } else {
+                resError(res, "Wrong command format", "tried to list user files, but command format was wrong");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::GET_STAT) {
+        if(!(u.isValid() && u.isAuthorized())) {
+            resError(res, "You are not logged in", "tried to get stats, but was not logged in");
+        } else {
+            UDetails userDetails;
+            if(u.getYourStats(userDetails)) {
+                UserDetails* tmp = res.add_userlist();
+                tmp->set_firstname(userDetails.name);
+                tmp->set_lastname(userDetails.surname);
+                tmp->set_role(userDetails.role == USER_ADMIN ? UserRole::ADMIN : UserRole::USER);
+                tmp->set_totalspace(userDetails.totalSpace);
+                tmp->set_usedspace(userDetails.usedSpace);
+                tmp->set_username(userDetails.username);
+
+                res.set_type(ResponseType::STAT);
+            } else {
+                resError(res, "Error occured", "tried to list users, but error occured");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::DELETE_USER) {
+        if(!(u.isAdmin())) {
+            resError(res, "Not enough permissions", "tried to delete user, but was not logged as admin");
+        } else {
+            if(cmd->params_size() == 1 && cmd->params(0).paramid() == "username" && !cmd->params(0).sparamval().empty()) {
+                if(UserManager::getInstance().deleteUser(cmd->params(0).sparamval())) {
+                    res.set_type(ResponseType::OK);
+                } else {
+                    resError(res, "Error occured", "tried to delete user " + cmd->params(0).sparamval() + ", but error occured");
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to put data, but command format was wrong");
+            }
+
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::DELETE) {
+        if(!(u.isValid() && u.isAuthorized())) {
+            resError(res, "You are not logged in", "tried to get stats, but was not logged in");
+        } else {
+            if(cmd->params_size() == 1 && cmd->params(0).paramid() == "path" && !cmd->params(0).sparamval().empty()) {
+
+                if(u.deleteFile(cmd->params(0).sparamval())) {
+                    res.set_type(ResponseType::OK);
+                } else {
+                    resError(res, "Error occured", "tried to delete file " + cmd->params(0).sparamval() + ", but error occured");
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to delete file, but command format was wrong");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::DELETE_USER_FILE) {
+        if(!(u.isAdmin())) {
+            resError(res, "Not enough permissions", "tried to delete user files, but was not logged as admin");
+        } else {
+            string username, path;
+            uint8_t validFields = 0;
+
+            for(auto& param: cmd->params()) {
+                if(param.paramid() == "username") {
+                    username = param.sparamval();
+                    validFields++;
+                } else if(param.paramid() == "path") {
+                    path = param.sparamval();
+                    validFields++;
+                }
+            }
+
+            if(validFields == 2 && !path.empty() && !username.empty()) {
+                u.deleteUserFile(username, path);
+            } else {
+                resError(res, "Wrong command format", "tried to list user files, but command format was wrong");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::CHANGE_PASSWD) {
+        if(!(u.isValid() && u.isAuthorized())) {
+            resError(res, "You are not logged in", "tried to change password, but was not logged in");
+        } else {
+            string current_passwd, new_passwd;
+            uint8_t validFields = 0;
+
+            for(auto& param: cmd->params()) {
+                if(param.paramid() == "current_passwd") {
+                    current_passwd = param.sparamval();
+                    validFields++;
+                } else if(param.paramid() == "new_passwd") {
+                    new_passwd = param.sparamval();
+                    validFields++;
+                }
+            }
+
+            if(validFields == 2 && !current_passwd.empty() && new_passwd.size() > 6) {
+                if(u.changePasswd(current_passwd, new_passwd)) {
+                    res.set_type(ResponseType::OK);
+                } else {
+                    resError(res, "Error occured", "tried to change password, but error occured");
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to change password, but command format was wrong");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::CHANGE_USER_PASS) {
+        if(!(u.isAdmin())) {
+            resError(res, "Not enough permissions", "tried to change user password, but was not logged as admin");
+        } else {
+            string username, new_passwd;
+            uint8_t validFields = 0;
+
+            for(auto& param: cmd->params()) {
+                if(param.paramid() == "username") {
+                    username = param.sparamval();
+                    validFields++;
+                } else if(param.paramid() == "new_passwd") {
+                    new_passwd = param.sparamval();
+                    validFields++;
+                }
+            }
+
+            if(validFields == 2 && !username.empty() && new_passwd.size() > 6) {
+                if(u.changeUserPasswd(username, new_passwd)) {
+                    res.set_type(ResponseType::OK);
+                } else {
+                    resError(res, "Error occured", "tried to change user password, but error occured");
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to change user password, but command format was wrong");
+            }
+        }
+
+        sendServerResponse(&res);
+    }  else if (cmd->type() == CommandType::DOWNLOAD) {
+        if(!(u.isValid() && u.isAuthorized())) {
+            resError(res, "You are not logged in", "tried to download file, but was not logged in");
+        } else {
+            string filename;
+            uint64_t startingChunk = 0;
+            uint8_t validFields = 0;
+
+            for(auto& param: cmd->params()) {
+                if(param.paramid() == "file_path") {
+                    filename = param.sparamval();
+                    validFields++;
+                } else if(param.paramid() == "starting_chunk") {
+                    startingChunk = (uint64_t) param.iparamval();
+                    validFields++;
+                }
+            }
+
+            if(validFields == 2 && !filename.empty()) {
+                string data;
+                if(u.initFileDownload(filename, startingChunk, data)) {
+                    res.set_type(ResponseType::SRV_DATA);
+                    res.set_data(data);
+                } else {
+                    resError(res, "Error occured", "tried to download file " + filename + ", but error occured");
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to download file, but command format was wrong");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::C_DOWNLOAD) {
+        if(!(u.isValid() && u.isAuthorized())) {
+            resError(res, "You are not logged in", "tried to continue downloading file, but was not logged in");
+        } else {
+            string data;
+            if (u.getFileChunk(data)) {
+                res.set_type(ResponseType::SRV_DATA);
+                res.set_data(data);
+            } else {
+                resError(res, "Error occured", "tried to continue downloading file, but error occured");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::SHARE) {
+        if(!(u.isValid() && u.isAuthorized())) {
+            resError(res, "You are not logged in", "tried to share file, but was not logged in");
+        } else {
+            string username, filename;
+            uint8_t validFields = 0;
+
+            for(auto& param: cmd->params()) {
+                if(param.paramid() == "username") {
+                    username = param.sparamval();
+                    validFields++;
+                } else if(param.paramid() == "file_path") {
+                    filename = param.sparamval();
+                    validFields++;
+                }
+            }
+
+            if(validFields == 2 && !username.empty() && !filename.empty()) {
+                if(u.shareWith(filename, username)) {
+                    res.set_type(ResponseType::OK);
+                } else {
+                    resError(res, "Error occured", "tried to share file, but error occured");
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to share file, but command format was wrong");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::UNSHARE) {
+        if(!(u.isValid() && u.isAuthorized())) {
+            resError(res, "You are not logged in", "tried to unshare file, but was not logged in");
+        } else {
+            string username, filename;
+            uint8_t validFields = 0;
+
+            for(auto& param: cmd->params()) {
+                if(param.paramid() == "username") {
+                    username = param.sparamval();
+                    validFields++;
+                } else if(param.paramid() == "file_path") {
+                    filename = param.sparamval();
+                    validFields++;
+                }
+            }
+
+            if(validFields == 2 && !username.empty() && !filename.empty()) {
+                if(u.unshareWith(filename, username)) {
+                    res.set_type(ResponseType::OK);
+                } else {
+                    resError(res, "Error occured", "tried to unshare file, but error occured");
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to unshare file, but command format was wrong");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::LIST_SHARED) {
+        if(!(u.isValid() && u.isAuthorized())) {
+            resError(res, "You are not logged in", "tried to list shared files, but was not logged in");
+        } else {
+            vector <UFile> list;
+            if(u.listShared(list)) {
+                for(auto&& file: list) {
+                    File* tmp_file = res.add_filelist();
+                    tmp_file->set_filename(file.filename);
+                    tmp_file->set_filetype(file.type == FILE_REGULAR ? FileType::FILE : FileType::DIRECTORY);
+                    tmp_file->set_size(file.size);
+                    tmp_file->set_hash(file.hash);
+                    tmp_file->set_owner(file.owner_name);
+                    tmp_file->set_ownerusername(file.owner_username);
+                    tmp_file->set_creationdate(file.creation_date);
+                }
+
+                res.set_type(ResponseType::FILES);
+            } else {
+                resError(res, "Error occured", "tried to list shared files, but error occured");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::ADMIN_LIST_SHARED) {
+        if(!(u.isAdmin())) {
+            resError(res, "Not enough permissions", "tried to list user shared files, but was not logged as admin");
+        } else {
+            if(cmd->params_size() == 1 && cmd->params(0).paramid() == "username" && !cmd->params(0).sparamval().empty()) {
+                vector <UFile> list;
+                if(u.listUserShared(cmd->params(0).sparamval(), list)) {
+                    for(auto&& file: list) {
+                        File* tmp_file = res.add_filelist();
+                        tmp_file->set_filename(file.filename);
+                        tmp_file->set_filetype(file.type == FILE_REGULAR ? FileType::FILE : FileType::DIRECTORY);
+                        tmp_file->set_size(file.size);
+                        tmp_file->set_hash(file.hash);
+                        tmp_file->set_owner(file.owner_name);
+                        tmp_file->set_ownerusername(file.owner_username);
+                        tmp_file->set_creationdate(file.creation_date);
+                    }
+
+                    res.set_type(ResponseType::FILES);
+                } else {
+                    resError(res, "Error occured", "tried to list user shared files, but error occured");
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to list user shared files, but command format was wrong");
+            }
+
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::SHARED_DOWNLOAD) {
+        if(!(u.isValid() && u.isAuthorized())) {
+            resError(res, "You are not logged in", "tried to download shared file, but was not logged in");
+        } else {
+            string filename, hash, ownerUsername;
+            uint64_t startingChunk = 0;
+            uint8_t validFields = 0;
+
+            for(auto& param: cmd->params()) {
+                if(param.paramid() == "file_path") {
+                    filename = param.sparamval();
+                    validFields++;
+                } else if(param.paramid() == "starting_chunk") {
+                    startingChunk = (uint64_t) param.iparamval();
+                    validFields++;
+                } else if(param.paramid() == "owner_username") {
+                    ownerUsername = param.sparamval();
+                    validFields++;
+                } else if(param.paramid() == "hash") {
+                    hash = param.sparamval();
+                    validFields++;
+                }
+            }
+
+            if(validFields == 4 && !filename.empty()) {
+                string data;
+                if(u.initSharedFileDownload(filename, ownerUsername, hash, startingChunk, data)) {
+                    res.set_type(ResponseType::SRV_DATA);
+                    res.set_data(data);
+                } else {
+                    resError(res, "Error occured", "tried to download shared file " + filename + ", but error occured");
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to download shared file, but command format was wrong");
+            }
+        }
+
+        sendServerResponse(&res);
     }
 }

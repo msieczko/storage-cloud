@@ -55,10 +55,10 @@ enum CommandType {
     LIST_FILES = 6;
     MKDIR = 7;
     DELETE = 8;
-    RENAME = 9;
+    C_DOWNLOAD = 9;
     SHARE = 10;
-    SHARE_INFO = 11;
-    MOVE = 12;
+    LIST_SHARED = 11;
+    ADMIN_LIST_SHARED = 12;
     DOWNLOAD = 13;
     METADATA = 14;
     USR_DATA = 15;
@@ -71,6 +71,11 @@ enum CommandType {
     ADMIN_UNSHARE = 22;
     ADMIN_SHARE_INFO = 23;
     WARN = 24;
+    LIST_USERS = 25;
+    CHANGE_PASSWD = 26;
+    CLEAR_CACHE = 27;
+    CHANGE_QUOTA = 28;
+    SHARED_DOWNLOAD = 29;
 }
 
 enum FileType {
@@ -85,8 +90,9 @@ message File {
     uint64 size = 3; //for directory it's files count inside
     bytes hash = 4; // empty for directory
     string owner = 5;
-    uint64 creationDate = 6;
-    repeated Param metadata = 7;
+    string ownerUsername = 6;
+    uint64 creationDate = 7;
+    repeated Param sharedWith = 8; //usernames
 }
 
 enum UserRole {
@@ -105,6 +111,7 @@ enum ResponseType {
     SHARED = 6;
     SRV_DATA = 7;
     CAN_SEND = 8;
+    USERS = 9;
 }
 
 message Handshake {
@@ -117,12 +124,12 @@ enum EncryptionAlgorithm {
     CAESAR = 2;
 }
 
-message User {
+message UserDetails {
     string username = 1;
     string firstName = 2;
     string lastName = 3;
     UserRole role = 4;
-    uint64 capacity = 5;
+    uint64 totalSpace = 5;
     uint64 usedSpace = 6;
 }
 
@@ -131,6 +138,6 @@ message ServerResponse {
     repeated Param params = 2;
     repeated string list = 3;
     repeated File fileList = 4;
-    repeated User userList = 5;
+    repeated UserDetails userList = 5;
     bytes data = 6;
 }
