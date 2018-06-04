@@ -224,6 +224,16 @@ int main(int argc, char **argv) {
 
 //    string u_name = "lukasz";
 //    User u(u_name, u_m);
+//
+//    vector<UFile> users;
+//    u.listShared(users);
+//
+//    for(auto& usr: users) {
+//        logger.info("main/users", usr.filename);
+//        logger.info("main/users", "|-> " + usr.owner_name);
+//        logger.info("main/users", "|-> " + usr.owner_username);
+//        logger.info("main/users", "|-> total space:" + to_string(usr.size) + "B");
+//    }
 
 //    u.deleteUserFile("miloszXD", "/test_dirXD/lol2");
 

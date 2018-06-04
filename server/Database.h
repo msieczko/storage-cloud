@@ -51,6 +51,8 @@ public:
     bool getField(string&&, string&&, bsoncxx::oid, const uint8_t*&, uint32_t&);
     bool getField(string&&, string&&, string&&, bsoncxx::oid& id, string&&, const string&, int64_t&);
     bool getId(string&&, string&&, const string&, bsoncxx::oid&);
+    bool getIdById(string&&, string&&, const string&, string&&, bsoncxx::oid&);
+    bool getIdByDoc(string&&, bsoncxx::document::value&&, bsoncxx::oid&);
     bool getFields(string&&, bsoncxx::oid,  std::map<string, bsoncxx::types::value>&);
     bool getFields(string&&, std::vector<string>&, std::map<bsoncxx::oid, std::map<string, bsoncxx::types::value> >&);
     bool getFields(string&&, bsoncxx::document::value&&, std::vector<string>&,
@@ -71,7 +73,7 @@ public:
     bool removeFieldFromArrays(string&&, string&&, string&&, bsoncxx::document::value&&);
     bool pushValToArr(string&&, string&&, bsoncxx::oid, bsoncxx::document::value&&);
     bool insertDoc(string&&, bsoncxx::oid&, bsoncxx::builder::basic::document&);
-    static bsoncxx::types::b_binary stringToBinary(string&);
+    static bsoncxx::types::b_binary stringToBinary(const string&);
     bool removeByOid(string&&, string&&, bsoncxx::oid&);
     bool sumFieldAdvanced(string&&, string&&, mongocxx::pipeline&, uint64_t&);
     bool deleteDocs(string&&, bsoncxx::document::value&&);

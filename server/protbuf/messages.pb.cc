@@ -255,6 +255,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, size_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, hash_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, owner_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, ownerusername_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, creationdate_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::StorageCloud::File, metadata_),
   ~0u,  // no _has_bits_
@@ -291,9 +292,9 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROT
   { 10, -1, sizeof(::StorageCloud::EncodedMessage)},
   { 20, -1, sizeof(::StorageCloud::Command)},
   { 29, -1, sizeof(::StorageCloud::File)},
-  { 41, -1, sizeof(::StorageCloud::Handshake)},
-  { 47, -1, sizeof(::StorageCloud::UserDetails)},
-  { 58, -1, sizeof(::StorageCloud::ServerResponse)},
+  { 42, -1, sizeof(::StorageCloud::Handshake)},
+  { 48, -1, sizeof(::StorageCloud::UserDetails)},
+  { 59, -1, sizeof(::StorageCloud::ServerResponse)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -338,49 +339,50 @@ void AddDescriptorsImpl() {
       "\030\005 \001(\014\"s\n\007Command\022\'\n\004type\030\001 \001(\0162\031.Storag"
       "eCloud.CommandType\022#\n\006params\030\002 \003(\0132\023.Sto"
       "rageCloud.Param\022\014\n\004list\030\003 \003(\t\022\014\n\004data\030\004 "
-      "\001(\014\"\252\001\n\004File\022\020\n\010filename\030\001 \001(\t\022(\n\010filety"
+      "\001(\014\"\301\001\n\004File\022\020\n\010filename\030\001 \001(\t\022(\n\010filety"
       "pe\030\002 \001(\0162\026.StorageCloud.FileType\022\014\n\004size"
-      "\030\003 \001(\004\022\014\n\004hash\030\004 \001(\014\022\r\n\005owner\030\005 \001(\t\022\024\n\014c"
-      "reationDate\030\006 \001(\004\022%\n\010metadata\030\007 \003(\0132\023.St"
-      "orageCloud.Param\"K\n\tHandshake\022>\n\023encrypt"
-      "ionAlgorithm\030\001 \001(\0162!.StorageCloud.Encryp"
-      "tionAlgorithm\"\221\001\n\013UserDetails\022\020\n\010usernam"
-      "e\030\001 \001(\t\022\021\n\tfirstName\030\002 \001(\t\022\020\n\010lastName\030\003"
-      " \001(\t\022$\n\004role\030\004 \001(\0162\026.StorageCloud.UserRo"
-      "le\022\022\n\ntotalSpace\030\005 \001(\004\022\021\n\tusedSpace\030\006 \001("
-      "\004\"\316\001\n\016ServerResponse\022(\n\004type\030\001 \001(\0162\032.Sto"
-      "rageCloud.ResponseType\022#\n\006params\030\002 \003(\0132\023"
-      ".StorageCloud.Param\022\014\n\004list\030\003 \003(\t\022$\n\010fil"
-      "eList\030\004 \003(\0132\022.StorageCloud.File\022+\n\010userL"
-      "ist\030\005 \003(\0132\031.StorageCloud.UserDetails\022\014\n\004"
-      "data\030\006 \001(\014*[\n\rHashAlgorithm\022\t\n\005NULL2\020\000\022\014"
-      "\n\010H_NOHASH\020\001\022\014\n\010H_SHA256\020\002\022\014\n\010H_SHA512\020\003"
-      "\022\n\n\006H_SHA1\020\004\022\t\n\005H_MD5\020\005*I\n\013MessageType\022\t"
-      "\n\005NULL3\020\000\022\013\n\007COMMAND\020\001\022\023\n\017SERVER_RESPONS"
-      "E\020\002\022\r\n\tHANDSHAKE\020\003*\273\003\n\013CommandType\022\t\n\005NU"
-      "LL1\020\000\022\t\n\005LOGIN\020\001\022\013\n\007RELOGIN\020\002\022\n\n\006LOGOUT\020"
-      "\003\022\014\n\010REGISTER\020\004\022\014\n\010GET_STAT\020\005\022\016\n\nLIST_FI"
-      "LES\020\006\022\t\n\005MKDIR\020\007\022\n\n\006DELETE\020\010\022\016\n\nC_DOWNLO"
-      "AD\020\t\022\t\n\005SHARE\020\n\022\016\n\nSHARE_INFO\020\013\022\014\n\010DOWNL"
-      "OAD\020\r\022\014\n\010METADATA\020\016\022\014\n\010USR_DATA\020\017\022\013\n\007UNS"
-      "HARE\020\020\022\017\n\013DELETE_USER\020\021\022\024\n\020CHANGE_USER_P"
-      "ASS\020\022\022\r\n\tUSER_STAT\020\023\022\023\n\017LIST_USER_FILES\020"
-      "\024\022\024\n\020DELETE_USER_FILE\020\025\022\021\n\rADMIN_UNSHARE"
-      "\020\026\022\024\n\020ADMIN_SHARE_INFO\020\027\022\010\n\004WARN\020\030\022\016\n\nLI"
-      "ST_USERS\020\031\022\021\n\rCHANGE_PASSWD\020\032\022\017\n\013CLEAR_C"
-      "ACHE\020\033\022\020\n\014CHANGE_QUOTA\020\034*.\n\010FileType\022\t\n\005"
-      "NULL6\020\000\022\010\n\004FILE\020\001\022\r\n\tDIRECTORY\020\002**\n\010User"
-      "Role\022\t\n\005NULL7\020\000\022\010\n\004USER\020\001\022\t\n\005ADMIN\020\002*\200\001\n"
-      "\014ResponseType\022\t\n\005NULL5\020\000\022\006\n\002OK\020\001\022\t\n\005ERRO"
-      "R\020\002\022\n\n\006LOGGED\020\003\022\010\n\004STAT\020\004\022\t\n\005FILES\020\005\022\n\n\006"
-      "SHARED\020\006\022\014\n\010SRV_DATA\020\007\022\014\n\010CAN_SEND\020\010\022\t\n\005"
-      "USERS\020\t*>\n\023EncryptionAlgorithm\022\t\n\005NULL4\020"
-      "\000\022\020\n\014NOENCRYPTION\020\001\022\n\n\006CAESAR\020\002B+\n\'com.g"
-      "ithub.mikee2509.storagecloud.protoP\001b\006pr"
-      "oto3"
+      "\030\003 \001(\004\022\014\n\004hash\030\004 \001(\014\022\r\n\005owner\030\005 \001(\t\022\025\n\ro"
+      "wnerUsername\030\006 \001(\t\022\024\n\014creationDate\030\007 \001(\004"
+      "\022%\n\010metadata\030\010 \003(\0132\023.StorageCloud.Param\""
+      "K\n\tHandshake\022>\n\023encryptionAlgorithm\030\001 \001("
+      "\0162!.StorageCloud.EncryptionAlgorithm\"\221\001\n"
+      "\013UserDetails\022\020\n\010username\030\001 \001(\t\022\021\n\tfirstN"
+      "ame\030\002 \001(\t\022\020\n\010lastName\030\003 \001(\t\022$\n\004role\030\004 \001("
+      "\0162\026.StorageCloud.UserRole\022\022\n\ntotalSpace\030"
+      "\005 \001(\004\022\021\n\tusedSpace\030\006 \001(\004\"\316\001\n\016ServerRespo"
+      "nse\022(\n\004type\030\001 \001(\0162\032.StorageCloud.Respons"
+      "eType\022#\n\006params\030\002 \003(\0132\023.StorageCloud.Par"
+      "am\022\014\n\004list\030\003 \003(\t\022$\n\010fileList\030\004 \003(\0132\022.Sto"
+      "rageCloud.File\022+\n\010userList\030\005 \003(\0132\031.Stora"
+      "geCloud.UserDetails\022\014\n\004data\030\006 \001(\014*[\n\rHas"
+      "hAlgorithm\022\t\n\005NULL2\020\000\022\014\n\010H_NOHASH\020\001\022\014\n\010H"
+      "_SHA256\020\002\022\014\n\010H_SHA512\020\003\022\n\n\006H_SHA1\020\004\022\t\n\005H"
+      "_MD5\020\005*I\n\013MessageType\022\t\n\005NULL3\020\000\022\013\n\007COMM"
+      "AND\020\001\022\023\n\017SERVER_RESPONSE\020\002\022\r\n\tHANDSHAKE\020"
+      "\003*\350\003\n\013CommandType\022\t\n\005NULL1\020\000\022\t\n\005LOGIN\020\001\022"
+      "\013\n\007RELOGIN\020\002\022\n\n\006LOGOUT\020\003\022\014\n\010REGISTER\020\004\022\014"
+      "\n\010GET_STAT\020\005\022\016\n\nLIST_FILES\020\006\022\t\n\005MKDIR\020\007\022"
+      "\n\n\006DELETE\020\010\022\016\n\nC_DOWNLOAD\020\t\022\t\n\005SHARE\020\n\022\017"
+      "\n\013LIST_SHARED\020\013\022\025\n\021ADMIN_LIST_SHARED\020\014\022\014"
+      "\n\010DOWNLOAD\020\r\022\014\n\010METADATA\020\016\022\014\n\010USR_DATA\020\017"
+      "\022\013\n\007UNSHARE\020\020\022\017\n\013DELETE_USER\020\021\022\024\n\020CHANGE"
+      "_USER_PASS\020\022\022\r\n\tUSER_STAT\020\023\022\023\n\017LIST_USER"
+      "_FILES\020\024\022\024\n\020DELETE_USER_FILE\020\025\022\021\n\rADMIN_"
+      "UNSHARE\020\026\022\024\n\020ADMIN_SHARE_INFO\020\027\022\010\n\004WARN\020"
+      "\030\022\016\n\nLIST_USERS\020\031\022\021\n\rCHANGE_PASSWD\020\032\022\017\n\013"
+      "CLEAR_CACHE\020\033\022\020\n\014CHANGE_QUOTA\020\034\022\023\n\017SHARE"
+      "D_DOWNLOAD\020\035*.\n\010FileType\022\t\n\005NULL6\020\000\022\010\n\004F"
+      "ILE\020\001\022\r\n\tDIRECTORY\020\002**\n\010UserRole\022\t\n\005NULL"
+      "7\020\000\022\010\n\004USER\020\001\022\t\n\005ADMIN\020\002*\200\001\n\014ResponseTyp"
+      "e\022\t\n\005NULL5\020\000\022\006\n\002OK\020\001\022\t\n\005ERROR\020\002\022\n\n\006LOGGE"
+      "D\020\003\022\010\n\004STAT\020\004\022\t\n\005FILES\020\005\022\n\n\006SHARED\020\006\022\014\n\010"
+      "SRV_DATA\020\007\022\014\n\010CAN_SEND\020\010\022\t\n\005USERS\020\t*>\n\023E"
+      "ncryptionAlgorithm\022\t\n\005NULL4\020\000\022\020\n\014NOENCRY"
+      "PTION\020\001\022\n\n\006CAESAR\020\002B+\n\'com.github.mikee2"
+      "509.storagecloud.protoP\001b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1964);
+      descriptor, 2032);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "messages.proto", &protobuf_RegisterTypes);
 }
@@ -449,6 +451,7 @@ bool CommandType_IsValid(int value) {
     case 9:
     case 10:
     case 11:
+    case 12:
     case 13:
     case 14:
     case 15:
@@ -465,6 +468,7 @@ bool CommandType_IsValid(int value) {
     case 26:
     case 27:
     case 28:
+    case 29:
       return true;
     default:
       return false;
@@ -1778,6 +1782,7 @@ const int File::kFiletypeFieldNumber;
 const int File::kSizeFieldNumber;
 const int File::kHashFieldNumber;
 const int File::kOwnerFieldNumber;
+const int File::kOwnerUsernameFieldNumber;
 const int File::kCreationDateFieldNumber;
 const int File::kMetadataFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
@@ -1808,6 +1813,10 @@ File::File(const File& from)
   if (from.owner().size() > 0) {
     owner_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.owner_);
   }
+  ownerusername_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.ownerusername().size() > 0) {
+    ownerusername_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.ownerusername_);
+  }
   ::memcpy(&size_, &from.size_,
     static_cast<size_t>(reinterpret_cast<char*>(&filetype_) -
     reinterpret_cast<char*>(&size_)) + sizeof(filetype_));
@@ -1818,6 +1827,7 @@ void File::SharedCtor() {
   filename_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   hash_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   owner_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ownerusername_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&size_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&filetype_) -
       reinterpret_cast<char*>(&size_)) + sizeof(filetype_));
@@ -1833,6 +1843,7 @@ void File::SharedDtor() {
   filename_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   hash_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   owner_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ownerusername_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 void File::SetCachedSize(int size) const {
@@ -1868,6 +1879,7 @@ void File::Clear() {
   filename_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   hash_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   owner_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ownerusername_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&size_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&filetype_) -
       reinterpret_cast<char*>(&size_)) + sizeof(filetype_));
@@ -1957,10 +1969,26 @@ bool File::MergePartialFromCodedStream(
         break;
       }
 
-      // uint64 creationDate = 6;
+      // string ownerUsername = 6;
       case 6: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(48u /* 48 & 0xFF */)) {
+            static_cast< ::google::protobuf::uint8>(50u /* 50 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_ownerusername()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->ownerusername().data(), static_cast<int>(this->ownerusername().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "StorageCloud.File.ownerUsername"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint64 creationDate = 7;
+      case 7: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(56u /* 56 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
@@ -1971,10 +1999,10 @@ bool File::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .StorageCloud.Param metadata = 7;
-      case 7: {
+      // repeated .StorageCloud.Param metadata = 8;
+      case 8: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(58u /* 58 & 0xFF */)) {
+            static_cast< ::google::protobuf::uint8>(66u /* 66 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(input, add_metadata()));
         } else {
           goto handle_unusual;
@@ -2045,16 +2073,26 @@ void File::SerializeWithCachedSizes(
       5, this->owner(), output);
   }
 
-  // uint64 creationDate = 6;
-  if (this->creationdate() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt64(6, this->creationdate(), output);
+  // string ownerUsername = 6;
+  if (this->ownerusername().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->ownerusername().data(), static_cast<int>(this->ownerusername().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "StorageCloud.File.ownerUsername");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      6, this->ownerusername(), output);
   }
 
-  // repeated .StorageCloud.Param metadata = 7;
+  // uint64 creationDate = 7;
+  if (this->creationdate() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(7, this->creationdate(), output);
+  }
+
+  // repeated .StorageCloud.Param metadata = 8;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->metadata_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      7, this->metadata(static_cast<int>(i)), output);
+      8, this->metadata(static_cast<int>(i)), output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -2111,17 +2149,28 @@ void File::SerializeWithCachedSizes(
         5, this->owner(), target);
   }
 
-  // uint64 creationDate = 6;
-  if (this->creationdate() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(6, this->creationdate(), target);
+  // string ownerUsername = 6;
+  if (this->ownerusername().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->ownerusername().data(), static_cast<int>(this->ownerusername().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "StorageCloud.File.ownerUsername");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        6, this->ownerusername(), target);
   }
 
-  // repeated .StorageCloud.Param metadata = 7;
+  // uint64 creationDate = 7;
+  if (this->creationdate() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(7, this->creationdate(), target);
+  }
+
+  // repeated .StorageCloud.Param metadata = 8;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->metadata_size()); i < n; i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        7, this->metadata(static_cast<int>(i)), deterministic, target);
+        8, this->metadata(static_cast<int>(i)), deterministic, target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -2141,7 +2190,7 @@ size_t File::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  // repeated .StorageCloud.Param metadata = 7;
+  // repeated .StorageCloud.Param metadata = 8;
   {
     unsigned int count = static_cast<unsigned int>(this->metadata_size());
     total_size += 1UL * count;
@@ -2173,6 +2222,13 @@ size_t File::ByteSizeLong() const {
         this->owner());
   }
 
+  // string ownerUsername = 6;
+  if (this->ownerusername().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->ownerusername());
+  }
+
   // uint64 size = 3;
   if (this->size() != 0) {
     total_size += 1 +
@@ -2180,7 +2236,7 @@ size_t File::ByteSizeLong() const {
         this->size());
   }
 
-  // uint64 creationDate = 6;
+  // uint64 creationDate = 7;
   if (this->creationdate() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt64Size(
@@ -2235,6 +2291,10 @@ void File::MergeFrom(const File& from) {
 
     owner_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.owner_);
   }
+  if (from.ownerusername().size() > 0) {
+
+    ownerusername_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.ownerusername_);
+  }
   if (from.size() != 0) {
     set_size(from.size());
   }
@@ -2274,6 +2334,7 @@ void File::InternalSwap(File* other) {
   filename_.Swap(&other->filename_);
   hash_.Swap(&other->hash_);
   owner_.Swap(&other->owner_);
+  ownerusername_.Swap(&other->ownerusername_);
   swap(size_, other->size_);
   swap(creationdate_, other->creationdate_);
   swap(filetype_, other->filetype_);

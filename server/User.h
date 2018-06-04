@@ -40,6 +40,7 @@ struct UFile {
     bool isValid;
     uint64_t lastValid;
     string owner_name;
+    string owner_username;
     uint8_t type;
     string realPath;
 };
@@ -98,8 +99,13 @@ public:
     bool changeUserPasswd(const string&, const string&);
     bool getFileChunk(string&);
     bool initFileDownload(const string&, uint64_t, string&);
+    bool initSharedFileDownload(const string& filename, const string& ownerUsername, const string& hash, const uint64_t pos, string& chunk);
+    bool shareWith(const string& filename, const string& username);
+    bool unshareWith(const string& filename, const string& username);
+    bool listShared(vector<UFile>&);
 
     bool listUserFiles(string&, string&, vector<UFile>&);
+    bool listUserShared(const string&, vector<UFile>&);
 };
 
 class UserManager {
@@ -151,6 +157,12 @@ public:
     bool addFileChunk(UFile&, const string&);
     bool validateFile(UFile&);
     bool getFileChunk(UFile&, string&);
+    bool getFileId(oid&, const string&, oid&);
+    bool getFileIdAdvanced(oid& ownerId, const string& filename, const string& hash, oid&);
+    bool shareWith(oid& fileId, oid& userId);
+    bool unshareWith(oid& fileId, oid& userId);
+    bool listSharedWithUser(oid&, vector<UFile>&);
+    bool getFileFilename(oid&, string&);
 
     bool runAsUser(const string&, std::function<bool(oid&)>);
 

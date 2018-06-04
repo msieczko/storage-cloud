@@ -152,7 +152,8 @@ enum CommandType {
   DELETE = 8,
   C_DOWNLOAD = 9,
   SHARE = 10,
-  SHARE_INFO = 11,
+  LIST_SHARED = 11,
+  ADMIN_LIST_SHARED = 12,
   DOWNLOAD = 13,
   METADATA = 14,
   USR_DATA = 15,
@@ -169,12 +170,13 @@ enum CommandType {
   CHANGE_PASSWD = 26,
   CLEAR_CACHE = 27,
   CHANGE_QUOTA = 28,
+  SHARED_DOWNLOAD = 29,
   CommandType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   CommandType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool CommandType_IsValid(int value);
 const CommandType CommandType_MIN = NULL1;
-const CommandType CommandType_MAX = CHANGE_QUOTA;
+const CommandType CommandType_MAX = SHARED_DOWNLOAD;
 const int CommandType_ARRAYSIZE = CommandType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* CommandType_descriptor();
@@ -832,10 +834,10 @@ class File : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
 
   // accessors -------------------------------------------------------
 
-  // repeated .StorageCloud.Param metadata = 7;
+  // repeated .StorageCloud.Param metadata = 8;
   int metadata_size() const;
   void clear_metadata();
-  static const int kMetadataFieldNumber = 7;
+  static const int kMetadataFieldNumber = 8;
   const ::StorageCloud::Param& metadata(int index) const;
   ::StorageCloud::Param* mutable_metadata(int index);
   ::StorageCloud::Param* add_metadata();
@@ -886,15 +888,29 @@ class File : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   ::std::string* release_owner();
   void set_allocated_owner(::std::string* owner);
 
+  // string ownerUsername = 6;
+  void clear_ownerusername();
+  static const int kOwnerUsernameFieldNumber = 6;
+  const ::std::string& ownerusername() const;
+  void set_ownerusername(const ::std::string& value);
+  #if LANG_CXX11
+  void set_ownerusername(::std::string&& value);
+  #endif
+  void set_ownerusername(const char* value);
+  void set_ownerusername(const char* value, size_t size);
+  ::std::string* mutable_ownerusername();
+  ::std::string* release_ownerusername();
+  void set_allocated_ownerusername(::std::string* ownerusername);
+
   // uint64 size = 3;
   void clear_size();
   static const int kSizeFieldNumber = 3;
   ::google::protobuf::uint64 size() const;
   void set_size(::google::protobuf::uint64 value);
 
-  // uint64 creationDate = 6;
+  // uint64 creationDate = 7;
   void clear_creationdate();
-  static const int kCreationDateFieldNumber = 6;
+  static const int kCreationDateFieldNumber = 7;
   ::google::protobuf::uint64 creationdate() const;
   void set_creationdate(::google::protobuf::uint64 value);
 
@@ -912,6 +928,7 @@ class File : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   ::google::protobuf::internal::ArenaStringPtr filename_;
   ::google::protobuf::internal::ArenaStringPtr hash_;
   ::google::protobuf::internal::ArenaStringPtr owner_;
+  ::google::protobuf::internal::ArenaStringPtr ownerusername_;
   ::google::protobuf::uint64 size_;
   ::google::protobuf::uint64 creationdate_;
   int filetype_;
@@ -2157,7 +2174,60 @@ inline void File::set_allocated_owner(::std::string* owner) {
   // @@protoc_insertion_point(field_set_allocated:StorageCloud.File.owner)
 }
 
-// uint64 creationDate = 6;
+// string ownerUsername = 6;
+inline void File::clear_ownerusername() {
+  ownerusername_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& File::ownerusername() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.File.ownerUsername)
+  return ownerusername_.GetNoArena();
+}
+inline void File::set_ownerusername(const ::std::string& value) {
+  
+  ownerusername_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:StorageCloud.File.ownerUsername)
+}
+#if LANG_CXX11
+inline void File::set_ownerusername(::std::string&& value) {
+  
+  ownerusername_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:StorageCloud.File.ownerUsername)
+}
+#endif
+inline void File::set_ownerusername(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  ownerusername_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:StorageCloud.File.ownerUsername)
+}
+inline void File::set_ownerusername(const char* value, size_t size) {
+  
+  ownerusername_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:StorageCloud.File.ownerUsername)
+}
+inline ::std::string* File::mutable_ownerusername() {
+  
+  // @@protoc_insertion_point(field_mutable:StorageCloud.File.ownerUsername)
+  return ownerusername_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* File::release_ownerusername() {
+  // @@protoc_insertion_point(field_release:StorageCloud.File.ownerUsername)
+  
+  return ownerusername_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void File::set_allocated_ownerusername(::std::string* ownerusername) {
+  if (ownerusername != NULL) {
+    
+  } else {
+    
+  }
+  ownerusername_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ownerusername);
+  // @@protoc_insertion_point(field_set_allocated:StorageCloud.File.ownerUsername)
+}
+
+// uint64 creationDate = 7;
 inline void File::clear_creationdate() {
   creationdate_ = GOOGLE_ULONGLONG(0);
 }
@@ -2171,7 +2241,7 @@ inline void File::set_creationdate(::google::protobuf::uint64 value) {
   // @@protoc_insertion_point(field_set:StorageCloud.File.creationDate)
 }
 
-// repeated .StorageCloud.Param metadata = 7;
+// repeated .StorageCloud.Param metadata = 8;
 inline int File::metadata_size() const {
   return metadata_.size();
 }

@@ -119,7 +119,7 @@ bool Database::getField(string&& colName, string&& fieldToGetName, string&& idFi
                         string&& fieldName, const string& fieldVal, int64_t& res) {
 
     mongocxx::options::find opts{};
-    opts.projection(make_document(kvp(fieldToGetName, 1), kvp("_id", 0)));
+    opts.projection(make_document(kvp("_id", 0), kvp(fieldToGetName, 1)));
 
     try {
         auto cursor = db[colName].find(make_document(kvp(idFieldName, id), kvp(fieldName, fieldVal)), opts);
@@ -177,6 +177,70 @@ bool Database::getId(string&& colName, string&& fieldName, const string& fieldVa
         return false;
     } catch (...) {
         logger->err(l_id, "error while getting id: unknown error");
+        return false;
+    }
+}
+
+bool Database::getIdById(string&& colName, string&& fieldName, const string& fieldValue, string&& idFieldName, bsoncxx::oid& id) {
+    mongocxx::options::find opts{};
+    opts.projection(make_document(kvp("_id", 1)));
+
+    try {
+        auto cursor = db[colName].find(make_document(kvp(idFieldName, id), kvp(fieldName, fieldValue)), opts);
+
+        auto doc_i = cursor.begin();
+
+        if (doc_i == cursor.end() || doc_i->empty()) {
+            logger->log(l_id, "getIdById got empty resultSet");
+            return false;
+        }
+
+        auto val = doc_i->begin();
+
+        if (val->type() == bsoncxx::type::k_oid) {
+            id = val->get_oid().value;
+            return true;
+        }
+
+        logger->log(l_id, "getIdById got invalid field type (should be k_oid)");
+        return false;
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while getting id by id: " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while getting id by id: unknown error");
+        return false;
+    }
+}
+
+bool Database::getIdByDoc(string&& colName, bsoncxx::document::value&& doc, bsoncxx::oid& res) {
+    mongocxx::options::find opts{};
+    opts.projection(make_document(kvp("_id", 1)));
+
+    try {
+        auto cursor = db[colName].find(doc.view(), opts);
+
+        auto doc_i = cursor.begin();
+
+        if (doc_i == cursor.end() || doc_i->empty()) {
+            logger->log(l_id, "getIdByDoc got empty resultSet");
+            return false;
+        }
+
+        auto val = doc_i->begin();
+
+        if (val->type() == bsoncxx::type::k_oid) {
+            res = val->get_oid().value;
+            return true;
+        }
+
+        logger->log(l_id, "getIdByDoc got invalid field type (should be k_oid)");
+        return false;
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while getting id by doc: " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while getting id by doc: unknown error");
         return false;
     }
 }
@@ -588,7 +652,7 @@ bool Database::insertDoc(string&& colName, bsoncxx::oid& id, bsoncxx::builder::b
     }
 }
 
-bsoncxx::types::b_binary Database::stringToBinary(string& str) {
+bsoncxx::types::b_binary Database::stringToBinary(const string& str) {
     bsoncxx::types::b_binary b_sid{};
     b_sid.bytes = (const uint8_t*) str.c_str();
     b_sid.size = (uint32_t) str.size();

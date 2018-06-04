@@ -263,6 +263,40 @@ bool User::initFileDownload(const string& filename, const uint64_t pos, string& 
     return getFileChunk(chunk);
 }
 
+bool User::initSharedFileDownload(const string& filename, const string& ownerUsername, const string& hash, const uint64_t pos, string& chunk) {
+    oid ownerId, fileId;
+    if(!user_manager.getUserId(ownerUsername, ownerId)) {
+        return false;
+    }
+
+    if(!user_manager.getFileIdAdvanced(ownerId, filename, hash, fileId)) {
+        return false;
+    }
+
+    string realFilename;
+
+    if(!user_manager.getFileFilename(fileId, realFilename)) {
+        return false;
+    }
+
+    UFile file;
+
+    if(!user_manager.runAsUser(ownerUsername, [&file, &realFilename, this](oid& id) -> bool
+        {return user_manager.getYourFileMetadata(id, realFilename, file, FILE_REGULAR);})
+    ) {
+        return false;
+    }
+
+    if(pos >= currentOutFile.size) {
+        return false;
+    }
+
+    currentOutFileValid = true;
+    currentOutFile.lastValid = pos;
+
+    return getFileChunk(chunk);
+}
+
 bool User::getFileChunk(string& chunk) {
     if(!currentOutFileValid) {
         return false;
@@ -277,6 +311,32 @@ bool User::getFileChunk(string& chunk) {
     }
 
     return true;
+}
+
+bool User::shareWith(const string& filename, const string& username) {
+    oid userId, fileId;
+    if(user_manager.getUserId(username, userId) && user_manager.getFileId(id, filename, fileId)) {
+        return user_manager.shareWith(fileId, userId);
+    }
+
+    return false;
+}
+
+bool User::unshareWith(const string& filename, const string& username) {
+    oid userId, fileId;
+    if(user_manager.getUserId(username, userId) && user_manager.getFileId(id, filename, fileId)) {
+        return user_manager.unshareWith(fileId, userId);
+    }
+
+    return false;
+}
+
+bool User::listShared(vector<UFile>& list) {
+    return user_manager.listSharedWithUser(id, list);
+}
+
+bool User::listUserShared(const string& username, vector<UFile>& list) {
+    return user_manager.runAsUser(username, [&list, this](oid& id) -> bool {return user_manager.listSharedWithUser(id, list);});
 }
 
 ///---------------------UserManager---------------------
@@ -677,6 +737,7 @@ bool UserManager::getYourFileMetadata(oid& id, const string& filename, UFile& fi
     fields.emplace_back("size");
     fields.emplace_back("creationDate");
     fields.emplace_back("ownerName");
+    fields.emplace_back("ownerUsername");
     fields.emplace_back("type");
     fields.emplace_back("hash");
     fields.emplace_back("isValid");
@@ -690,7 +751,8 @@ bool UserManager::getYourFileMetadata(oid& id, const string& filename, UFile& fi
     stages.match(make_document(kvp("owner", id), kvp("filename", filename), kvp("type", type)));
     stages.lookup(make_document(kvp("from", "users"), kvp("localField", "owner"), kvp("foreignField", "_id"), kvp("as", "ownerTMP")));
     stages.unwind("$ownerTMP");
-    stages.add_fields(make_document(kvp("ownerName", make_document(kvp("$concat", make_array("$ownerTMP.name", " ", "$ownerTMP.surname"))))));
+    stages.add_fields(make_document(kvp("ownerName", make_document(kvp("$concat", make_array("$ownerTMP.name", " ", "$ownerTMP.surname")))),
+                                    kvp("ownerUsername", "$ownerTMP.username")));
     stages.project(make_document(kvp("ownerTMP", 0)));
 
     if(!db.getFieldsAdvanced("files", stages, fields, mmap)) {
@@ -950,6 +1012,79 @@ bool UserManager::getFileChunk(UFile& file, string& chunk) {
     return true;
 }
 
+bool UserManager::getFileId(oid& ownerId, const string& filename, oid& res) {
+    res = ownerId;
+    return db.getIdById("files", "filename", filename, "owner", res);
+}
+
+bool UserManager::getFileIdAdvanced(oid& ownerId, const string& filename, const string& hash, oid& res) {
+    res = ownerId;
+    return db.getIdByDoc("files", make_document(
+            kvp("owner", ownerId),
+            kvp("hash", Database::stringToBinary(hash)),
+            kvp("filename", bsoncxx::types::b_regex("/"+filename+"$"))
+    ), res);
+}
+
+bool UserManager::shareWith(oid& fileId, oid& userId) {
+    return db.pushValToArr("files", "sharedWith", fileId, make_document(kvp("userId", userId)));
+}
+
+bool UserManager::unshareWith(oid& fileId, oid& userId) {
+    return db.removeFieldFromArray("files", "sharedWith", fileId, make_document(kvp("userId", userId)));
+}
+
+bool UserManager::listSharedWithUser(oid& id, vector<UFile>& list) {
+    map<string, map<string, bsoncxx::types::value> > mmap;
+    vector<string> fields;
+    fields.emplace_back("filename");
+    fields.emplace_back("size");
+    fields.emplace_back("creationDate");
+    fields.emplace_back("ownerName");
+    fields.emplace_back("ownerUsername");
+    fields.emplace_back("hash");
+    fields.emplace_back("type");
+
+    mongocxx::pipeline stages;
+
+    stages.match(make_document(kvp("sharedWith.userId", id), kvp("isValid", true), kvp("type", FILE_REGULAR)));
+    stages.lookup(make_document(kvp("from", "users"), kvp("localField", "owner"), kvp("foreignField", "_id"), kvp("as", "ownerTMP")));
+    stages.unwind("$ownerTMP");
+    stages.add_fields(make_document(kvp("ownerName", make_document(kvp("$concat", make_array("$ownerTMP.name", " ", "$ownerTMP.surname")))),
+                                    kvp("ownerUsername", "$ownerTMP.username")));
+    stages.project(make_document(kvp("ownerTMP", 0), kvp("_id", 0)));
+
+    if(!db.getFieldsAdvanced("files", stages, fields, mmap)) {
+        return false;
+    }
+
+    try {
+        for(std::pair<string, map<string, bsoncxx::types::value> > usr: mmap) {
+            UFile tmp;
+            tmp.filename = usr.first.substr(usr.first.rfind('/') + 1);
+            tmp.size = (uint64_t) usr.second.find("size")->second.get_int64();
+            tmp.creation_date = (uint64_t) usr.second.find("creationDate")->second.get_date().to_int64();
+            tmp.owner_name = bsoncxx::string::to_string(usr.second.find("ownerName")->second.get_utf8().value);
+            tmp.owner_username = bsoncxx::string::to_string(usr.second.find("ownerUsername")->second.get_utf8().value);
+            tmp.type = (uint8_t) usr.second.find("type")->second.get_int64().value;
+            tmp.hash = string((const char*) usr.second.find("hash")->second.get_binary().bytes, usr.second.find("hash")->second.get_binary().size);
+
+            list.emplace_back(tmp);
+        }
+    } catch (const std::exception& ex) {
+        logger.err(l_id, "error while parsing shared file list: " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger.err(l_id, "error while parsing shared file list: unknown error");
+        return false;
+    }
+
+    return true;
+}
+
+bool UserManager::getFileFilename(oid& fileId, string& res) {
+    return db.getField("files", "filename", fileId, res);
+}
 /**
 
 db.getCollection('users').update(
