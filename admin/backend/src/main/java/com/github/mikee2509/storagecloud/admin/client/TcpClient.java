@@ -9,12 +9,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 
 @Service
 public class TcpClient {
     private static final int BUFFER_SIZE = 1024;
+    private static final int SO_TIMEOUT = 5000;
 
     @Value("${tin.server.address}")
     private String serverAddress;
@@ -27,7 +29,9 @@ public class TcpClient {
 
     public void openConnection() throws IOException {
         if (clientSocket == null || clientSocket.isClosed()) {
-            clientSocket = new Socket(serverAddress, serverPort);
+            clientSocket = new Socket();
+            clientSocket.connect(new InetSocketAddress(serverAddress, serverPort), SO_TIMEOUT);
+
         }
         socketOutputStream = clientSocket.getOutputStream();
         socketInputStream = clientSocket.getInputStream();
@@ -56,7 +60,7 @@ public class TcpClient {
         return new Packet(buffer.toByteArray());
     }
 
-    public void stopConnection() throws IOException {
+    public void closeConnection() throws IOException {
         socketInputStream.close();
         socketOutputStream.close();
         clientSocket.close();

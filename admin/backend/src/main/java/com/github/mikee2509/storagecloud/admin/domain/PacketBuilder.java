@@ -221,7 +221,7 @@ public class PacketBuilder {
     public class HandshakePacketBuilder {
         Handshake.Builder handshakeBuilder = Handshake.newBuilder();
 
-        public HandshakePacketBuilder encryptionAlgorithm(EncryptionAlgorithm algorithm) {
+        public HandshakePacketBuilder negotiateEncryptionAlgorithm(EncryptionAlgorithm algorithm) {
             handshakeBuilder.setEncryptionAlgorithm(algorithm);
             return this;
         }
