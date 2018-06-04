@@ -2,13 +2,12 @@ package com.github.mikee2509.storagecloud.admin.security;
 
 import com.github.mikee2509.storagecloud.admin.client.TcpClientService;
 import com.github.mikee2509.storagecloud.admin.domain.dto.AuthStatusDto;
+import com.github.mikee2509.storagecloud.admin.domain.dto.AuthResponseDto;
 import com.github.mikee2509.storagecloud.admin.domain.dto.UserAuthDto;
 import com.github.mikee2509.storagecloud.admin.domain.exception.LoginException;
 import com.github.mikee2509.storagecloud.admin.domain.security.SessionDetails;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 @Log
 @RestController
@@ -29,13 +29,21 @@ class AuthController {
 
     @GetMapping("/logout")
     String logout(HttpSession session) {
+        try {
+            serverAuthenticationProvider.logout();
+            tcpClientService.closeConnection();
+        } catch (LoginException e) {
+            log.info("Failed to log out: " + e.getMessage());
+        } catch (IOException e) {
+            log.info("Failed to close connection: " + e.getMessage());
+        }
         SecurityContextHolder.clearContext();
         session.invalidate();
         return "OK";
     }
 
     @PostMapping("/login")
-    String login(@RequestBody UserAuthDto userAuthDto) {
+    AuthResponseDto login(@RequestBody UserAuthDto userAuthDto) {
         try {
             Authentication request = new UsernamePasswordAuthenticationToken(
                     userAuthDto.getUsername(), userAuthDto.getPassword()
@@ -44,12 +52,12 @@ class AuthController {
             SecurityContextHolder.getContext().setAuthentication(result);
         } catch (Exception e) {
             log.info(e.getMessage());
-            return "ERROR";
+            return AuthResponseDto.error(e.getMessage());
         }
         log.info("Successfully authenticated. Security context contains: " +
                 SecurityContextHolder.getContext().getAuthentication()
         );
-        return "OK";
+        return AuthResponseDto.success();
 
     }
 

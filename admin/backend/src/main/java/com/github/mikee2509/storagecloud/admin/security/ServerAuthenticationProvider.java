@@ -48,7 +48,7 @@ public class ServerAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return authentication.equals(UsernamePasswordAuthenticationToken.class);
+        return Objects.equals(authentication, UsernamePasswordAuthenticationToken.class);
     }
 
     private ByteString login(String username, String password) {
@@ -80,6 +80,27 @@ public class ServerAuthenticationProvider implements AuthenticationProvider {
         UserDetails userDetails = getUserDetails(sessionDetails.getUsername());
 
         return SessionDetails.create(userDetails, sid);
+    }
+
+    public void logout() {
+        Packet logoutPacket = Packet.builder()
+                .hashAlgorithm(hAlgorithm)
+                .command()
+                .type(CommandType.LOGOUT)
+                .build();
+
+        Packet response = openConnectionAndSend(logoutPacket);
+        ServerResponse serverResponse = parse(response);
+        if (serverResponse.getType() == ResponseType.ERROR) {
+            Param msg = serverResponse.getParamsList().stream()
+                    .filter(param -> Objects.equals(param.getSParamVal(), MSG.toString()))
+                    .findFirst()
+                    .orElseThrow(() -> new LoginException("Failed to logout"));
+            if (msg.getSParamVal() == null) {
+                throw new LoginException("Failed to logout");
+            }
+            throw new LoginException("Failed to logout: " + msg.getSParamVal());
+        }
     }
 
     private Packet openConnectionAndSend(Packet packet) {
