@@ -1,10 +1,11 @@
 package com.github.mikee2509.storagecloud.admin.client;
 
 import com.github.mikee2509.storagecloud.admin.domain.Packet;
-import com.github.mikee2509.storagecloud.admin.domain.TcpClientException;
+import com.github.mikee2509.storagecloud.admin.domain.exception.TcpClientException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PreDestroy;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,9 +14,8 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 
-@Service
-public class TcpClient {
-    private static final int BUFFER_SIZE = 1024;
+@Component
+public class TcpClientService {
     private static final int SO_TIMEOUT = 5000;
 
     @Value("${tin.server.address}")
@@ -27,8 +27,12 @@ public class TcpClient {
     private OutputStream socketOutputStream;
     private InputStream socketInputStream;
 
+    public boolean isConnected() {
+        return clientSocket != null && !clientSocket.isClosed();
+    }
+
     public void openConnection() throws IOException {
-        if (clientSocket == null || clientSocket.isClosed()) {
+        if (!isConnected()) {
             clientSocket = new Socket();
             clientSocket.connect(new InetSocketAddress(serverAddress, serverPort), SO_TIMEOUT);
 
@@ -46,20 +50,21 @@ public class TcpClient {
 
         byte[] responseSize = new byte[4];
         if (socketInputStream.read(responseSize) != 4) {
-            throw new TcpClientException("Failed to receive server response size");
+            throw new TcpClientException("Failed to receive response size");
         }
         buffer.write(responseSize);
 
         int payloadSize = ByteBuffer.wrap(responseSize).getInt() - 4;
         byte[] responsePayload = new byte[payloadSize];
         if (socketInputStream.read(responsePayload) != payloadSize) {
-            throw new TcpClientException("Failed to receive server response payload");
+            throw new TcpClientException("Failed to receive response payload");
         }
         buffer.write(responsePayload);
         buffer.flush();
         return new Packet(buffer.toByteArray());
     }
 
+    @PreDestroy
     public void closeConnection() throws IOException {
         socketInputStream.close();
         socketOutputStream.close();

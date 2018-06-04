@@ -4,7 +4,8 @@ public enum ParamId {
     SID,
     USERNAME,
     PASSWORD,
-    PATH;
+    PATH,
+    MSG;
 
     @Override
     public String toString() {

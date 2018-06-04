@@ -1,6 +1,6 @@
 package com.github.mikee2509.storagecloud.admin;
 
-import com.github.mikee2509.storagecloud.admin.client.TcpClient;
+import com.github.mikee2509.storagecloud.admin.client.TcpClientService;
 import com.github.mikee2509.storagecloud.admin.domain.Packet;
 import com.github.mikee2509.storagecloud.admin.domain.ParamId;
 import com.github.mikee2509.storagecloud.admin.domain.ServerResponseParserException;
@@ -31,31 +31,34 @@ import static org.assertj.core.api.Assertions.assertThat;
 @NoArgsConstructor
 @ActiveProfiles("mock")
 @RunWith(SpringRunner.class)
-public class TcpClientTest {
+public class TcpClientServiceTest {
     @Value("${tin.username}")
     private String username;
     @Value("${tin.password}")
     private String password;
+    @Value("${tin.hashAlgorithm}")
+    private HashAlgorithm hAlgorithm;
+    @Value("${tin.encryptionAlgorithm}")
+    private EncryptionAlgorithm eAlgorithm;
+
 
     @Autowired
-    private TcpClient client;
+    private TcpClientService client;
 
     private Packet handshake;
     private Packet loginPacket;
     private Packet logoutPacket;
-    private static final EncryptionAlgorithm E_ALGORITHM = EncryptionAlgorithm.NOENCRYPTION;
-    private static final HashAlgorithm H_ALGORITHM = HashAlgorithm.H_SHA512;
 
     @Before
     public void setUp() throws Exception {
         handshake = Packet.builder()
-                .hashAlgorithm(H_ALGORITHM)
+                .hashAlgorithm(hAlgorithm)
                 .handshake()
-                .negotiateEncryptionAlgorithm(E_ALGORITHM)
+                .negotiateEncryptionAlgorithm(eAlgorithm)
                 .build();
 
         loginPacket = Packet.builder()
-                .hashAlgorithm(H_ALGORITHM)
+                .hashAlgorithm(hAlgorithm)
                 .command()
                 .type(CommandType.LOGIN)
                 .addParam(USERNAME.toString()).ofValue(username)
@@ -63,27 +66,27 @@ public class TcpClientTest {
                 .build();
 
         logoutPacket = Packet.builder()
-                .hashAlgorithm(H_ALGORITHM)
+                .hashAlgorithm(hAlgorithm)
                 .command()
                 .type(CommandType.LOGOUT)
                 .build();
     }
 
     private void sendHandshake() throws ServerResponseParserException, IOException {
-        ServerResponse serverResponse = client.sendPacket(handshake).parseServerResponse(E_ALGORITHM);
+        ServerResponse serverResponse = client.sendPacket(handshake).parseServerResponse(eAlgorithm);
         log.info(serverResponse.toString());
         assertThat(serverResponse.getType()).isEqualTo(OK);
     }
 
     private ServerResponse sendLogin() throws ServerResponseParserException, IOException {
-        ServerResponse serverResponse = client.sendPacket(loginPacket).parseServerResponse(E_ALGORITHM);
+        ServerResponse serverResponse = client.sendPacket(loginPacket).parseServerResponse(eAlgorithm);
         log.info(serverResponse.toString());
         assertThat(serverResponse.getType() == LOGGED).isTrue();
         return serverResponse;
     }
 
     private void sendLogout() throws ServerResponseParserException, IOException {
-        ServerResponse serverResponse = client.sendPacket(logoutPacket).parseServerResponse(E_ALGORITHM);
+        ServerResponse serverResponse = client.sendPacket(logoutPacket).parseServerResponse(eAlgorithm);
         log.info(serverResponse.toString());
         assertThat(serverResponse.getType()).isEqualTo(OK);
     }
@@ -102,7 +105,7 @@ public class TcpClientTest {
     @Test
     public void testLoginWithWrongCredentials() throws IOException, ServerResponseParserException {
         Packet wrongCredentialsLoginPacket = Packet.builder()
-                .hashAlgorithm(H_ALGORITHM)
+                .hashAlgorithm(hAlgorithm)
                 .command()
                 .type(CommandType.LOGIN)
                 .addParam("username").ofValue(username)
@@ -113,7 +116,7 @@ public class TcpClientTest {
 
         sendHandshake();
 
-        ServerResponse serverResponse = client.sendPacket(wrongCredentialsLoginPacket).parseServerResponse(E_ALGORITHM);
+        ServerResponse serverResponse = client.sendPacket(wrongCredentialsLoginPacket).parseServerResponse(eAlgorithm);
         log.info(serverResponse.toString());
         assertThat(serverResponse.getType()).isEqualTo(ResponseType.ERROR);
 
@@ -137,7 +140,7 @@ public class TcpClientTest {
         client.closeConnection();
 
         Packet reloginPacket = Packet.builder()
-                .hashAlgorithm(H_ALGORITHM)
+                .hashAlgorithm(hAlgorithm)
                 .command()
                 .type(CommandType.RELOGIN)
                 .addParam(SID.toString()).ofValue(sid)
@@ -146,7 +149,7 @@ public class TcpClientTest {
 
         client.openConnection();
 
-        serverResponse = client.sendPacket(reloginPacket).parseServerResponse(E_ALGORITHM);
+        serverResponse = client.sendPacket(reloginPacket).parseServerResponse(eAlgorithm);
         log.info(serverResponse.toString());
         assertThat(serverResponse.getType()).isEqualTo(LOGGED);
 
@@ -155,19 +158,19 @@ public class TcpClientTest {
     }
 
     @Test
-    public void testGetStat() throws IOException, ServerResponseParserException {
+    public void testListFiles() throws IOException, ServerResponseParserException {
         client.openConnection();
         sendHandshake();
         sendLogin();
 
-        Packet getStatPacket = Packet.builder()
-                .hashAlgorithm(H_ALGORITHM)
+        Packet listFilesPacket = Packet.builder()
+                .hashAlgorithm(hAlgorithm)
                 .command()
                 .type(CommandType.LIST_FILES)
                 .addParam(PATH.toString()).ofValue("/")
                 .build();
 
-        ServerResponse serverResponse = client.sendPacket(getStatPacket).parseServerResponse(E_ALGORITHM);
+        ServerResponse serverResponse = client.sendPacket(listFilesPacket).parseServerResponse(eAlgorithm);
         log.info(serverResponse.toString());
 
         sendLogout();

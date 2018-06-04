@@ -2,6 +2,7 @@ package com.github.mikee2509.storagecloud.admin.domain.security;
 
 import com.github.mikee2509.storagecloud.admin.domain.dto.UserDto;
 import com.github.mikee2509.storagecloud.proto.UserDetails;
+import com.google.protobuf.ByteString;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,16 +15,16 @@ import java.util.Objects;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class SessionDetails implements org.springframework.security.core.userdetails.UserDetails {
     private String username;
-    private String password;
     private String firstName;
     private String lastName;
+    private ByteString sid;
 
-    public static SessionDetails create(UserDetails user, String password) {
+    public static SessionDetails create(UserDetails user, ByteString sid) {
         return new SessionDetails(
                 user.getUsername(),
-                password,
                 user.getFirstName(),
-                user.getLastName()
+                user.getLastName(),
+                sid
         );
     }
 
@@ -47,7 +48,7 @@ public class SessionDetails implements org.springframework.security.core.userdet
 
     @Override
     public String getPassword() {
-        return password;
+        return null;
     }
 
     @Override
@@ -81,5 +82,9 @@ public class SessionDetails implements org.springframework.security.core.userdet
     @Override
     public int hashCode() {
         return Objects.hash(username);
+    }
+
+    public ByteString getSid() {
+        return sid;
     }
 }
