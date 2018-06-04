@@ -165,7 +165,7 @@ int main(int argc, char **argv) {
 
     logger.set_input_string(&cmd);
 
-    UserManager u_m = UserManager::getInstance(&db);
+    UserManager u_m = UserManager::getInstance(&db, &logger);
 
 //    vector<User> allUsers;
 //    db.listUsers(allUsers);
@@ -222,27 +222,40 @@ int main(int argc, char **argv) {
 //    db.setField("users", "testField", allUsers[0].id, tmpi);
 
 
-    string u_name = "miloszXD";
-    User u(u_name, u_m);
-    string passwd = "nicepasswd";
-    string newSid;
-    u.loginByPassword(passwd, newSid);
+//    string u_name = "lukasz";
+//    User u(u_name, u_m);
+//
+//    vector<UFile> users;
+//    u.listShared(users);
+//
+//    for(auto& usr: users) {
+//        logger.info("main/users", usr.filename);
+//        logger.info("main/users", "|-> " + usr.owner_name);
+//        logger.info("main/users", "|-> " + usr.owner_username);
+//        logger.info("main/users", "|-> total space:" + to_string(usr.size) + "B");
+//    }
 
-    UFile f;
-    f.filename = "/dir/dir23/file24.test";
-    f.size = 254345;
-    f.creation_date = time(0);
-    f.type = FILE_REGULAR;
+//    u.deleteUserFile("miloszXD", "/test_dirXD/lol2");
 
-    string s_tmp("/dir/dir23");
-
-    vector<UFile> fields;
-
-    u.listFilesinPath(s_tmp, fields);
-
-    for(auto&& file: fields) {
-        logger.info("FILES", file.filename + " " + file.owner_name);
-    }
+//    string passwd = "nicepasswd";
+//    string newSid;
+//    u.loginByPassword(passwd, newSid);
+//
+//    UFile f;
+//    f.filename = "/dir/dir23/file24.test";
+//    f.size = 254345;
+//    f.creation_date = time(0);
+//    f.type = FILE_REGULAR;
+//
+//    string s_tmp("/dir/dir23");
+//
+//    vector<UFile> fields;
+//
+//    u.listFilesinPath(s_tmp, fields);
+//
+//    for(auto&& file: fields) {
+//        logger.info("FILES", file.filename + " " + file.owner_name);
+//    }
 
 //    u.addFile(f);
 
@@ -258,6 +271,17 @@ int main(int argc, char **argv) {
 
 //    cout<<(u.loginByPassword(passwd, newSid) ? "passwd ok" : "passwd wrong")<<" sid: "<<newSid<<endl;
 
+//    bool xd_ok;
+//    UDetails tmp_u;
+//    tmp_u.surname = "Nazwisko";
+//    tmp_u.name = "MiłoszTest";
+//    tmp_u.username = "miloszXD";
+//    tmp_u.role = USER_ADMIN;
+//    UserManager::getInstance().registerUser(tmp_u, passwd, xd_ok);
+
+    auto tmp_id = bsoncxx::oid{string("5b134cabe206a52f873c0d43")};
+
+//    UserManager::getInstance().deletePath(tmp_id, "/test_dirXD/lol3/lol");
 
     while(!should_exit) {
         c = getch();
@@ -280,11 +304,16 @@ int main(int argc, char **argv) {
                 logger.info("main", "Available commands:\n  exit - closes server\n  list - lists active connections");
             } else if (cmd == "users") {
                 logger.info("main", "All users:");
-                vector<string> users;
+                vector<UDetails> users;
                 u_m.listAllUsers(users);
 
                 for(auto& usr: users) {
-                    logger.info("main", "> " + usr);
+                    logger.info("main/users", usr.username);
+                    logger.info("main/users", "|-> " + usr.name);
+                    logger.info("main/users", "|-> " + usr.surname);
+                    logger.info("main/users", string("|-> ") + (usr.role == USER_ADMIN ? "admin" : "regular user"));
+                    logger.info("main/users", "|-> total space:" + to_string(usr.totalSpace) + "B");
+                    logger.info("main/users", "'-> used space: " + to_string(usr.usedSpace) + "B");
                 }
             } else {
                 logger.warn("main", "Unknown command, try help");
