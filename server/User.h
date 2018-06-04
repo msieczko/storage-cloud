@@ -23,6 +23,8 @@
 #define USER_USER 1
 #define USER_ADMIN 2
 
+#define OUT_FILE_CHUNK_SIZE 2048
+
 using bsoncxx::oid;
 using std::vector;
 
@@ -60,7 +62,10 @@ private:
     bool currentInFileValid;
     UFile currentInFile;
 
-    bool checkPassword(string&);
+    bool currentOutFileValid = false;
+    UFile currentOutFile;
+
+    bool checkPassword(const string&);
 
 public:
     User(const string&, UserManager&);
@@ -70,7 +75,7 @@ public:
     bool getHomeDir(string&);
     bool getSurname(string&);
     bool setName(string&);
-    bool setPassword(string&);
+    bool setPassword(const string&);
     bool loginByPassword(string&, string&);
     bool loginBySid(string&);
     bool logout(string&);
@@ -88,6 +93,11 @@ public:
     bool getFreeSpace(uint64_t&);
     bool getYourStats(UDetails&);
     bool deleteFile(const string&);
+    bool deleteUserFile(const string&, const string&);
+    bool changePasswd(const string&, const string&);
+    bool changeUserPasswd(const string&, const string&);
+    bool getFileChunk(string&);
+    bool initFileDownload(const string&, uint64_t, string&);
 
     bool listUserFiles(string&, string&, vector<UFile>&);
 };
@@ -117,7 +127,7 @@ public:
     bool getName(oid&, string&);
     bool getSurname(oid&, string&);
     bool getHomeDir(oid&, string&);
-    bool checkPasswd(oid&, string&);
+    bool checkPasswd(oid&, const string&);
     bool setPasswd(oid&, const string&);
     bool setName(oid&, string&);
     bool addSid(oid&, string&);
@@ -137,11 +147,12 @@ public:
 
     bool listFilesinPath(oid&, const string&, vector<UFile>&);
     bool addNewFile(oid&, UFile&, string&, oid&);
-    bool getYourFileMetadata(oid&, const string&, UFile&);
+    bool getYourFileMetadata(oid&, const string&, UFile&, uint8_t);
     bool addFileChunk(UFile&, const string&);
     bool validateFile(UFile&);
+    bool getFileChunk(UFile&, string&);
 
-    bool runAsUser(string&, std::function<bool(oid&)>);
+    bool runAsUser(const string&, std::function<bool(oid&)>);
 
     bool deleteUser(const string&);
 

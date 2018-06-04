@@ -222,8 +222,10 @@ int main(int argc, char **argv) {
 //    db.setField("users", "testField", allUsers[0].id, tmpi);
 
 
-//    string u_name = "miloszXD";
+//    string u_name = "lukasz";
 //    User u(u_name, u_m);
+
+//    u.deleteUserFile("miloszXD", "/test_dirXD/lol2");
 
 //    string passwd = "nicepasswd";
 //    string newSid;
@@ -268,6 +270,7 @@ int main(int argc, char **argv) {
 //    UserManager::getInstance().registerUser(tmp_u, passwd, xd_ok);
 
     auto tmp_id = bsoncxx::oid{string("5b134cabe206a52f873c0d43")};
+
 //    UserManager::getInstance().deletePath(tmp_id, "/test_dirXD/lol3/lol");
 
     while(!should_exit) {

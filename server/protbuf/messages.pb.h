@@ -150,10 +150,9 @@ enum CommandType {
   LIST_FILES = 6,
   MKDIR = 7,
   DELETE = 8,
-  RENAME = 9,
+  C_DOWNLOAD = 9,
   SHARE = 10,
   SHARE_INFO = 11,
-  MOVE = 12,
   DOWNLOAD = 13,
   METADATA = 14,
   USR_DATA = 15,
@@ -167,12 +166,15 @@ enum CommandType {
   ADMIN_SHARE_INFO = 23,
   WARN = 24,
   LIST_USERS = 25,
+  CHANGE_PASSWD = 26,
+  CLEAR_CACHE = 27,
+  CHANGE_QUOTA = 28,
   CommandType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   CommandType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool CommandType_IsValid(int value);
 const CommandType CommandType_MIN = NULL1;
-const CommandType CommandType_MAX = LIST_USERS;
+const CommandType CommandType_MAX = CHANGE_QUOTA;
 const int CommandType_ARRAYSIZE = CommandType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* CommandType_descriptor();

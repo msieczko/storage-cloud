@@ -489,5 +489,134 @@ bool Client::processCommand(Command* cmd) {
         }
 
         sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::DELETE_USER_FILE) {
+        if(!(u.isAdmin())) {
+            resError(res, "Not enough permissions", "tried to delete user files, but was not logged as admin");
+        } else {
+            string username, path;
+            uint8_t validFields = 0;
+
+            for(auto& param: cmd->params()) {
+                if(param.paramid() == "username") {
+                    username = param.sparamval();
+                    validFields++;
+                } else if(param.paramid() == "path") {
+                    path = param.sparamval();
+                    validFields++;
+                }
+            }
+
+            if(validFields == 2 && !path.empty() && !username.empty()) {
+                u.deleteUserFile(username, path);
+            } else {
+                resError(res, "Wrong command format", "tried to list user files, but command format was wrong");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::CHANGE_PASSWD) {
+        if(!(u.isValid() && u.isAuthorized())) {
+            resError(res, "You are not logged in", "tried to change password, but was not logged in");
+        } else {
+            string current_passwd, new_passwd;
+            uint8_t validFields = 0;
+
+            for(auto& param: cmd->params()) {
+                if(param.paramid() == "current_passwd") {
+                    current_passwd = param.sparamval();
+                    validFields++;
+                } else if(param.paramid() == "new_passwd") {
+                    new_passwd = param.sparamval();
+                    validFields++;
+                }
+            }
+
+            if(validFields == 2 && !current_passwd.empty() && new_passwd.size() > 6) {
+                if(u.changePasswd(current_passwd, new_passwd)) {
+                    res.set_type(ResponseType::OK);
+                } else {
+                    resError(res, "Error occured", "tried to change password, but error occured");
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to change password, but command format was wrong");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::CHANGE_USER_PASS) {
+        if(!(u.isAdmin())) {
+            resError(res, "Not enough permissions", "tried to change user password, but was not logged as admin");
+        } else {
+            string username, new_passwd;
+            uint8_t validFields = 0;
+
+            for(auto& param: cmd->params()) {
+                if(param.paramid() == "username") {
+                    username = param.sparamval();
+                    validFields++;
+                } else if(param.paramid() == "new_passwd") {
+                    new_passwd = param.sparamval();
+                    validFields++;
+                }
+            }
+
+            if(validFields == 2 && !username.empty() && new_passwd.size() > 6) {
+                if(u.changeUserPasswd(username, new_passwd)) {
+                    res.set_type(ResponseType::OK);
+                } else {
+                    resError(res, "Error occured", "tried to change user password, but error occured");
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to change user password, but command format was wrong");
+            }
+        }
+
+        sendServerResponse(&res);
+    }  else if (cmd->type() == CommandType::DOWNLOAD) {
+        if(!(u.isValid() && u.isAuthorized())) {
+            resError(res, "You are not logged in", "tried to download file, but was not logged in");
+        } else {
+            string filename;
+            uint64_t startingChunk = 0;
+            uint8_t validFields = 0;
+
+            for(auto& param: cmd->params()) {
+                if(param.paramid() == "file_path") {
+                    filename = param.sparamval();
+                    validFields++;
+                } else if(param.paramid() == "starting_chunk") {
+                    startingChunk = (uint64_t) param.iparamval();
+                    validFields++;
+                }
+            }
+
+            if(validFields == 2 && !filename.empty()) {
+                string data;
+                if(u.initFileDownload(filename, startingChunk, data)) {
+                    res.set_type(ResponseType::SRV_DATA);
+                    res.set_data(data);
+                } else {
+                    resError(res, "Error occured", "tried to download file " + filename + ", but error occured");
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to download file, but command format was wrong");
+            }
+        }
+
+        sendServerResponse(&res);
+    }  else if (cmd->type() == CommandType::C_DOWNLOAD) {
+        if(!(u.isValid() && u.isAuthorized())) {
+            resError(res, "You are not logged in", "tried to continue downloading file, but was not logged in");
+        } else {
+            string data;
+            if (u.getFileChunk(data)) {
+                res.set_type(ResponseType::SRV_DATA);
+                res.set_data(data);
+            } else {
+                resError(res, "Error occured", "tried to continue downloading file, but error occured");
+            }
+        }
+
+        sendServerResponse(&res);
     }
 }

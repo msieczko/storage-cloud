@@ -56,11 +56,11 @@ bool User::setName(string& name) {
     return user_manager.setName(id, name);
 }
 
-bool User::setPassword(string& passwd) {
+bool User::setPassword(const string& passwd) {
     return user_manager.setPasswd(id, passwd);
 }
 
-bool User::checkPassword(string& passwd) {
+bool User::checkPassword(const string& passwd) {
     return user_manager.checkPasswd(id, passwd);
 }
 
@@ -127,7 +127,7 @@ uint8_t User::addFile(UFile& file) {
     if(user_manager.yourFileExists(id, file.filename)) {
         if(file.type == FILE_REGULAR) {
             UFile tmp_file;
-            if(user_manager.getYourFileMetadata(id, file.filename, tmp_file)) {
+            if(user_manager.getYourFileMetadata(id, file.filename, tmp_file, FILE_REGULAR)) {
                 if(!tmp_file.isValid && tmp_file.size == file.size && tmp_file.hash == file.hash) {
                     currentInFile = tmp_file;
                     currentInFileValid = true;
@@ -209,16 +209,74 @@ bool User::deleteFile(const string& path) {
         return false;
     }
 
-    UFile file;
-    if(!user_manager.getYourFileMetadata(id, path, file)) {
+    if(user_manager.yourFileIsDir(id, path)) {
+        return user_manager.deletePath(id, path);
+    }
+
+    return user_manager.deleteFile(id, path);
+}
+
+bool User::deleteUserFile(const string& username, const string& path) {
+
+    if(!user_manager.runAsUser(username, [&path, this](oid& id) -> bool {return user_manager.yourFileExists(id, path);})) {
         return false;
     }
 
-    if(file.type == FILE_REGULAR) {
-        return user_manager.deleteFile(id, path);
+    if(user_manager.runAsUser(username, [&path, this](oid& id) -> bool
+        {return user_manager.yourFileIsDir(id, path);})
+    ) {
+        return user_manager.runAsUser(username, [&path, this](oid& id) -> bool {return user_manager.deletePath(id, path);});
     }
 
-    return user_manager.deletePath(id, path);
+    return user_manager.runAsUser(username, [&path, this](oid& id) -> bool {return user_manager.deleteFile(id, path);});
+}
+
+bool User::changePasswd(const string& old, const string& new_passwd) {
+    if(checkPassword(old)) {
+        return setPassword(new_passwd);
+    }
+
+    return false;
+}
+
+bool User::changeUserPasswd(const string& username, const string& new_passwd) {
+    return user_manager.runAsUser(username, [&new_passwd, this](oid& id) -> bool {return user_manager.setPasswd(id, new_passwd);});
+}
+
+bool User::initFileDownload(const string& filename, const uint64_t pos, string& chunk) {
+    currentOutFileValid = false;
+    if(!user_manager.yourFileExists(id, filename)) {
+        return false;
+    }
+
+    if(!user_manager.getYourFileMetadata(id, filename, currentOutFile, FILE_REGULAR)) {
+        return false;
+    }
+
+    if(pos >= currentOutFile.size) {
+        return false;
+    }
+
+    currentOutFileValid = true;
+    currentOutFile.lastValid = pos;
+
+    return getFileChunk(chunk);
+}
+
+bool User::getFileChunk(string& chunk) {
+    if(!currentOutFileValid) {
+        return false;
+    }
+
+    if(!user_manager.getFileChunk(currentOutFile, chunk)) {
+        return false;
+    }
+
+    if(currentOutFile.lastValid == currentOutFile.size) {
+        currentOutFileValid = false;
+    }
+
+    return true;
 }
 
 ///---------------------UserManager---------------------
@@ -260,7 +318,7 @@ bool UserManager::getPasswdHash(oid& id, string& res) {
     return false;
 }
 
-bool UserManager::checkPasswd(oid& id, string& passwd) {
+bool UserManager::checkPasswd(oid& id, const string& passwd) {
     auto digest = new uint8_t[SHA512_DIGEST_LENGTH];
 
     SHA512((const uint8_t*) passwd.c_str(), passwd.size(), digest);
@@ -564,6 +622,7 @@ bool UserManager::addNewFile(oid& id, UFile& file, string& dir, oid& newId) {
         doc.append(kvp("owner", toOID(id)));
         doc.append(kvp("hash", toBinary(tmp)));
         doc.append(kvp("isValid", toBool(true)));
+        doc.append(kvp("lastValid", toINT64(0)));
 
         string homeDir;
 
@@ -611,7 +670,7 @@ bool UserManager::yourFileIsDir(oid &id, const string &path) {
     return type == FILE_DIR;
 }
 
-bool UserManager::getYourFileMetadata(oid& id, const string& filename, UFile& file) {
+bool UserManager::getYourFileMetadata(oid& id, const string& filename, UFile& file, uint8_t type) {
     map<string, map<string, bsoncxx::types::value> > mmap;
     vector<string> fields;
     fields.emplace_back("filename");
@@ -621,12 +680,14 @@ bool UserManager::getYourFileMetadata(oid& id, const string& filename, UFile& fi
     fields.emplace_back("type");
     fields.emplace_back("hash");
     fields.emplace_back("isValid");
-    fields.emplace_back("lastValid");
     fields.emplace_back("_id");
+    if(type == FILE_REGULAR) {
+        fields.emplace_back("lastValid");
+    }
     
     mongocxx::pipeline stages;
 
-    stages.match(make_document(kvp("owner", id), kvp("filename", filename), kvp("type", FILE_REGULAR)));
+    stages.match(make_document(kvp("owner", id), kvp("filename", filename), kvp("type", type)));
     stages.lookup(make_document(kvp("from", "users"), kvp("localField", "owner"), kvp("foreignField", "_id"), kvp("as", "ownerTMP")));
     stages.unwind("$ownerTMP");
     stages.add_fields(make_document(kvp("ownerName", make_document(kvp("$concat", make_array("$ownerTMP.name", " ", "$ownerTMP.surname"))))));
@@ -651,8 +712,10 @@ bool UserManager::getYourFileMetadata(oid& id, const string& filename, UFile& fi
         file.type = (uint8_t) tmp_file.second.find("type")->second.get_int64().value;
         file.hash = string((const char*) tmp_file.second.find("hash")->second.get_binary().bytes, tmp_file.second.find("hash")->second.get_binary().size);
         file.isValid = tmp_file.second.find("isValid")->second.get_bool();
-        file.lastValid = (uint64_t) tmp_file.second.find("lastValid")->second.get_int64();
         file.id = tmp_file.second.find("_id")->second.get_oid().value;
+        if(type == FILE_REGULAR) {
+            file.lastValid = (uint64_t) tmp_file.second.find("lastValid")->second.get_int64();
+        }
 
         string homeDir;
 
@@ -749,7 +812,7 @@ bool UserManager::validateFile(UFile& file) {
     return true;
 }
 
-bool UserManager::runAsUser(string& username, std::function<bool(oid&)> fun) {
+bool UserManager::runAsUser(const string& username, std::function<bool(oid&)> fun) {
     oid tmp_id;
     if(!getUserId(username, tmp_id)) {
         return false;
@@ -796,7 +859,7 @@ bool UserManager::deleteUser(const string& username) {
 
 bool UserManager::deleteFile(oid& id, const string& path) {
     UFile details;
-    if(!getYourFileMetadata(id, path, details)) {
+    if(!getYourFileMetadata(id, path, details, FILE_REGULAR)) {
         return false;
     }
 
@@ -864,6 +927,29 @@ bool UserManager::deletePath(oid& id, const string& path) {
 
     return true;
 }
+
+bool UserManager::getFileChunk(UFile& file, string& chunk) {
+    uint64_t toRead = (file.size - file.lastValid > OUT_FILE_CHUNK_SIZE) ? OUT_FILE_CHUNK_SIZE : (file.size - file.lastValid);
+    chunk.resize(toRead);
+    std::fstream fs;
+    fs.open(file.realPath, std::ios::in | std::ios::binary);
+    if(!fs.is_open()) {
+        return false;
+    }
+    fs.seekg(file.lastValid, std::ios::beg);
+
+    fs.read(&chunk[0], toRead);
+    if(fs.bad() || fs.tellg() != file.lastValid + toRead) {
+        return false;
+    }
+
+    fs.close();
+
+    file.lastValid += toRead;
+
+    return true;
+}
+
 /**
 
 db.getCollection('users').update(
