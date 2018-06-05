@@ -8,8 +8,6 @@ import lombok.Getter;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Builder
@@ -18,8 +16,9 @@ public class FileDto {
     private FileType fileType;
     private Long size;
     private String owner;
+    private String ownerUsername;
     private LocalDateTime creationDate;
-    private List<ParamDto> sharedWith;
+    private boolean isShared;
 
     public static FileDto from(File file) {
         return FileDto.builder()
@@ -27,11 +26,10 @@ public class FileDto {
                 .fileType(file.getFiletype())
                 .size(file.getSize())
                 .owner(file.getOwner())
+                .ownerUsername(file.getOwnerUsername())
                 .creationDate(LocalDateTime.ofInstant(
                         Instant.ofEpochMilli(file.getCreationDate()), ZoneId.systemDefault()))
-                .sharedWith(file.getSharedWithList().stream()
-                        .map(ParamDto::from)
-                        .collect(Collectors.toList()))
+                .isShared(file.getIsShared())
                 .build();
     }
 }

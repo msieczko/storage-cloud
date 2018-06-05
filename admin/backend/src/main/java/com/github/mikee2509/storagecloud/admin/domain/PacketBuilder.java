@@ -180,40 +180,8 @@ public class PacketBuilder {
                 return this;
             }
 
-            public ParamBuilder withMetadata(String paramId) {
-                return new ParamBuilder(paramId);
-            }
-
             public ServerResponsePacketBuilder and() {
                 return ServerResponsePacketBuilder.this;
-            }
-
-            public class ParamBuilder {
-                private Param.Builder paramBuilder = Param.newBuilder();
-
-                private ParamBuilder(String paramId) {
-                    paramBuilder.setParamId(paramId);
-                }
-
-                public FileBuilder ofValue(String value) {
-                    paramBuilder.setSParamVal(value);
-                    return buildAndGetParent();
-                }
-
-                public FileBuilder ofValue(long value) {
-                    paramBuilder.setIParamVal(value);
-                    return buildAndGetParent();
-                }
-
-                public FileBuilder ofValue(ByteString value) {
-                    paramBuilder.setBParamVal(value);
-                    return buildAndGetParent();
-                }
-
-                private FileBuilder buildAndGetParent() {
-                    fileBuilder.addSharedWith(paramBuilder.build());
-                    return FileBuilder.this;
-                }
             }
         }
     }
