@@ -1,19 +1,25 @@
 package pl.edu.pw.elka.llepak.tinbox
 
+import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main_menu.*
 import pl.edu.pw.elka.llepak.tinbox.Connection.connectionData
 import pl.edu.pw.elka.llepak.tinbox.Connection.errorData
+import pl.edu.pw.elka.llepak.tinbox.protobuf.File
+import pl.edu.pw.elka.llepak.tinbox.tasks.ListFilesTask
 import pl.edu.pw.elka.llepak.tinbox.viewmodels.MainMenuViewModel
 
 class MainMenuActivity: AppCompatActivity() {
+
+    lateinit var viewModel: MainMenuViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,7 +28,7 @@ class MainMenuActivity: AppCompatActivity() {
         connectionData.observe(this, Observer(this::displayConnectionData))
         errorData.observe(this, Observer(this::displayError))
 
-        val viewModel = ViewModelProviders.of(this).get(MainMenuViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(MainMenuViewModel::class.java)
 
         viewModel.loggedOutLiveData.observe(this, Observer(this::logOut))
 
@@ -32,6 +38,15 @@ class MainMenuActivity: AppCompatActivity() {
             main_menu_progress.visibility = View.VISIBLE
             viewModel.logout()
         })
+
+        file_list_button.setOnClickListener({
+            main_menu_progress.visibility = View.VISIBLE
+            val intent = Intent(this, ListFilesActivity::class.java)
+            intent.putExtra(ListFilesActivity.PATH, "/")
+            startActivity(intent)
+            main_menu_progress.visibility = View.GONE
+        })
+
     }
 
     private fun displayConnectionData(message: String?) {
@@ -57,4 +72,5 @@ class MainMenuActivity: AppCompatActivity() {
         else
             main_menu_progress.visibility = View.GONE
     }
+
 }

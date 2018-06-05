@@ -11,4 +11,6 @@
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="show_files">List my files</string>
+    <string name="create_folder">Create a folder</string>
+    <string name="upload_file">Upload a file</string>
 </resources>

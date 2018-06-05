@@ -8,31 +8,76 @@ public interface FileOrBuilder extends
     com.google.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>optional string name = 1;</code>
+   * <pre>
+   *with path
+   * </pre>
+   *
+   * <code>optional string filename = 1;</code>
    */
-  java.lang.String getName();
+  java.lang.String getFilename();
   /**
-   * <code>optional string name = 1;</code>
+   * <pre>
+   *with path
+   * </pre>
+   *
+   * <code>optional string filename = 1;</code>
    */
   com.google.protobuf.ByteString
-      getNameBytes();
+      getFilenameBytes();
 
   /**
-   * <code>optional int64 size = 2;</code>
+   * <code>optional .StorageCloud.FileType filetype = 2;</code>
+   */
+  int getFiletypeValue();
+  /**
+   * <code>optional .StorageCloud.FileType filetype = 2;</code>
+   */
+  pl.edu.pw.elka.llepak.tinbox.protobuf.FileType getFiletype();
+
+  /**
+   * <pre>
+   *for directory it's files count inside
+   * </pre>
+   *
+   * <code>optional uint64 size = 3;</code>
    */
   long getSize();
 
   /**
-   * <code>repeated .StorageCloud.Param metadata = 3;</code>
+   * <pre>
+   * empty for directory
+   * </pre>
+   *
+   * <code>optional bytes hash = 4;</code>
+   */
+  com.google.protobuf.ByteString getHash();
+
+  /**
+   * <code>optional string owner = 5;</code>
+   */
+  java.lang.String getOwner();
+  /**
+   * <code>optional string owner = 5;</code>
+   */
+  com.google.protobuf.ByteString
+      getOwnerBytes();
+
+  /**
+   * <code>optional uint64 creationDate = 6;</code>
+   */
+  long getCreationDate();
+
+  /**
+   * <code>repeated .StorageCloud.Param metadata = 7;</code>
    */
   java.util.List<pl.edu.pw.elka.llepak.tinbox.protobuf.Param> 
       getMetadataList();
   /**
-   * <code>repeated .StorageCloud.Param metadata = 3;</code>
+   * <code>repeated .StorageCloud.Param metadata = 7;</code>
    */
   pl.edu.pw.elka.llepak.tinbox.protobuf.Param getMetadata(int index);
   /**
-   * <code>repeated .StorageCloud.Param metadata = 3;</code>
+   * <code>repeated .StorageCloud.Param metadata = 7;</code>
    */
   int getMetadataCount();
 }

@@ -12,108 +12,288 @@ public  final class File extends
     // @@protoc_insertion_point(message_implements:StorageCloud.File)
     FileOrBuilder {
   private File() {
-    name_ = "";
+    filename_ = "";
+    hash_ = com.google.protobuf.ByteString.EMPTY;
+    owner_ = "";
     metadata_ = emptyProtobufList();
   }
   private int bitField0_;
-  public static final int NAME_FIELD_NUMBER = 1;
-  private java.lang.String name_;
+  public static final int FILENAME_FIELD_NUMBER = 1;
+  private java.lang.String filename_;
   /**
-   * <code>optional string name = 1;</code>
+   * <pre>
+   *with path
+   * </pre>
+   *
+   * <code>optional string filename = 1;</code>
    */
-  public java.lang.String getName() {
-    return name_;
+  public java.lang.String getFilename() {
+    return filename_;
   }
   /**
-   * <code>optional string name = 1;</code>
+   * <pre>
+   *with path
+   * </pre>
+   *
+   * <code>optional string filename = 1;</code>
    */
   public com.google.protobuf.ByteString
-      getNameBytes() {
-    return com.google.protobuf.ByteString.copyFromUtf8(name_);
+      getFilenameBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(filename_);
   }
   /**
-   * <code>optional string name = 1;</code>
+   * <pre>
+   *with path
+   * </pre>
+   *
+   * <code>optional string filename = 1;</code>
    */
-  private void setName(
+  private void setFilename(
       java.lang.String value) {
     if (value == null) {
     throw new NullPointerException();
   }
   
-    name_ = value;
+    filename_ = value;
   }
   /**
-   * <code>optional string name = 1;</code>
+   * <pre>
+   *with path
+   * </pre>
+   *
+   * <code>optional string filename = 1;</code>
    */
-  private void clearName() {
+  private void clearFilename() {
     
-    name_ = getDefaultInstance().getName();
+    filename_ = getDefaultInstance().getFilename();
   }
   /**
-   * <code>optional string name = 1;</code>
+   * <pre>
+   *with path
+   * </pre>
+   *
+   * <code>optional string filename = 1;</code>
    */
-  private void setNameBytes(
+  private void setFilenameBytes(
       com.google.protobuf.ByteString value) {
     if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
     
-    name_ = value.toStringUtf8();
+    filename_ = value.toStringUtf8();
   }
 
-  public static final int SIZE_FIELD_NUMBER = 2;
+  public static final int FILETYPE_FIELD_NUMBER = 2;
+  private int filetype_;
+  /**
+   * <code>optional .StorageCloud.FileType filetype = 2;</code>
+   */
+  public int getFiletypeValue() {
+    return filetype_;
+  }
+  /**
+   * <code>optional .StorageCloud.FileType filetype = 2;</code>
+   */
+  public pl.edu.pw.elka.llepak.tinbox.protobuf.FileType getFiletype() {
+    pl.edu.pw.elka.llepak.tinbox.protobuf.FileType result = pl.edu.pw.elka.llepak.tinbox.protobuf.FileType.forNumber(filetype_);
+    return result == null ? pl.edu.pw.elka.llepak.tinbox.protobuf.FileType.UNRECOGNIZED : result;
+  }
+  /**
+   * <code>optional .StorageCloud.FileType filetype = 2;</code>
+   */
+  private void setFiletypeValue(int value) {
+      filetype_ = value;
+  }
+  /**
+   * <code>optional .StorageCloud.FileType filetype = 2;</code>
+   */
+  private void setFiletype(pl.edu.pw.elka.llepak.tinbox.protobuf.FileType value) {
+    if (value == null) {
+      throw new NullPointerException();
+    }
+    
+    filetype_ = value.getNumber();
+  }
+  /**
+   * <code>optional .StorageCloud.FileType filetype = 2;</code>
+   */
+  private void clearFiletype() {
+    
+    filetype_ = 0;
+  }
+
+  public static final int SIZE_FIELD_NUMBER = 3;
   private long size_;
   /**
-   * <code>optional int64 size = 2;</code>
+   * <pre>
+   *for directory it's files count inside
+   * </pre>
+   *
+   * <code>optional uint64 size = 3;</code>
    */
   public long getSize() {
     return size_;
   }
   /**
-   * <code>optional int64 size = 2;</code>
+   * <pre>
+   *for directory it's files count inside
+   * </pre>
+   *
+   * <code>optional uint64 size = 3;</code>
    */
   private void setSize(long value) {
     
     size_ = value;
   }
   /**
-   * <code>optional int64 size = 2;</code>
+   * <pre>
+   *for directory it's files count inside
+   * </pre>
+   *
+   * <code>optional uint64 size = 3;</code>
    */
   private void clearSize() {
     
     size_ = 0L;
   }
 
-  public static final int METADATA_FIELD_NUMBER = 3;
+  public static final int HASH_FIELD_NUMBER = 4;
+  private com.google.protobuf.ByteString hash_;
+  /**
+   * <pre>
+   * empty for directory
+   * </pre>
+   *
+   * <code>optional bytes hash = 4;</code>
+   */
+  public com.google.protobuf.ByteString getHash() {
+    return hash_;
+  }
+  /**
+   * <pre>
+   * empty for directory
+   * </pre>
+   *
+   * <code>optional bytes hash = 4;</code>
+   */
+  private void setHash(com.google.protobuf.ByteString value) {
+    if (value == null) {
+    throw new NullPointerException();
+  }
+  
+    hash_ = value;
+  }
+  /**
+   * <pre>
+   * empty for directory
+   * </pre>
+   *
+   * <code>optional bytes hash = 4;</code>
+   */
+  private void clearHash() {
+    
+    hash_ = getDefaultInstance().getHash();
+  }
+
+  public static final int OWNER_FIELD_NUMBER = 5;
+  private java.lang.String owner_;
+  /**
+   * <code>optional string owner = 5;</code>
+   */
+  public java.lang.String getOwner() {
+    return owner_;
+  }
+  /**
+   * <code>optional string owner = 5;</code>
+   */
+  public com.google.protobuf.ByteString
+      getOwnerBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(owner_);
+  }
+  /**
+   * <code>optional string owner = 5;</code>
+   */
+  private void setOwner(
+      java.lang.String value) {
+    if (value == null) {
+    throw new NullPointerException();
+  }
+  
+    owner_ = value;
+  }
+  /**
+   * <code>optional string owner = 5;</code>
+   */
+  private void clearOwner() {
+    
+    owner_ = getDefaultInstance().getOwner();
+  }
+  /**
+   * <code>optional string owner = 5;</code>
+   */
+  private void setOwnerBytes(
+      com.google.protobuf.ByteString value) {
+    if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+    
+    owner_ = value.toStringUtf8();
+  }
+
+  public static final int CREATIONDATE_FIELD_NUMBER = 6;
+  private long creationDate_;
+  /**
+   * <code>optional uint64 creationDate = 6;</code>
+   */
+  public long getCreationDate() {
+    return creationDate_;
+  }
+  /**
+   * <code>optional uint64 creationDate = 6;</code>
+   */
+  private void setCreationDate(long value) {
+    
+    creationDate_ = value;
+  }
+  /**
+   * <code>optional uint64 creationDate = 6;</code>
+   */
+  private void clearCreationDate() {
+    
+    creationDate_ = 0L;
+  }
+
+  public static final int METADATA_FIELD_NUMBER = 7;
   private com.google.protobuf.Internal.ProtobufList<pl.edu.pw.elka.llepak.tinbox.protobuf.Param> metadata_;
   /**
-   * <code>repeated .StorageCloud.Param metadata = 3;</code>
+   * <code>repeated .StorageCloud.Param metadata = 7;</code>
    */
   public java.util.List<pl.edu.pw.elka.llepak.tinbox.protobuf.Param> getMetadataList() {
     return metadata_;
   }
   /**
-   * <code>repeated .StorageCloud.Param metadata = 3;</code>
+   * <code>repeated .StorageCloud.Param metadata = 7;</code>
    */
   public java.util.List<? extends pl.edu.pw.elka.llepak.tinbox.protobuf.ParamOrBuilder> 
       getMetadataOrBuilderList() {
     return metadata_;
   }
   /**
-   * <code>repeated .StorageCloud.Param metadata = 3;</code>
+   * <code>repeated .StorageCloud.Param metadata = 7;</code>
    */
   public int getMetadataCount() {
     return metadata_.size();
   }
   /**
-   * <code>repeated .StorageCloud.Param metadata = 3;</code>
+   * <code>repeated .StorageCloud.Param metadata = 7;</code>
    */
   public pl.edu.pw.elka.llepak.tinbox.protobuf.Param getMetadata(int index) {
     return metadata_.get(index);
   }
   /**
-   * <code>repeated .StorageCloud.Param metadata = 3;</code>
+   * <code>repeated .StorageCloud.Param metadata = 7;</code>
    */
   public pl.edu.pw.elka.llepak.tinbox.protobuf.ParamOrBuilder getMetadataOrBuilder(
       int index) {
@@ -127,7 +307,7 @@ public  final class File extends
   }
 
   /**
-   * <code>repeated .StorageCloud.Param metadata = 3;</code>
+   * <code>repeated .StorageCloud.Param metadata = 7;</code>
    */
   private void setMetadata(
       int index, pl.edu.pw.elka.llepak.tinbox.protobuf.Param value) {
@@ -138,7 +318,7 @@ public  final class File extends
     metadata_.set(index, value);
   }
   /**
-   * <code>repeated .StorageCloud.Param metadata = 3;</code>
+   * <code>repeated .StorageCloud.Param metadata = 7;</code>
    */
   private void setMetadata(
       int index, pl.edu.pw.elka.llepak.tinbox.protobuf.Param.Builder builderForValue) {
@@ -146,7 +326,7 @@ public  final class File extends
     metadata_.set(index, builderForValue.build());
   }
   /**
-   * <code>repeated .StorageCloud.Param metadata = 3;</code>
+   * <code>repeated .StorageCloud.Param metadata = 7;</code>
    */
   private void addMetadata(pl.edu.pw.elka.llepak.tinbox.protobuf.Param value) {
     if (value == null) {
@@ -156,7 +336,7 @@ public  final class File extends
     metadata_.add(value);
   }
   /**
-   * <code>repeated .StorageCloud.Param metadata = 3;</code>
+   * <code>repeated .StorageCloud.Param metadata = 7;</code>
    */
   private void addMetadata(
       int index, pl.edu.pw.elka.llepak.tinbox.protobuf.Param value) {
@@ -167,7 +347,7 @@ public  final class File extends
     metadata_.add(index, value);
   }
   /**
-   * <code>repeated .StorageCloud.Param metadata = 3;</code>
+   * <code>repeated .StorageCloud.Param metadata = 7;</code>
    */
   private void addMetadata(
       pl.edu.pw.elka.llepak.tinbox.protobuf.Param.Builder builderForValue) {
@@ -175,7 +355,7 @@ public  final class File extends
     metadata_.add(builderForValue.build());
   }
   /**
-   * <code>repeated .StorageCloud.Param metadata = 3;</code>
+   * <code>repeated .StorageCloud.Param metadata = 7;</code>
    */
   private void addMetadata(
       int index, pl.edu.pw.elka.llepak.tinbox.protobuf.Param.Builder builderForValue) {
@@ -183,7 +363,7 @@ public  final class File extends
     metadata_.add(index, builderForValue.build());
   }
   /**
-   * <code>repeated .StorageCloud.Param metadata = 3;</code>
+   * <code>repeated .StorageCloud.Param metadata = 7;</code>
    */
   private void addAllMetadata(
       java.lang.Iterable<? extends pl.edu.pw.elka.llepak.tinbox.protobuf.Param> values) {
@@ -192,13 +372,13 @@ public  final class File extends
         values, metadata_);
   }
   /**
-   * <code>repeated .StorageCloud.Param metadata = 3;</code>
+   * <code>repeated .StorageCloud.Param metadata = 7;</code>
    */
   private void clearMetadata() {
     metadata_ = emptyProtobufList();
   }
   /**
-   * <code>repeated .StorageCloud.Param metadata = 3;</code>
+   * <code>repeated .StorageCloud.Param metadata = 7;</code>
    */
   private void removeMetadata(int index) {
     ensureMetadataIsMutable();
@@ -207,14 +387,26 @@ public  final class File extends
 
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!name_.isEmpty()) {
-      output.writeString(1, getName());
+    if (!filename_.isEmpty()) {
+      output.writeString(1, getFilename());
+    }
+    if (filetype_ != pl.edu.pw.elka.llepak.tinbox.protobuf.FileType.NULL6.getNumber()) {
+      output.writeEnum(2, filetype_);
     }
     if (size_ != 0L) {
-      output.writeInt64(2, size_);
+      output.writeUInt64(3, size_);
+    }
+    if (!hash_.isEmpty()) {
+      output.writeBytes(4, hash_);
+    }
+    if (!owner_.isEmpty()) {
+      output.writeString(5, getOwner());
+    }
+    if (creationDate_ != 0L) {
+      output.writeUInt64(6, creationDate_);
     }
     for (int i = 0; i < metadata_.size(); i++) {
-      output.writeMessage(3, metadata_.get(i));
+      output.writeMessage(7, metadata_.get(i));
     }
   }
 
@@ -223,17 +415,33 @@ public  final class File extends
     if (size != -1) return size;
 
     size = 0;
-    if (!name_.isEmpty()) {
+    if (!filename_.isEmpty()) {
       size += com.google.protobuf.CodedOutputStream
-        .computeStringSize(1, getName());
+        .computeStringSize(1, getFilename());
+    }
+    if (filetype_ != pl.edu.pw.elka.llepak.tinbox.protobuf.FileType.NULL6.getNumber()) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeEnumSize(2, filetype_);
     }
     if (size_ != 0L) {
       size += com.google.protobuf.CodedOutputStream
-        .computeInt64Size(2, size_);
+        .computeUInt64Size(3, size_);
+    }
+    if (!hash_.isEmpty()) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeBytesSize(4, hash_);
+    }
+    if (!owner_.isEmpty()) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeStringSize(5, getOwner());
+    }
+    if (creationDate_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeUInt64Size(6, creationDate_);
     }
     for (int i = 0; i < metadata_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(3, metadata_.get(i));
+        .computeMessageSize(7, metadata_.get(i));
     }
     memoizedSerializedSize = size;
     return size;
@@ -322,53 +530,118 @@ public  final class File extends
 
 
     /**
-     * <code>optional string name = 1;</code>
+     * <pre>
+     *with path
+     * </pre>
+     *
+     * <code>optional string filename = 1;</code>
      */
-    public java.lang.String getName() {
-      return instance.getName();
+    public java.lang.String getFilename() {
+      return instance.getFilename();
     }
     /**
-     * <code>optional string name = 1;</code>
+     * <pre>
+     *with path
+     * </pre>
+     *
+     * <code>optional string filename = 1;</code>
      */
     public com.google.protobuf.ByteString
-        getNameBytes() {
-      return instance.getNameBytes();
+        getFilenameBytes() {
+      return instance.getFilenameBytes();
     }
     /**
-     * <code>optional string name = 1;</code>
+     * <pre>
+     *with path
+     * </pre>
+     *
+     * <code>optional string filename = 1;</code>
      */
-    public Builder setName(
+    public Builder setFilename(
         java.lang.String value) {
       copyOnWrite();
-      instance.setName(value);
+      instance.setFilename(value);
       return this;
     }
     /**
-     * <code>optional string name = 1;</code>
+     * <pre>
+     *with path
+     * </pre>
+     *
+     * <code>optional string filename = 1;</code>
      */
-    public Builder clearName() {
+    public Builder clearFilename() {
       copyOnWrite();
-      instance.clearName();
+      instance.clearFilename();
       return this;
     }
     /**
-     * <code>optional string name = 1;</code>
+     * <pre>
+     *with path
+     * </pre>
+     *
+     * <code>optional string filename = 1;</code>
      */
-    public Builder setNameBytes(
+    public Builder setFilenameBytes(
         com.google.protobuf.ByteString value) {
       copyOnWrite();
-      instance.setNameBytes(value);
+      instance.setFilenameBytes(value);
       return this;
     }
 
     /**
-     * <code>optional int64 size = 2;</code>
+     * <code>optional .StorageCloud.FileType filetype = 2;</code>
+     */
+    public int getFiletypeValue() {
+      return instance.getFiletypeValue();
+    }
+    /**
+     * <code>optional .StorageCloud.FileType filetype = 2;</code>
+     */
+    public Builder setFiletypeValue(int value) {
+      copyOnWrite();
+      instance.setFiletypeValue(value);
+      return this;
+    }
+    /**
+     * <code>optional .StorageCloud.FileType filetype = 2;</code>
+     */
+    public pl.edu.pw.elka.llepak.tinbox.protobuf.FileType getFiletype() {
+      return instance.getFiletype();
+    }
+    /**
+     * <code>optional .StorageCloud.FileType filetype = 2;</code>
+     */
+    public Builder setFiletype(pl.edu.pw.elka.llepak.tinbox.protobuf.FileType value) {
+      copyOnWrite();
+      instance.setFiletype(value);
+      return this;
+    }
+    /**
+     * <code>optional .StorageCloud.FileType filetype = 2;</code>
+     */
+    public Builder clearFiletype() {
+      copyOnWrite();
+      instance.clearFiletype();
+      return this;
+    }
+
+    /**
+     * <pre>
+     *for directory it's files count inside
+     * </pre>
+     *
+     * <code>optional uint64 size = 3;</code>
      */
     public long getSize() {
       return instance.getSize();
     }
     /**
-     * <code>optional int64 size = 2;</code>
+     * <pre>
+     *for directory it's files count inside
+     * </pre>
+     *
+     * <code>optional uint64 size = 3;</code>
      */
     public Builder setSize(long value) {
       copyOnWrite();
@@ -376,7 +649,11 @@ public  final class File extends
       return this;
     }
     /**
-     * <code>optional int64 size = 2;</code>
+     * <pre>
+     *for directory it's files count inside
+     * </pre>
+     *
+     * <code>optional uint64 size = 3;</code>
      */
     public Builder clearSize() {
       copyOnWrite();
@@ -385,25 +662,123 @@ public  final class File extends
     }
 
     /**
-     * <code>repeated .StorageCloud.Param metadata = 3;</code>
+     * <pre>
+     * empty for directory
+     * </pre>
+     *
+     * <code>optional bytes hash = 4;</code>
+     */
+    public com.google.protobuf.ByteString getHash() {
+      return instance.getHash();
+    }
+    /**
+     * <pre>
+     * empty for directory
+     * </pre>
+     *
+     * <code>optional bytes hash = 4;</code>
+     */
+    public Builder setHash(com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setHash(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * empty for directory
+     * </pre>
+     *
+     * <code>optional bytes hash = 4;</code>
+     */
+    public Builder clearHash() {
+      copyOnWrite();
+      instance.clearHash();
+      return this;
+    }
+
+    /**
+     * <code>optional string owner = 5;</code>
+     */
+    public java.lang.String getOwner() {
+      return instance.getOwner();
+    }
+    /**
+     * <code>optional string owner = 5;</code>
+     */
+    public com.google.protobuf.ByteString
+        getOwnerBytes() {
+      return instance.getOwnerBytes();
+    }
+    /**
+     * <code>optional string owner = 5;</code>
+     */
+    public Builder setOwner(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setOwner(value);
+      return this;
+    }
+    /**
+     * <code>optional string owner = 5;</code>
+     */
+    public Builder clearOwner() {
+      copyOnWrite();
+      instance.clearOwner();
+      return this;
+    }
+    /**
+     * <code>optional string owner = 5;</code>
+     */
+    public Builder setOwnerBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setOwnerBytes(value);
+      return this;
+    }
+
+    /**
+     * <code>optional uint64 creationDate = 6;</code>
+     */
+    public long getCreationDate() {
+      return instance.getCreationDate();
+    }
+    /**
+     * <code>optional uint64 creationDate = 6;</code>
+     */
+    public Builder setCreationDate(long value) {
+      copyOnWrite();
+      instance.setCreationDate(value);
+      return this;
+    }
+    /**
+     * <code>optional uint64 creationDate = 6;</code>
+     */
+    public Builder clearCreationDate() {
+      copyOnWrite();
+      instance.clearCreationDate();
+      return this;
+    }
+
+    /**
+     * <code>repeated .StorageCloud.Param metadata = 7;</code>
      */
     public java.util.List<pl.edu.pw.elka.llepak.tinbox.protobuf.Param> getMetadataList() {
       return java.util.Collections.unmodifiableList(
           instance.getMetadataList());
     }
     /**
-     * <code>repeated .StorageCloud.Param metadata = 3;</code>
+     * <code>repeated .StorageCloud.Param metadata = 7;</code>
      */
     public int getMetadataCount() {
       return instance.getMetadataCount();
     }/**
-     * <code>repeated .StorageCloud.Param metadata = 3;</code>
+     * <code>repeated .StorageCloud.Param metadata = 7;</code>
      */
     public pl.edu.pw.elka.llepak.tinbox.protobuf.Param getMetadata(int index) {
       return instance.getMetadata(index);
     }
     /**
-     * <code>repeated .StorageCloud.Param metadata = 3;</code>
+     * <code>repeated .StorageCloud.Param metadata = 7;</code>
      */
     public Builder setMetadata(
         int index, pl.edu.pw.elka.llepak.tinbox.protobuf.Param value) {
@@ -412,7 +787,7 @@ public  final class File extends
       return this;
     }
     /**
-     * <code>repeated .StorageCloud.Param metadata = 3;</code>
+     * <code>repeated .StorageCloud.Param metadata = 7;</code>
      */
     public Builder setMetadata(
         int index, pl.edu.pw.elka.llepak.tinbox.protobuf.Param.Builder builderForValue) {
@@ -421,7 +796,7 @@ public  final class File extends
       return this;
     }
     /**
-     * <code>repeated .StorageCloud.Param metadata = 3;</code>
+     * <code>repeated .StorageCloud.Param metadata = 7;</code>
      */
     public Builder addMetadata(pl.edu.pw.elka.llepak.tinbox.protobuf.Param value) {
       copyOnWrite();
@@ -429,7 +804,7 @@ public  final class File extends
       return this;
     }
     /**
-     * <code>repeated .StorageCloud.Param metadata = 3;</code>
+     * <code>repeated .StorageCloud.Param metadata = 7;</code>
      */
     public Builder addMetadata(
         int index, pl.edu.pw.elka.llepak.tinbox.protobuf.Param value) {
@@ -438,7 +813,7 @@ public  final class File extends
       return this;
     }
     /**
-     * <code>repeated .StorageCloud.Param metadata = 3;</code>
+     * <code>repeated .StorageCloud.Param metadata = 7;</code>
      */
     public Builder addMetadata(
         pl.edu.pw.elka.llepak.tinbox.protobuf.Param.Builder builderForValue) {
@@ -447,7 +822,7 @@ public  final class File extends
       return this;
     }
     /**
-     * <code>repeated .StorageCloud.Param metadata = 3;</code>
+     * <code>repeated .StorageCloud.Param metadata = 7;</code>
      */
     public Builder addMetadata(
         int index, pl.edu.pw.elka.llepak.tinbox.protobuf.Param.Builder builderForValue) {
@@ -456,7 +831,7 @@ public  final class File extends
       return this;
     }
     /**
-     * <code>repeated .StorageCloud.Param metadata = 3;</code>
+     * <code>repeated .StorageCloud.Param metadata = 7;</code>
      */
     public Builder addAllMetadata(
         java.lang.Iterable<? extends pl.edu.pw.elka.llepak.tinbox.protobuf.Param> values) {
@@ -465,7 +840,7 @@ public  final class File extends
       return this;
     }
     /**
-     * <code>repeated .StorageCloud.Param metadata = 3;</code>
+     * <code>repeated .StorageCloud.Param metadata = 7;</code>
      */
     public Builder clearMetadata() {
       copyOnWrite();
@@ -473,7 +848,7 @@ public  final class File extends
       return this;
     }
     /**
-     * <code>repeated .StorageCloud.Param metadata = 3;</code>
+     * <code>repeated .StorageCloud.Param metadata = 7;</code>
      */
     public Builder removeMetadata(int index) {
       copyOnWrite();
@@ -503,10 +878,17 @@ public  final class File extends
       case VISIT: {
         Visitor visitor = (Visitor) arg0;
         pl.edu.pw.elka.llepak.tinbox.protobuf.File other = (pl.edu.pw.elka.llepak.tinbox.protobuf.File) arg1;
-        name_ = visitor.visitString(!name_.isEmpty(), name_,
-            !other.name_.isEmpty(), other.name_);
+        filename_ = visitor.visitString(!filename_.isEmpty(), filename_,
+            !other.filename_.isEmpty(), other.filename_);
+        filetype_ = visitor.visitInt(filetype_ != 0, filetype_,    other.filetype_ != 0, other.filetype_);
         size_ = visitor.visitLong(size_ != 0L, size_,
             other.size_ != 0L, other.size_);
+        hash_ = visitor.visitByteString(hash_ != com.google.protobuf.ByteString.EMPTY, hash_,
+            other.hash_ != com.google.protobuf.ByteString.EMPTY, other.hash_);
+        owner_ = visitor.visitString(!owner_.isEmpty(), owner_,
+            !other.owner_.isEmpty(), other.owner_);
+        creationDate_ = visitor.visitLong(creationDate_ != 0L, creationDate_,
+            other.creationDate_ != 0L, other.creationDate_);
         metadata_= visitor.visitList(metadata_, other.metadata_);
         if (visitor == com.google.protobuf.GeneratedMessageLite.MergeFromVisitor
             .INSTANCE) {
@@ -536,15 +918,37 @@ public  final class File extends
               case 10: {
                 String s = input.readStringRequireUtf8();
 
-                name_ = s;
+                filename_ = s;
                 break;
               }
               case 16: {
+                int rawValue = input.readEnum();
 
-                size_ = input.readInt64();
+                filetype_ = rawValue;
                 break;
               }
-              case 26: {
+              case 24: {
+
+                size_ = input.readUInt64();
+                break;
+              }
+              case 34: {
+
+                hash_ = input.readBytes();
+                break;
+              }
+              case 42: {
+                String s = input.readStringRequireUtf8();
+
+                owner_ = s;
+                break;
+              }
+              case 48: {
+
+                creationDate_ = input.readUInt64();
+                break;
+              }
+              case 58: {
                 if (!metadata_.isModifiable()) {
                   metadata_ =
                       com.google.protobuf.GeneratedMessageLite.mutableCopy(metadata_);

@@ -8,9 +8,9 @@ import pl.edu.pw.elka.llepak.tinbox.protobuf.ResponseType
 import pl.edu.pw.elka.llepak.tinbox.protobuf.ServerResponse
 import java.net.SocketTimeoutException
 
-class LoginTask(private val username: String, private val password: String): AsyncTask<Unit, Unit, Boolean>() {
+class LoginTask(private val username: String, private val password: String): AsyncTask<Unit, Unit, Pair<ServerResponse, ResponseType>>() {
 
-    override fun doInBackground(vararg params: Unit?): Boolean {
+    override fun doInBackground(vararg params: Unit?): Pair<ServerResponse, ResponseType> {
         val usernameParam = Connection.messageBuilder.buildParam("username", username)
         val passwordParam = Connection.messageBuilder.buildParam("password", password)
         val loginObject = Connection.messageBuilder.buildCommand(CommandType.LOGIN, mutableListOf(usernameParam, passwordParam))
@@ -21,18 +21,6 @@ class LoginTask(private val username: String, private val password: String): Asy
             responseType = response.type
         }
         catch (e: Exception) {}
-        return when (responseType) {
-            ResponseType.LOGGED -> {
-                Log.i("sid_login", response.getParams(0).bParamVal.toString("UTF-16"))
-                Connection.sid = response.getParams(0).bParamVal
-                Connection.username = username
-                true
-            }
-            ResponseType.ERROR -> false
-            else -> {
-                Connection.reconnect()
-                false
-            }
-        }
+        return Pair(response, responseType)
     }
 }

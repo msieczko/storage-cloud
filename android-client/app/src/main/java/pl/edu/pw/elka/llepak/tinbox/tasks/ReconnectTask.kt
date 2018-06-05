@@ -2,6 +2,7 @@ package pl.edu.pw.elka.llepak.tinbox.tasks
 
 import android.os.AsyncTask
 import pl.edu.pw.elka.llepak.tinbox.Connection
+import pl.edu.pw.elka.llepak.tinbox.Connection.TIMEOUT
 import pl.edu.pw.elka.llepak.tinbox.Connection.connect
 import pl.edu.pw.elka.llepak.tinbox.Connection.socket
 import java.net.InetSocketAddress

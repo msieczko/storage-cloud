@@ -6,8 +6,8 @@ import pl.edu.pw.elka.llepak.tinbox.protobuf.CommandType
 import pl.edu.pw.elka.llepak.tinbox.protobuf.ResponseType
 import pl.edu.pw.elka.llepak.tinbox.protobuf.ServerResponse
 
-class ReloginTask: AsyncTask<Unit, Unit, Boolean>() {
-    override fun doInBackground(vararg params: Unit?): Boolean {
+class ReloginTask: AsyncTask<Unit, Unit, Pair<ServerResponse, ResponseType>>() {
+    override fun doInBackground(vararg params: Unit?): Pair<ServerResponse, ResponseType> {
         val sidParam = Connection.messageBuilder.buildParam("sid", Connection.sid)
         val userParam = Connection.messageBuilder.buildParam("username", Connection.username)
 
@@ -20,13 +20,6 @@ class ReloginTask: AsyncTask<Unit, Unit, Boolean>() {
             responseType = response.type
         }
         catch (e: Exception) {}
-        return when(responseType) {
-            ResponseType.LOGGED -> {
-                Connection.sid = response.getParams(0).bParamVal
-                true
-            }
-            ResponseType.ERROR -> false
-            else -> false
-        }
+        return Pair(response, responseType)
     }
 }

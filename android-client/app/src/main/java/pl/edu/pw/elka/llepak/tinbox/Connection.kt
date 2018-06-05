@@ -19,7 +19,6 @@ object Connection {
     const val PORT = 52137
     const val TIMEOUT = 5000
 
-    val hashAlgorithm = HashAlgorithm.H_SHA512
     var encryptionAlgorithm = EncryptionAlgorithm.NOENCRYPTION
     val defaulEncryptionAlgorithm = EncryptionAlgorithm.CAESAR
 
@@ -61,6 +60,8 @@ object Connection {
             connectData.postValue(connected)
             if (connected)
                 connectionData.postValue(message)
+            else
+                errorData.postValue("Error while connecting!")
         }).start()
     }
 
@@ -69,19 +70,25 @@ object Connection {
         val handshake = HandshakeTask(defaulEncryptionAlgorithm)
         handshake.execute()
         Thread({
-            connectData.postValue(handshake.get())
+            val (response, responseType) = handshake.get()
+            when (responseType) {
+                ResponseType.OK -> {
+                    connectData.postValue(true)
+                    connectionData.postValue("Handshake successful!")
+                }
+                ResponseType.ERROR -> {
+                    connectData.postValue(false)
+                    val errorMsg = response.getParams(0).sParamVal
+                    errorData.postValue(errorMsg)
+                }
+            }
         }).start()
     }
 
-    fun sendHandshake(handshake: Handshake) {
+    fun sendHandshake(handshake: Handshake): ServerResponse {
         sendWithoutResponse(MessageType.HANDSHAKE, handshake.toByteArray())
-    }
-
-    fun getHandshakeAnswer(): ResponseType {
-        val received = socket.getInputStream()
-        val receiveBuffer = ByteArray(4)
-        received.read(receiveBuffer, 0, 4)
-        return messageDecoder.decodeMessage(receiveBuffer, received).type
+        encryptionAlgorithm = defaulEncryptionAlgorithm
+        return getResponse()
     }
 
 
@@ -92,22 +99,23 @@ object Connection {
     }
 
     private fun sendWithResponse(type: MessageType, data: ByteArray): ServerResponse {
+        sendWithoutResponse(type, data)
+        return getResponse()
+    }
+
+    private fun sendWithoutResponse(type: MessageType, data: ByteArray) {
         val encodedMessage = messageBuilder.buildEncodedMessage(type, data)
 
         val toSend = messageBuilder.prepareToSend(encodedMessage)
 
         socket.getOutputStream().write(toSend)
+    }
 
+    private fun getResponse(): ServerResponse {
         val received = socket.getInputStream()
         val receiveBuffer = ByteArray(4)
         received.read(receiveBuffer, 0, 4)
         return messageDecoder.decodeMessage(receiveBuffer, received)
-    }
-
-    fun sendWithoutResponse(type: MessageType, byteData: ByteArray) {
-        val encodedMessage = messageBuilder.buildEncodedMessage(type, byteData)
-        val toSend = messageBuilder.prepareToSend(encodedMessage)
-        socket.getOutputStream().write(toSend)
     }
 
     fun reconnect() {
@@ -131,9 +139,7 @@ object Connection {
         Thread({
             val reconnected = reconnectTask.get()
             if (reconnected) {
-                HandshakeTask(defaulEncryptionAlgorithm).execute().get()
-                Log.i("sid", sid.toString("UTF-16"))
-                Log.i("username", username)
+                sendHandshake()
                 if (sid != ByteString.EMPTY && username != "")
                     relogin()
                 else
@@ -160,11 +166,18 @@ object Connection {
             }
         }
         Thread({
-            val logged = reloginTask.get()
-            if (logged)
-                connectionData.postValue("Logged in as $username")
-            else
-                errorData.postValue("Error while relogging")
+            val (response, responseType) = reloginTask.get()
+            when(responseType) {
+                ResponseType.LOGGED -> {
+                    Connection.sid = response.getParams(0).bParamVal
+                    connectionData.postValue("Logged in as $username")
+                }
+                ResponseType.ERROR -> {
+                    val errorMsg = response.getParams(0).sParamVal
+                    errorData.postValue(errorMsg)
+                }
+                else -> errorData.postValue("Error while relogging")
+            }
         }).start()
     }
 }

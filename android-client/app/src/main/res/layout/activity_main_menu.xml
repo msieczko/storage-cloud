@@ -16,6 +16,12 @@
             android:layout_height="wrap_content"
             android:id="@+id/file_list_button"/>
 
+    <Button
+            android:text="@string/upload_file"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/upload_file_button"/>
+
     <ProgressBar
             android:id="@+id/main_menu_progress"
             style="?android:attr/progressBarStyle"
