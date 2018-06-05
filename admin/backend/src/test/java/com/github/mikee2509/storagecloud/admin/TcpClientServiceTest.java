@@ -59,6 +59,7 @@ public class TcpClientServiceTest {
 
         loginPacket = Packet.builder()
                 .hashAlgorithm(hAlgorithm)
+                .encryptionAlgorithm(eAlgorithm)
                 .command()
                 .type(CommandType.LOGIN)
                 .addParam(USERNAME.toString()).ofValue(username)
@@ -67,6 +68,7 @@ public class TcpClientServiceTest {
 
         logoutPacket = Packet.builder()
                 .hashAlgorithm(hAlgorithm)
+                .encryptionAlgorithm(eAlgorithm)
                 .command()
                 .type(CommandType.LOGOUT)
                 .build();
@@ -106,6 +108,7 @@ public class TcpClientServiceTest {
     public void testLoginWithWrongCredentials() throws IOException, ServerResponseParserException {
         Packet wrongCredentialsLoginPacket = Packet.builder()
                 .hashAlgorithm(hAlgorithm)
+                .encryptionAlgorithm(eAlgorithm)
                 .command()
                 .type(CommandType.LOGIN)
                 .addParam("username").ofValue(username)
@@ -141,6 +144,7 @@ public class TcpClientServiceTest {
 
         Packet reloginPacket = Packet.builder()
                 .hashAlgorithm(hAlgorithm)
+                .encryptionAlgorithm(eAlgorithm)
                 .command()
                 .type(CommandType.RELOGIN)
                 .addParam(SID.toString()).ofValue(sid)
@@ -165,12 +169,35 @@ public class TcpClientServiceTest {
 
         Packet listFilesPacket = Packet.builder()
                 .hashAlgorithm(hAlgorithm)
+                .encryptionAlgorithm(eAlgorithm)
                 .command()
                 .type(CommandType.LIST_FILES)
                 .addParam(PATH.toString()).ofValue("/")
                 .build();
 
         ServerResponse serverResponse = client.sendPacket(listFilesPacket).parseServerResponse(eAlgorithm);
+        log.info(serverResponse.toString());
+
+        sendLogout();
+        client.closeConnection();
+    }
+
+    @Test
+    public void testListUserFiles() throws IOException, ServerResponseParserException {
+        client.openConnection();
+        sendHandshake();
+        sendLogin();
+
+        Packet listUserFilesPacket = Packet.builder()
+                .hashAlgorithm(hAlgorithm)
+                .encryptionAlgorithm(eAlgorithm)
+                .command()
+                .type(CommandType.LIST_USER_FILES)
+                .addParam(USERNAME.toString()).ofValue("miloszXD")
+                .addParam(PATH.toString()).ofValue("/test_dirXDD")
+                .build();
+
+        ServerResponse serverResponse = client.sendPacket(listUserFilesPacket).parseServerResponse(eAlgorithm);
         log.info(serverResponse.toString());
 
         sendLogout();

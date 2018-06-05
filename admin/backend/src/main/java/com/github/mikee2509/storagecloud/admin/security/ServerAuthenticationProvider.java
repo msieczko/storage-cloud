@@ -39,6 +39,7 @@ public class ServerAuthenticationProvider implements AuthenticationProvider {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
+        sendHandshake();
         ByteString sid = login(username, password);
         UserDetails userDetails = getUserDetails(username);
 
@@ -51,9 +52,23 @@ public class ServerAuthenticationProvider implements AuthenticationProvider {
         return Objects.equals(authentication, UsernamePasswordAuthenticationToken.class);
     }
 
+    private void sendHandshake() {
+        Packet handshake = Packet.builder()
+                .hashAlgorithm(hAlgorithm)
+                .handshake()
+                .negotiateEncryptionAlgorithm(eAlgorithm)
+                .build();
+        Packet response = openConnectionAndSend(handshake);
+        ServerResponse serverResponse = parse(response);
+        if (serverResponse.getType() != ResponseType.OK) {
+            throw new LoginException("Failed to negotiate encryption algorithm");
+        }
+    }
+
     private ByteString login(String username, String password) {
         Packet loginPacket = Packet.builder()
                 .hashAlgorithm(hAlgorithm)
+                .encryptionAlgorithm(eAlgorithm)
                 .command()
                 .type(CommandType.LOGIN)
                 .addParam(USERNAME.toString()).ofValue(username)
@@ -66,8 +81,10 @@ public class ServerAuthenticationProvider implements AuthenticationProvider {
     }
 
     public SessionDetails relogin(SessionDetails sessionDetails) {
+        sendHandshake();
         Packet reloginPacket = Packet.builder()
                 .hashAlgorithm(hAlgorithm)
+                .encryptionAlgorithm(eAlgorithm)
                 .command()
                 .type(CommandType.RELOGIN)
                 .addParam(SID.toString()).ofValue(sessionDetails.getSid())
@@ -85,6 +102,7 @@ public class ServerAuthenticationProvider implements AuthenticationProvider {
     public void logout() {
         Packet logoutPacket = Packet.builder()
                 .hashAlgorithm(hAlgorithm)
+                .encryptionAlgorithm(eAlgorithm)
                 .command()
                 .type(CommandType.LOGOUT)
                 .build();
@@ -148,6 +166,7 @@ public class ServerAuthenticationProvider implements AuthenticationProvider {
     private UserDetails getUserDetails(String username) {
         Packet listUsersPacket = Packet.builder()
                 .hashAlgorithm(hAlgorithm)
+                .encryptionAlgorithm(eAlgorithm)
                 .command()
                 .type(CommandType.LIST_USERS)
                 .build();

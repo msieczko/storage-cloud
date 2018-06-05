@@ -28,7 +28,7 @@ public class TcpClientService {
     private InputStream socketInputStream;
 
     public boolean isConnected() {
-        return clientSocket != null && !clientSocket.isClosed();
+        return clientSocket != null && clientSocket.isConnected() && !clientSocket.isClosed();
     }
 
     public void openConnection() throws IOException {
@@ -42,7 +42,7 @@ public class TcpClientService {
     }
 
     public Packet sendPacket(Packet packet) throws IOException {
-        if (clientSocket == null || clientSocket.isClosed()) {
+        if (!isConnected()) {
             throw new TcpClientException("No open connection");
         }
         socketOutputStream.write(packet.getData());
@@ -66,8 +66,8 @@ public class TcpClientService {
 
     @PreDestroy
     public void closeConnection() throws IOException {
-        socketInputStream.close();
-        socketOutputStream.close();
-        clientSocket.close();
+        if (socketInputStream != null) socketInputStream.close();
+        if (socketOutputStream != null) socketOutputStream.close();
+        if (clientSocket != null) clientSocket.close();
     }
 }

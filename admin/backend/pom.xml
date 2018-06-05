@@ -40,6 +40,20 @@
                 </resources>
             </build>
         </profile>
+        <profile>
+            <id>tcp</id>
+            <properties>
+                <activeProfile>tcp</activeProfile>
+            </properties>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                        <filtering>true</filtering>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
     </profiles>
 
     <dependencies>
