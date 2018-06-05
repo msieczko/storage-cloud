@@ -287,6 +287,7 @@ int main(int argc, char **argv) {
 
 //    UserManager::getInstance().deletePath(tmp_id, "/test_dirXD/lol3/lol");
 
+
     while(!should_exit) {
         c = getch();
 

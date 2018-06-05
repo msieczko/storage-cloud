@@ -393,6 +393,14 @@ bool User::shareInfoUser(const string& username, const string& filename, vector<
     return user_manager.shareInfo(fileId, res);
 }
 
+bool User::getWarnings(vector<string>& list) {
+    return user_manager.getWarningList(id, list);
+}
+
+bool User::warnUser(const string& username, const string& body) {
+    return user_manager.runAsUser(username , [&body, this](oid& id) -> bool {return user_manager.addWarning(id, body);});
+}
+
 ///---------------------UserManager---------------------
 
 UserManager::UserManager(Database& db_t, Logger& logger_t): db(db_t), logger(logger_t) {}
@@ -583,7 +591,7 @@ bool UserManager::registerUser(UDetails& user, const string& password, bool& use
         return false;
     }
 
-    setPasswd(tmp_id, password);
+    return setPasswd(tmp_id, password);
 }
 
 bool UserManager::listAllUsers(std::vector<UDetails>& res) {
@@ -1003,7 +1011,10 @@ bool UserManager::deleteUser(const string& username) {
 
     db.removeByOid("files", "owner", id);
     db.removeByOid("users", "_id", id);
-    db.removeFieldFromArrays("files", "sharedWith", "sharedWith.userId", make_document(kvp("userId", id)));
+
+    bsoncxx::types::b_oid id_obj;
+    id_obj.value = id;
+    db.removeFieldFromArrays("files", "sharedWith", "userId", bsoncxx::types::value{id_obj});
 
     return true;
 }
@@ -1260,6 +1271,28 @@ bool UserManager::shareInfo(oid& fileId, vector<string>& res) {
     stages.unwind("$sharedWith");
 
     return db.getFieldMAdvanced("files", "sharedWith", stages, res);
+}
+
+bool UserManager::getWarningList(oid& id, vector<string>& list) {
+    mongocxx::pipeline stages;
+
+    stages.match(make_document(kvp("_id", id)));
+    stages.project(make_document(kvp("warning", make_document(kvp("$map", make_document(
+            kvp("input", "$warnings"),
+            kvp("as", "warn"),
+            kvp("in", "$$warn.body")
+    )))), kvp("_id", 0)));
+    stages.unwind("$warning");
+
+    if(db.getFieldMAdvanced("users", "warning", stages, list)) {
+        return db.setField("users", "warnings", id, bsoncxx::types::value{bsoncxx::types::b_array{}});
+    }
+
+    return false;
+}
+
+bool UserManager::addWarning(oid& id, const string& body) {
+    return db.pushValToArr("users", "warnings", id, make_document(kvp("body", body)));
 }
 
 /**

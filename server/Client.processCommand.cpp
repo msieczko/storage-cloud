@@ -50,6 +50,11 @@ bool Client::processCommand(Command* cmd) {
             tmp_param->set_paramid("sid");
             tmp_param->set_bparamval(sid);
             logger->log(id, "user " + t_username + " logged in");
+            vector<string> warns;
+            u.getWarnings(warns);
+            for(auto& warn: warns) {
+                res.add_list(warn);
+            }
         } else {
             res.set_type(ResponseType::ERROR);
             Param* tmp_param = res.add_params();
@@ -108,6 +113,11 @@ bool Client::processCommand(Command* cmd) {
             tmp_param->set_paramid("sid");
             tmp_param->set_bparamval(sid);
             logger->log(id, "user " + t_username + " relogged in");
+            vector<string> warns;
+            u.getWarnings(warns);
+            for(auto& warn: warns) {
+                res.add_list(warn);
+            }
         } else {
             res.set_type(ResponseType::ERROR);
             Param* tmp_param = res.add_params();
@@ -379,6 +389,7 @@ bool Client::processCommand(Command* cmd) {
                 u_d.username = username;
                 u_d.name = name;
                 u_d.surname = surname;
+                u_d.role = USER_USER;
 
                 bool usernameTaken = false;
                 if(!UserManager::getInstance().registerUser(u_d, passwd, usernameTaken)) {
@@ -864,6 +875,35 @@ bool Client::processCommand(Command* cmd) {
                 }
             } else {
                 resError(res, "Wrong command format", "tried to get admin shared info, but command format was wrong");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::WARN) {
+        if(!(u.isAdmin())) {
+            resError(res, "Not enough permissions", "tried to warn user, but was not logged as admin");
+        } else {
+            string username, warnBody;
+            uint8_t validFields = 0;
+
+            for(auto& param: cmd->params()) {
+                if(param.paramid() == "user") {
+                    username = param.sparamval();
+                    validFields++;
+                } else if(param.paramid() == "message") {
+                    warnBody = param.sparamval();
+                    validFields++;
+                }
+            }
+
+            if(validFields == 2 && !username.empty() && !warnBody.empty()) {
+                if(u.warnUser(username, warnBody)) {
+                    res.set_type(ResponseType::OK);
+                } else {
+                    resError(res, "Error occured", "tried to warn user " + username + ", but error occured");
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to warn user, but command format was wrong");
             }
         }
 

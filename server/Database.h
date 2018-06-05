@@ -73,7 +73,7 @@ public:
     bool countField(string&&, string&&, const string&, string&&, bsoncxx::oid, uint64_t&);
     bool countField(string&&, string&&, const string&, uint64_t&);
     bool removeFieldFromArray(string&&, string&&, bsoncxx::oid, bsoncxx::document::value&&);
-    bool removeFieldFromArrays(string&&, string&&, string&&, bsoncxx::document::value&&);
+    bool removeFieldFromArrays(string&&, string&&, string&&, bsoncxx::types::value&&);
     bool pushValToArr(string&&, string&&, bsoncxx::oid, bsoncxx::document::value&&);
     bool insertDoc(string&&, bsoncxx::oid&, bsoncxx::builder::basic::document&);
     static bsoncxx::types::b_binary stringToBinary(const string&);

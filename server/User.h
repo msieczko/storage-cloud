@@ -94,9 +94,6 @@ public:
     uint8_t addFile(UFile&);
     bool addFileChunk(const string&);
     bool isAdmin();
-    bool getRole(uint8_t&);
-    bool getCapacity(uint64_t&);
-    bool getFreeSpace(uint64_t&);
     bool getYourStats(UDetails&);
     bool deleteFile(const string&);
     bool deleteUserFile(const string&, const string&);
@@ -111,6 +108,8 @@ public:
     bool clearCache();
     bool shareInfo(const string&, vector<string>&);
     bool shareInfoUser(const string&, const string&, vector<string>&);
+    bool getWarnings(vector<string>&);
+    bool warnUser(const string&, const string&);
 
     bool listUserFiles(string&, string&, vector<UFile>&);
     bool listUserShared(const string&, vector<UFile>&);
@@ -181,6 +180,8 @@ public:
     bool setTotalSpace(oid&, uint64_t&);
     bool changeFreeSpace(oid&, int64_t);
     bool shareInfo(oid& fileId, vector<string>&);
+    bool getWarningList(oid&, vector<string>&);
+    bool addWarning(oid&, const string&);
 
     bool runAsUser(const string&, std::function<bool(oid&)>);
 

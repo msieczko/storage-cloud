@@ -177,7 +177,7 @@ bool Database::getFieldM(string&& colName, string&& fieldName, bsoncxx::document
             logger->log(l_id, "getFieldM got empty result");
         }
 
-        return notEmpty;
+        return true;
     } catch (const std::exception& ex) {
         logger->err(l_id, "error while getting field multiple times: " + string(ex.what()));
         return false;
@@ -212,7 +212,7 @@ bool Database::getFieldMAdvanced(string&& colName, string&& fieldName, mongocxx:
             logger->log(l_id, "getFieldMAdvanced got empty result");
         }
 
-        return notEmpty;
+        return true;
     } catch (const std::exception& ex) {
         logger->err(l_id, "error while getting field multiple times advanced: " + string(ex.what()));
         return false;
@@ -526,7 +526,7 @@ bool Database::getFieldsAdvanced(string&& colName, mongocxx::pipeline& stages, v
             logger->log(l_id, "getFieldsAdvanced got empty result");
         }
 
-        return notEmpty;
+        return true;
     } catch (const std::exception& ex) {
         logger->err(l_id, "error while getting fields (4): " + string(ex.what()));
         return false;
@@ -682,10 +682,11 @@ bool Database::removeFieldFromArray(string&& colName, string&& arrayName, bsoncx
     return true;
 }
 
-bool Database::removeFieldFromArrays(string&& colName, string&& arrayName, string&& fullName, bsoncxx::document::value&& val) {
+bool Database::removeFieldFromArrays(string&& colName, string&& arrayName, string&& fieldName, bsoncxx::types::value&& val) {
+    string fullName = arrayName + "." + fieldName;
     try {
         db[colName].update_many(make_document(kvp(fullName, val)),
-                               make_document(kvp("$pull", make_document(kvp(arrayName, val)))));
+                               make_document(kvp("$pull", make_document(kvp(arrayName, make_document(kvp(fieldName, val)))))));
     } catch (const std::exception& ex) {
         logger->err(l_id, "error while removing field from arrays: " + string(ex.what()));
         return false;
