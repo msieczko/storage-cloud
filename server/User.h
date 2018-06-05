@@ -25,6 +25,8 @@
 
 #define OUT_FILE_CHUNK_SIZE 2048
 
+#define GARBAGE_COLLECTOR_TRESHOLD_MINUTES 30
+
 using bsoncxx::oid;
 using std::vector;
 
@@ -43,6 +45,8 @@ struct UFile {
     string owner_username;
     uint8_t type;
     string realPath;
+    bool isShared;
+    std::chrono::system_clock::time_point lastChunkTime;
 };
 
 struct UDetails {
@@ -103,6 +107,7 @@ public:
     bool shareWith(const string& filename, const string& username);
     bool unshareWith(const string& filename, const string& username);
     bool listShared(vector<UFile>&);
+    bool clearCache();
 
     bool listUserFiles(string&, string&, vector<UFile>&);
     bool listUserShared(const string&, vector<UFile>&);
@@ -120,6 +125,7 @@ private:
     explicit UserManager(Database&, Logger&);
     bool parseUserDetails(std::map<string, bsoncxx::types::value>&, UDetails&);
     bool getPasswdHash(oid&, string&);
+    void garbageCollectorMain(std::condition_variable&, bool&);
 
     bsoncxx::types::b_utf8 toUTF8(string&);
     bsoncxx::types::b_int64 toINT64(uint64_t i);
@@ -127,6 +133,8 @@ private:
     bsoncxx::types::b_oid toOID(oid);
     bsoncxx::types::b_bool toBool(bool);
     bsoncxx::types::b_binary toBinary(string&);
+
+
 
 //    string mapToString(std::map<string, bsoncxx::document::element>&);
 public:
@@ -163,6 +171,9 @@ public:
     bool unshareWith(oid& fileId, oid& userId);
     bool listSharedWithUser(oid&, vector<UFile>&);
     bool getFileFilename(oid&, string&);
+    bool updateLastChunkTime(UFile&);
+    bool collectOldUnfinished();
+    bool removeAllUnfinishedForUser(oid&);
 
     bool runAsUser(const string&, std::function<bool(oid&)>);
 
@@ -173,6 +184,8 @@ public:
         static UserManager instance(*db, *logger);
         return instance;
     }
+
+    std::thread startGarbageCollector(std::condition_variable&, bool&);
 };
 
 #endif //SERVER_USER_H

@@ -175,7 +175,10 @@ int main(int argc, char *argv[])
 
 
     cmd.clear_params();
-    cmd.set_type(StorageCloud::GET_STAT);
+    cmd.set_type(StorageCloud::LIST_FILES);
+    tmp_param = cmd.add_params();
+    tmp_param->set_paramid("path");
+    tmp_param->set_sparamval("/");
     delete data;
     data = new uint8_t[cmd.ByteSize()];
     cmd.SerializeToArray(data, cmd.ByteSize());
@@ -214,9 +217,9 @@ int main(int argc, char *argv[])
 
     cout<<"received response size: "<<rcv_siz<<endl;
 
-//
-close(sock);
-return 0;
+////
+//close(sock);
+//return 0;
 
 
 
@@ -352,7 +355,7 @@ return 0;
     tmp_param->set_bparamval(file_hash, SHA_DIGEST_LENGTH);
     tmp_param = cmd.add_params();
     tmp_param->set_paramid("target_file_path");
-    tmp_param->set_sparamval("/test_dirXDD/test.xd");
+    tmp_param->set_sparamval("/test_dirXDD/test.xd2");
     tmp_param = cmd.add_params();
     tmp_param->set_paramid("size");
     tmp_param->set_iparamval(length);
@@ -402,8 +405,6 @@ return 0;
     rcv_siz = (uint32_t) recv(sock, in_buf, 1024, NULL);
 
     cout<<"received response size: "<<rcv_siz<<endl;
-
-
 
 
 

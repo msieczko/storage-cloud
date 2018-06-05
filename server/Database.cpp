@@ -26,11 +26,9 @@ Database::Database(Logger* l) {
 }
 
 Database::~Database() {
-    logger->info(l_id, "closing database connection 0");
+    logger->info(l_id, "closing database connection");
     delete client;
-    logger->info(l_id, "closing database connection 1");
     delete inst;
-    logger->info(l_id, "closing database connection 2");
 }
 
 bool Database::getField(string& colName, string& fieldName, bsoncxx::oid id, bsoncxx::document::element& el) {
@@ -145,6 +143,47 @@ bool Database::getField(string&& colName, string&& fieldToGetName, string&& idFi
         return false;
     } catch (...) {
         logger->err(l_id, "error while getting field (2): unknown error");
+        return false;
+    }
+}
+
+bool Database::getFieldM(string&& colName, string&& fieldName, bsoncxx::document::value&& fDoc, std::vector<string>& res) {
+    auto doc = bsoncxx::builder::basic::document{};
+    doc.append(kvp("_id", 0));
+    doc.append(kvp(fieldName, 1));
+
+    mongocxx::options::find opts{};
+    opts.projection(doc.view());
+
+    try {
+        auto cursor = db[colName].find(fDoc.view(), opts);
+
+        bool notEmpty = false;
+
+        for (auto doc_v: cursor) {
+            notEmpty = true;
+
+            auto obj = doc_v.begin();
+
+            //TODO check if id was passed as field
+            if (distance(obj, doc_v.end()) != 1) {
+                logger->log(l_id, "getFieldM got too much fields");
+                return false;
+            }
+
+            res.emplace_back(bsoncxx::string::to_string(obj->get_utf8().value));
+        }
+
+        if(!notEmpty) {
+            logger->log(l_id, "getFieldM got empty result");
+        }
+
+        return notEmpty;
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while getting field multiple times: " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while getting field multiple times: unknown error");
         return false;
     }
 }
@@ -348,7 +387,7 @@ bool Database::getFields(string&& colName, vector<string>& fields, map<bsoncxx::
     }
 }
 
-bool Database::getFields(string&& colName, bsoncxx::document::value&& doc, vector<string>& fields, map<string, map<string, bsoncxx::types::value> >& elements) {
+bool Database::getFields(string&& colName, bsoncxx::document::value&& doc, const vector<string>& fields, map<string, map<string, bsoncxx::types::value> >& elements) {
     auto odoc = bsoncxx::builder::basic::document{};
 
     for(const auto &name: fields) {
@@ -502,6 +541,16 @@ bool Database::setField(string&& colName, string&& fieldName, bsoncxx::oid id, i
     bsoncxx::types::b_int64 tmp{};
     tmp.value = newVal;
     return setField(colName, fieldName, id, bsoncxx::types::value{tmp});
+}
+
+bool Database::setFieldCurrentDate(string&& colName, string&& fieldName, bsoncxx::oid id, std::chrono::system_clock::time_point& returnVal) {
+    bsoncxx::types::b_date tmp{std::chrono::system_clock::now()};
+    if(setField(colName, fieldName, id, bsoncxx::types::value{tmp})) {
+        returnVal = tmp;
+        return true;
+    }
+
+    return false;
 }
 
 bool Database::setField(string&& colName, string&& fieldName, bsoncxx::oid id, bool newVal) {

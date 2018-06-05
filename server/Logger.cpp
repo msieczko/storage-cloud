@@ -13,6 +13,11 @@ void Logger::print_msg() {
             queue_empty.wait(l);
         }
 
+        if(destroying) {
+            cout<<"\r[LOGGER] Bye!"<<endl;
+            break;
+        }
+
         bool printed = false;
 
         if(!msg_queue.empty()) {
@@ -49,9 +54,10 @@ void Logger::print_msg() {
 
             printed = true;
 
-            if (msg.body == "bye!" && *should_exit) {
-                break;
-            }
+
+//            if (msg.body == "bye!" && *should_exit) {
+//                break;
+//            }
         }
 
         if(input != nullptr) {
@@ -74,6 +80,8 @@ Logger::Logger(bool* s_e) {
 }
 
 Logger::~Logger() {
+    destroying = true;
+    queue_empty.notify_one();
     if(printer.joinable())
         printer.join();
 }

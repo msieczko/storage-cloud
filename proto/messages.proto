@@ -76,6 +76,7 @@ enum CommandType {
     CLEAR_CACHE = 27;
     CHANGE_QUOTA = 28;
     SHARED_DOWNLOAD = 29;
+    SHARED_INFO = 30;
 }
 
 enum FileType {
@@ -92,7 +93,7 @@ message File {
     string owner = 5;
     string ownerUsername = 6;
     uint64 creationDate = 7;
-    repeated Param sharedWith = 8; //usernames
+    bool isShared = 8; // if shared with anyone
 }
 
 enum UserRole {

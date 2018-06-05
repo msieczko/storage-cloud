@@ -26,6 +26,7 @@ private:
     std::string last_printed = "";
     std::thread printer;
     bool* should_exit;
+    bool destroying = false;
 
     void print_msg();
 

@@ -167,6 +167,10 @@ int main(int argc, char **argv) {
 
     UserManager u_m = UserManager::getInstance(&db, &logger);
 
+    std::condition_variable g_cond;
+
+    auto garbageCollector = u_m.startGarbageCollector(g_cond, should_exit);
+
 //    vector<User> allUsers;
 //    db.listUsers(allUsers);
 
@@ -332,10 +336,12 @@ int main(int argc, char **argv) {
     server_t.join();
 
     logger.info("main", "closing database connection");
+    logger.info("main", "joining garbage collector");
+    g_cond.notify_one();
+    garbageCollector.join();
 //    db.~Database();
 //    log"server closed"<<endl;
     logger.info("main", "bye!");
-    logger.~Logger();
     return 0;
 }
 

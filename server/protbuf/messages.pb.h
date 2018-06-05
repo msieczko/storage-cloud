@@ -171,12 +171,13 @@ enum CommandType {
   CLEAR_CACHE = 27,
   CHANGE_QUOTA = 28,
   SHARED_DOWNLOAD = 29,
+  SHARED_INFO = 30,
   CommandType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   CommandType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool CommandType_IsValid(int value);
 const CommandType CommandType_MIN = NULL1;
-const CommandType CommandType_MAX = SHARED_DOWNLOAD;
+const CommandType CommandType_MAX = SHARED_INFO;
 const int CommandType_ARRAYSIZE = CommandType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* CommandType_descriptor();
@@ -834,18 +835,6 @@ class File : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
 
   // accessors -------------------------------------------------------
 
-  // repeated .StorageCloud.Param metadata = 8;
-  int metadata_size() const;
-  void clear_metadata();
-  static const int kMetadataFieldNumber = 8;
-  const ::StorageCloud::Param& metadata(int index) const;
-  ::StorageCloud::Param* mutable_metadata(int index);
-  ::StorageCloud::Param* add_metadata();
-  ::google::protobuf::RepeatedPtrField< ::StorageCloud::Param >*
-      mutable_metadata();
-  const ::google::protobuf::RepeatedPtrField< ::StorageCloud::Param >&
-      metadata() const;
-
   // string filename = 1;
   void clear_filename();
   static const int kFilenameFieldNumber = 1;
@@ -908,30 +897,36 @@ class File : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   ::google::protobuf::uint64 size() const;
   void set_size(::google::protobuf::uint64 value);
 
-  // uint64 creationDate = 7;
-  void clear_creationdate();
-  static const int kCreationDateFieldNumber = 7;
-  ::google::protobuf::uint64 creationdate() const;
-  void set_creationdate(::google::protobuf::uint64 value);
-
   // .StorageCloud.FileType filetype = 2;
   void clear_filetype();
   static const int kFiletypeFieldNumber = 2;
   ::StorageCloud::FileType filetype() const;
   void set_filetype(::StorageCloud::FileType value);
 
+  // bool isShared = 8;
+  void clear_isshared();
+  static const int kIsSharedFieldNumber = 8;
+  bool isshared() const;
+  void set_isshared(bool value);
+
+  // uint64 creationDate = 7;
+  void clear_creationdate();
+  static const int kCreationDateFieldNumber = 7;
+  ::google::protobuf::uint64 creationdate() const;
+  void set_creationdate(::google::protobuf::uint64 value);
+
   // @@protoc_insertion_point(class_scope:StorageCloud.File)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::RepeatedPtrField< ::StorageCloud::Param > metadata_;
   ::google::protobuf::internal::ArenaStringPtr filename_;
   ::google::protobuf::internal::ArenaStringPtr hash_;
   ::google::protobuf::internal::ArenaStringPtr owner_;
   ::google::protobuf::internal::ArenaStringPtr ownerusername_;
   ::google::protobuf::uint64 size_;
-  ::google::protobuf::uint64 creationdate_;
   int filetype_;
+  bool isshared_;
+  ::google::protobuf::uint64 creationdate_;
   mutable int _cached_size_;
   friend struct ::protobuf_messages_2eproto::TableStruct;
   friend void ::protobuf_messages_2eproto::InitDefaultsFileImpl();
@@ -2241,34 +2236,18 @@ inline void File::set_creationdate(::google::protobuf::uint64 value) {
   // @@protoc_insertion_point(field_set:StorageCloud.File.creationDate)
 }
 
-// repeated .StorageCloud.Param metadata = 8;
-inline int File::metadata_size() const {
-  return metadata_.size();
+// bool isShared = 8;
+inline void File::clear_isshared() {
+  isshared_ = false;
 }
-inline void File::clear_metadata() {
-  metadata_.Clear();
+inline bool File::isshared() const {
+  // @@protoc_insertion_point(field_get:StorageCloud.File.isShared)
+  return isshared_;
 }
-inline const ::StorageCloud::Param& File::metadata(int index) const {
-  // @@protoc_insertion_point(field_get:StorageCloud.File.metadata)
-  return metadata_.Get(index);
-}
-inline ::StorageCloud::Param* File::mutable_metadata(int index) {
-  // @@protoc_insertion_point(field_mutable:StorageCloud.File.metadata)
-  return metadata_.Mutable(index);
-}
-inline ::StorageCloud::Param* File::add_metadata() {
-  // @@protoc_insertion_point(field_add:StorageCloud.File.metadata)
-  return metadata_.Add();
-}
-inline ::google::protobuf::RepeatedPtrField< ::StorageCloud::Param >*
-File::mutable_metadata() {
-  // @@protoc_insertion_point(field_mutable_list:StorageCloud.File.metadata)
-  return &metadata_;
-}
-inline const ::google::protobuf::RepeatedPtrField< ::StorageCloud::Param >&
-File::metadata() const {
-  // @@protoc_insertion_point(field_list:StorageCloud.File.metadata)
-  return metadata_;
+inline void File::set_isshared(bool value) {
+  
+  isshared_ = value;
+  // @@protoc_insertion_point(field_set:StorageCloud.File.isShared)
 }
 
 // -------------------------------------------------------------------

@@ -281,9 +281,7 @@ bool User::initSharedFileDownload(const string& filename, const string& ownerUse
 
     UFile file;
 
-    if(!user_manager.runAsUser(ownerUsername, [&file, &realFilename, this](oid& id) -> bool
-        {return user_manager.getYourFileMetadata(id, realFilename, file, FILE_REGULAR);})
-    ) {
+    if(!user_manager.getYourFileMetadata(ownerId, realFilename, file, FILE_REGULAR)) {
         return false;
     }
 
@@ -339,9 +337,27 @@ bool User::listUserShared(const string& username, vector<UFile>& list) {
     return user_manager.runAsUser(username, [&list, this](oid& id) -> bool {return user_manager.listSharedWithUser(id, list);});
 }
 
+bool User::clearCache() {
+    return user_manager.removeAllUnfinishedForUser(id);
+}
+
 ///---------------------UserManager---------------------
 
 UserManager::UserManager(Database& db_t, Logger& logger_t): db(db_t), logger(logger_t) {}
+
+std::thread UserManager::startGarbageCollector(std::condition_variable& g_cond, bool& should_exit) {
+    return std::thread(&UserManager::garbageCollectorMain, this, std::ref(g_cond), std::ref(should_exit));
+}
+
+void UserManager::garbageCollectorMain(std::condition_variable& g_cond, bool& should_exit) {
+    std::mutex g_mutex;
+    while (!should_exit) {
+        logger.log("UserManager", "running garbage collector");
+        collectOldUnfinished();
+        std::unique_lock<std::mutex> lock(g_mutex);
+        g_cond.wait_for(lock, std::chrono::minutes(5));
+    }
+}
 
 bool UserManager::getName(oid& id, string& res) {
     return db.getField("users", "name", id, res);
@@ -550,7 +566,7 @@ bool UserManager::listFilesinPath(oid& id, const string& path, vector<UFile>& fi
     fields.emplace_back("ownerName");
     fields.emplace_back("type");
     fields.emplace_back("hash");
-//    fields.emplace_back("isValid");
+    fields.emplace_back("isShared");
 
 //    map<string, bsoncxx::types::value> queryValues;
 //    queryValues.emplace("owner", id);
@@ -568,6 +584,10 @@ bool UserManager::listFilesinPath(oid& id, const string& path, vector<UFile>& fi
     stages.lookup(make_document(kvp("from", "users"), kvp("localField", "owner"), kvp("foreignField", "_id"), kvp("as", "ownerTMP")));
     stages.unwind("$ownerTMP");
     stages.add_fields(make_document(kvp("ownerName", make_document(kvp("$concat", make_array("$ownerTMP.name", " ", "$ownerTMP.surname"))))));
+    stages.add_fields(make_document(kvp("isShared", make_document(kvp("$and", make_array(
+            make_document(kvp("$eq", make_array(make_document(kvp("$type", "$sharedWith")), "array"))),
+            make_document(kvp("$gt", make_array(make_document(kvp("$size", "$sharedWith")), 0)))
+    ))))));
     stages.project(make_document(kvp("ownerTMP", 0), kvp("_id", 0)));
 
     if(!db.getFieldsAdvanced("files", stages, fields, mmap)) {
@@ -586,6 +606,7 @@ bool UserManager::listFilesinPath(oid& id, const string& path, vector<UFile>& fi
             tmp.owner_name = bsoncxx::string::to_string(usr.second.find("ownerName")->second.get_utf8().value);
             tmp.type = (uint8_t) usr.second.find("type")->second.get_int64().value;
             tmp.hash = string((const char*) usr.second.find("hash")->second.get_binary().bytes, usr.second.find("hash")->second.get_binary().size);
+            tmp.isShared = usr.second.find("isShared")->second.get_bool();
 
             files.emplace_back(tmp);
         }
@@ -741,6 +762,7 @@ bool UserManager::getYourFileMetadata(oid& id, const string& filename, UFile& fi
     fields.emplace_back("type");
     fields.emplace_back("hash");
     fields.emplace_back("isValid");
+    fields.emplace_back("isShared");
     fields.emplace_back("_id");
     if(type == FILE_REGULAR) {
         fields.emplace_back("lastValid");
@@ -753,6 +775,10 @@ bool UserManager::getYourFileMetadata(oid& id, const string& filename, UFile& fi
     stages.unwind("$ownerTMP");
     stages.add_fields(make_document(kvp("ownerName", make_document(kvp("$concat", make_array("$ownerTMP.name", " ", "$ownerTMP.surname")))),
                                     kvp("ownerUsername", "$ownerTMP.username")));
+    stages.add_fields(make_document(kvp("isShared", make_document(kvp("$and", make_array(
+            make_document(kvp("$eq", make_array(make_document(kvp("$type", "$sharedWith")), "array"))),
+            make_document(kvp("$gt", make_array(make_document(kvp("$size", "$sharedWith")), 0)))
+    ))))));
     stages.project(make_document(kvp("ownerTMP", 0)));
 
     if(!db.getFieldsAdvanced("files", stages, fields, mmap)) {
@@ -775,6 +801,7 @@ bool UserManager::getYourFileMetadata(oid& id, const string& filename, UFile& fi
         file.hash = string((const char*) tmp_file.second.find("hash")->second.get_binary().bytes, tmp_file.second.find("hash")->second.get_binary().size);
         file.isValid = tmp_file.second.find("isValid")->second.get_bool();
         file.id = tmp_file.second.find("_id")->second.get_oid().value;
+        file.isShared = tmp_file.second.find("isShared")->second.get_bool();
         if(type == FILE_REGULAR) {
             file.lastValid = (uint64_t) tmp_file.second.find("lastValid")->second.get_int64();
         }
@@ -818,7 +845,11 @@ bool UserManager::addFileChunk(UFile& file, const string& chunk) {
 
     file.lastValid += chunk.size();
 
-    return db.incField("files", file.id, "lastValid", chunk.size());
+    if(db.incField("files", file.id, "lastValid", chunk.size())) {
+        return updateLastChunkTime(file);
+    }
+
+    return false;
 }
 
 bool UserManager::validateFile(UFile& file) {
@@ -1068,6 +1099,7 @@ bool UserManager::listSharedWithUser(oid& id, vector<UFile>& list) {
             tmp.owner_username = bsoncxx::string::to_string(usr.second.find("ownerUsername")->second.get_utf8().value);
             tmp.type = (uint8_t) usr.second.find("type")->second.get_int64().value;
             tmp.hash = string((const char*) usr.second.find("hash")->second.get_binary().bytes, usr.second.find("hash")->second.get_binary().size);
+            tmp.isShared = true;
 
             list.emplace_back(tmp);
         }
@@ -1084,6 +1116,59 @@ bool UserManager::listSharedWithUser(oid& id, vector<UFile>& list) {
 
 bool UserManager::getFileFilename(oid& fileId, string& res) {
     return db.getField("files", "filename", fileId, res);
+}
+
+bool UserManager::updateLastChunkTime(UFile& file) {
+    return db.setFieldCurrentDate("files", "lastChunkTime", file.id, file.lastChunkTime);
+}
+
+bool UserManager::removeAllUnfinishedForUser(oid& id) {
+    vector<string> filesToDel;
+
+    if(!db.getFieldM("files", "filename", make_document(
+            kvp("isValid", false),
+            kvp("type", FILE_REGULAR),
+            kvp("owner", id)
+    ), filesToDel)){
+        return false;
+    }
+
+    logger.log(l_id, "deleting " + std::to_string(filesToDel.size()) + " unfinished files for user");
+
+    for(auto& file: filesToDel) {
+        if(!deleteFile(id, file)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool UserManager::collectOldUnfinished() {
+    std::chrono::system_clock::time_point curr = std::chrono::system_clock::now();
+    std::chrono::system_clock::time_point thresholdTime
+            = std::chrono::system_clock::time_point(curr - std::chrono::minutes(GARBAGE_COLLECTOR_TRESHOLD_MINUTES));
+
+    map<string, map<string, bsoncxx::types::value> > mmap;
+
+    if(!db.getFields("files", make_document(
+            kvp("isValid", false),
+            kvp("type", FILE_REGULAR),
+            kvp("lastChunkTime", make_document(kvp("$lt", bsoncxx::types::b_date(thresholdTime))))
+    ), vector<string>{"filename", "owner"}, mmap)){
+        return false;
+    }
+
+    logger.info(l_id, "deleting " + std::to_string(mmap.size()) + " old unfinished files");
+
+    for(auto& file: mmap) {
+        oid id = file.second.find("owner")->second.get_oid().value;
+        if(!deleteFile(id, file.first)) {
+            return false;
+        }
+    }
+
+    return true;
 }
 /**
 

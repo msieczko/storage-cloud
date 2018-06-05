@@ -170,6 +170,7 @@ bool Client::processCommand(Command* cmd) {
                     tmp_file->set_hash(file.hash);
                     tmp_file->set_owner(file.owner_name);
                     tmp_file->set_creationdate(file.creation_date);
+                    tmp_file->set_isshared(file.isShared);
                 }
 
                 res.set_type(ResponseType::FILES);
@@ -425,6 +426,7 @@ bool Client::processCommand(Command* cmd) {
                     tmp_file->set_hash(file.hash);
                     tmp_file->set_owner(file.owner_name);
                     tmp_file->set_creationdate(file.creation_date);
+                    tmp_file->set_isshared(file.isShared);
                 }
 
                 res.set_type(ResponseType::FILES);
@@ -691,6 +693,7 @@ bool Client::processCommand(Command* cmd) {
                     tmp_file->set_owner(file.owner_name);
                     tmp_file->set_ownerusername(file.owner_username);
                     tmp_file->set_creationdate(file.creation_date);
+                    tmp_file->set_isshared(file.isShared);
                 }
 
                 res.set_type(ResponseType::FILES);
@@ -716,6 +719,7 @@ bool Client::processCommand(Command* cmd) {
                         tmp_file->set_owner(file.owner_name);
                         tmp_file->set_ownerusername(file.owner_username);
                         tmp_file->set_creationdate(file.creation_date);
+                        tmp_file->set_isshared(file.isShared);
                     }
 
                     res.set_type(ResponseType::FILES);
@@ -763,6 +767,18 @@ bool Client::processCommand(Command* cmd) {
                 }
             } else {
                 resError(res, "Wrong command format", "tried to download shared file, but command format was wrong");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::CLEAR_CACHE) {
+        if(!(u.isValid() && u.isAuthorized())) {
+            resError(res, "You are not logged in", "tried to clear cache, but was not logged in");
+        } else {
+            if(u.clearCache()) {
+                res.set_type(ResponseType::OK);
+            } else {
+                resError(res, "Error occured", "tried to clear cache, but error occured");
             }
         }
 
