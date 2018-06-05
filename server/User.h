@@ -109,6 +109,8 @@ public:
     bool unshareWith(const string& filename, const string& username);
     bool listShared(vector<UFile>&);
     bool clearCache();
+    bool shareInfo(const string&, vector<string>&);
+    bool shareInfoUser(const string&, const string&, vector<string>&);
 
     bool listUserFiles(string&, string&, vector<UFile>&);
     bool listUserShared(const string&, vector<UFile>&);
@@ -178,6 +180,7 @@ public:
     bool removeAllUnfinishedForUser(oid&);
     bool setTotalSpace(oid&, uint64_t&);
     bool changeFreeSpace(oid&, int64_t);
+    bool shareInfo(oid& fileId, vector<string>&);
 
     bool runAsUser(const string&, std::function<bool(oid&)>);
 

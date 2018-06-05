@@ -376,6 +376,23 @@ bool User::changeUserTotalStorage(const string& username, uint64_t newVal) {
     return user_manager.setTotalSpace(userId, newVal);
 }
 
+bool User::shareInfo(const string& filename, vector<string>& res) {
+    oid fileId;
+    if(!user_manager.getFileId(id, filename, fileId)) {
+        return false;
+    }
+    return user_manager.shareInfo(fileId, res);
+}
+
+bool User::shareInfoUser(const string& username, const string& filename, vector<string>& res) {
+    oid fileId;
+    if(!user_manager.runAsUser(username , [&filename, &fileId, this](oid& id) -> bool {return user_manager.getFileId(id, filename, fileId);})) {
+        return false;
+    }
+
+    return user_manager.shareInfo(fileId, res);
+}
+
 ///---------------------UserManager---------------------
 
 UserManager::UserManager(Database& db_t, Logger& logger_t): db(db_t), logger(logger_t) {}
@@ -1230,6 +1247,20 @@ bool UserManager::changeFreeSpace(oid& id, int64_t diff) {
 }
 
 
+bool UserManager::shareInfo(oid& fileId, vector<string>& res) {
+    mongocxx::pipeline stages;
+
+    stages.match(make_document(kvp("_id", fileId)));
+    stages.lookup(make_document(kvp("from", "users"), kvp("localField", "sharedWith.userId"), kvp("foreignField", "_id"), kvp("as", "sharedTMP")));
+    stages.project(make_document(kvp("sharedWith", make_document(kvp("$map", make_document(
+            kvp("input", "$sharedTMP"),
+            kvp("as", "users"),
+            kvp("in", "$$users.username")
+    )))), kvp("_id", 0)));
+    stages.unwind("$sharedWith");
+
+    return db.getFieldMAdvanced("files", "sharedWith", stages, res);
+}
 
 /**
 

@@ -171,13 +171,13 @@ enum CommandType {
   CLEAR_CACHE = 27,
   CHANGE_QUOTA = 28,
   SHARED_DOWNLOAD = 29,
-  SHARED_INFO = 30,
+  SHARE_INFO = 30,
   CommandType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   CommandType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool CommandType_IsValid(int value);
 const CommandType CommandType_MIN = NULL1;
-const CommandType CommandType_MAX = SHARED_INFO;
+const CommandType CommandType_MAX = SHARE_INFO;
 const int CommandType_ARRAYSIZE = CommandType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* CommandType_descriptor();

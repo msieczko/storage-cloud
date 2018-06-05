@@ -76,7 +76,7 @@ enum CommandType {
     CLEAR_CACHE = 27;
     CHANGE_QUOTA = 28;
     SHARED_DOWNLOAD = 29;
-    SHARED_INFO = 30;
+    SHARE_INFO = 30;
 }
 
 enum FileType {

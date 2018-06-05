@@ -815,5 +815,58 @@ bool Client::processCommand(Command* cmd) {
         }
 
         sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::SHARE_INFO) {
+        if(!(u.isValid() && u.isAuthorized())) {
+            resError(res, "You are not logged in", "tried to get shared info, but was not logged in");
+        } else {
+            if(cmd->params_size() == 1 && cmd->params(0).paramid() == "file_path" && !cmd->params(0).sparamval().empty()) {
+                vector<string> users;
+                if(u.shareInfo(cmd->params(0).sparamval(), users)) {
+                    res.set_type(ResponseType::SHARED);
+                    for(auto& username: users) {
+                        res.add_list(username);
+                    }
+                } else {
+                    resError(res, "Error occured", "tried to get shared info about " + cmd->params(0).sparamval() + ", but error occured");
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to get shared info, but command format was wrong");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::ADMIN_SHARE_INFO) {
+        if(!(u.isAdmin())) {
+            resError(res, "Not enough permissions", "tried to get share info, but was not logged as admin");
+        } else {
+            string username, filename;
+            uint8_t validFields = 0;
+
+            for(auto& param: cmd->params()) {
+                if(param.paramid() == "owner_username") {
+                    username = param.sparamval();
+                    validFields++;
+                } else if(param.paramid() == "file_path") {
+                    filename = param.sparamval();
+                    validFields++;
+                }
+            }
+
+            if(validFields == 2 && !username.empty() && !filename.empty()) {
+                vector<string> users;
+                if(u.shareInfoUser(username, filename, users)) {
+                    res.set_type(ResponseType::SHARED);
+                    for(auto& usr: users) {
+                        res.add_list(usr);
+                    }
+                } else {
+                    resError(res, "Error occured", "tried to get admin shared info about " + cmd->params(0).sparamval() + ", but error occured");
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to get admin shared info, but command format was wrong");
+            }
+        }
+
+        sendServerResponse(&res);
     }
 }

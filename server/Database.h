@@ -51,6 +51,7 @@ public:
     bool getField(string&&, string&&, bsoncxx::oid, const uint8_t*&, uint32_t&);
     bool getField(string&&, string&&, string&&, bsoncxx::oid& id, string&&, const string&, int64_t&);
     bool getFieldM(string&&, string&&, bsoncxx::document::value&&, std::vector<string>&);
+    bool getFieldMAdvanced(string&&, string&&, mongocxx::pipeline&, std::vector<string>&);
     bool getId(string&&, string&&, const string&, bsoncxx::oid&);
     bool getIdById(string&&, string&&, const string&, string&&, bsoncxx::oid&);
     bool getIdByDoc(string&&, bsoncxx::document::value&&, bsoncxx::oid&);

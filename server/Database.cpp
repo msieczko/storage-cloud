@@ -165,7 +165,6 @@ bool Database::getFieldM(string&& colName, string&& fieldName, bsoncxx::document
 
             auto obj = doc_v.begin();
 
-            //TODO check if id was passed as field
             if (distance(obj, doc_v.end()) != 1) {
                 logger->log(l_id, "getFieldM got too much fields");
                 return false;
@@ -184,6 +183,41 @@ bool Database::getFieldM(string&& colName, string&& fieldName, bsoncxx::document
         return false;
     } catch (...) {
         logger->err(l_id, "error while getting field multiple times: unknown error");
+        return false;
+    }
+}
+
+bool Database::getFieldMAdvanced(string&& colName, string&& fieldName, mongocxx::pipeline& stages, std::vector<string>& res) {
+    stages.project(make_document(kvp("_id", 0), kvp(fieldName, 1)));
+
+    try {
+        auto cursor = db[colName].aggregate(stages);
+
+        bool notEmpty = false;
+
+        for (auto doc_v: cursor) {
+            notEmpty = true;
+
+            auto obj = doc_v.begin();
+
+            if (distance(obj, doc_v.end()) != 1) {
+                logger->log(l_id, "getFieldMAdvanced got too much fields");
+                return false;
+            }
+
+            res.emplace_back(bsoncxx::string::to_string(obj->get_utf8().value));
+        }
+
+        if(!notEmpty) {
+            logger->log(l_id, "getFieldMAdvanced got empty result");
+        }
+
+        return notEmpty;
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while getting field multiple times advanced: " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while getting field multiple times advanced: unknown error");
         return false;
     }
 }
