@@ -1,10 +1,9 @@
 package com.github.mikee2509.storagecloud.admin.user;
 
+import com.github.mikee2509.storagecloud.admin.domain.dto.NewUserDto;
 import com.github.mikee2509.storagecloud.admin.domain.dto.UserDto;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -17,5 +16,10 @@ class UserController {
     @GetMapping("/users")
     List<UserDto> getAllUsers() {
         return userFacade.getAllUsers();
+    }
+
+    @PostMapping("/users")
+    String register(@RequestBody NewUserDto newUserDto) {
+        return userFacade.register(newUserDto);
     }
 }

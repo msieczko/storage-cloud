@@ -1,15 +1,16 @@
 package com.github.mikee2509.storagecloud.admin.user;
 
+import com.github.mikee2509.storagecloud.admin.domain.dto.NewUserDto;
 import com.github.mikee2509.storagecloud.proto.UserDetails;
 import com.github.mikee2509.storagecloud.proto.UserRole;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 class MockUserService implements UserService {
+    private List<UserDetails> usersList;
 
-    @Override
-    public List<UserDetails> listUsers() {
+    public MockUserService() {
         UserDetails alex = UserDetails.newBuilder()
                 .setUsername("alex321")
                 .setFirstName("Alex")
@@ -28,6 +29,29 @@ class MockUserService implements UserService {
                 .setUsedSpace(150)
                 .build();
 
-        return Arrays.asList(alex, sara);
+        ArrayList<UserDetails> usersList = new ArrayList<>();
+        usersList.add(alex);
+        usersList.add(sara);
+        this.usersList = usersList;
+    }
+
+    @Override
+    public List<UserDetails> listUsers() {
+        return usersList;
+    }
+
+    @Override
+    public String register(NewUserDto newUserDto) {
+        UserDetails newUserDetails = UserDetails.newBuilder()
+                .setUsername(newUserDto.getUsername())
+                .setFirstName(newUserDto.getFirstName())
+                .setLastName(newUserDto.getLastName())
+                .setRole(UserRole.USER)
+                .setTotalSpace(1000)
+                .setUsedSpace(300)
+                .build();
+
+        usersList.add(newUserDetails);
+        return "OK";
     }
 }
