@@ -349,6 +349,8 @@ int main(int argc, char *argv[])
 //    tmp_param->set_paramid("path");
 //    tmp_param->set_sparamval("/dir/dir23");
 
+//    file_hash[0]=1;
+
     cmd.set_type(StorageCloud::METADATA);
     tmp_param = cmd.add_params();
     tmp_param->set_paramid("file_checksum");

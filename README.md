@@ -23,5 +23,5 @@ Prośba o kolejny fragment pliku | C_DOWNLOAD | - | SRV_DATA data / ERROR msg
 Zainicjalizowanie wgrywania pliku | METADATA target_file_path size file_checksum | - | CAN_SEND starting_chunk / ERROR code msg
 Wgrywanie danych | USR_DATA data | - | OK / ERROR code msg
 Usunięcie nie do końca przesłanych plików (zwróci error także jeśli cache był pusty) | CLEAR_CACHE | - | OK / ERROR msg
-Zmiana dostępnego miejsca | - | CHANGE_QUOTA newVal(int) | OK / ERROR msg
+Zmiana dostępnego miejsca | - | CHANGE_QUOTA username(string) new_val(int) | OK / ERROR msg
 Wylistowanie plików udostępnionych dla użytkownika | LIST_SHARED | ADMIN_LIST_SHARED username | FILES [File_message_list] / ERROR msg

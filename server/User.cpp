@@ -129,7 +129,13 @@ uint8_t User::addFile(UFile& file) {
             UFile tmp_file;
             if(user_manager.getYourFileMetadata(id, file.filename, tmp_file, FILE_REGULAR)) {
                 if(!tmp_file.isValid && tmp_file.size == file.size && tmp_file.hash == file.hash) {
+                    uint64_t spaceNeeded = tmp_file.size - tmp_file.lastValid;
+                    uint64_t availableSpace;
+                    if(!user_manager.getFreeSpace(id, availableSpace) || availableSpace < spaceNeeded) {
+                        return ADD_FILE_NO_SPACE;
+                    }
                     currentInFile = tmp_file;
+                    currentInFile.owner = id;
                     currentInFileValid = true;
                     return ADD_FILE_CONTINUE_OK;
                 }
@@ -143,10 +149,16 @@ uint8_t User::addFile(UFile& file) {
 
     if(user_manager.addNewFile(id, file, dir, fileId)) {
         if(file.type == FILE_REGULAR) {
+            uint64_t availableSpace;
+            if(!user_manager.getFreeSpace(id, availableSpace) || availableSpace < file.size) {
+                return ADD_FILE_NO_SPACE;
+            }
+
             currentInFile = file;
             currentInFile.isValid = false;
             currentInFile.lastValid = 0;
             currentInFile.id = fileId;
+            currentInFile.owner = id;
             currentInFileValid = true;
         }
 
@@ -169,6 +181,11 @@ bool User::addFileChunk(const string& chunk) {
         return false;
     }
 
+    uint64_t freeSpace;
+    if(!user_manager.getFreeSpace(id, freeSpace) || freeSpace < chunk.size()) {
+        return false;
+    }
+
     if(currentInFile.size > currentInFile.lastValid + chunk.size()) {
         return false;
     }
@@ -182,7 +199,6 @@ bool User::addFileChunk(const string& chunk) {
     }
 
     return user_manager.validateFile(currentInFile);
-    //TODO dodac usuwanie jak nie pyknie
 }
 
 bool User::isAdmin() {
@@ -339,6 +355,25 @@ bool User::listUserShared(const string& username, vector<UFile>& list) {
 
 bool User::clearCache() {
     return user_manager.removeAllUnfinishedForUser(id);
+}
+
+bool User::changeUserTotalStorage(const string& username, uint64_t newVal) {
+    oid userId;
+    if(!user_manager.getUserId(username, userId)) {
+        return false;
+    }
+
+    uint64_t freeSpace, totalSpace;
+
+    if(!user_manager.getFreeSpace(userId, freeSpace) || user_manager.getTotalSpace(userId, totalSpace)) {
+        return false;
+    }
+
+    if(totalSpace - freeSpace > newVal) {
+        return false;
+    }
+
+    return user_manager.setTotalSpace(userId, newVal);
 }
 
 ///---------------------UserManager---------------------
@@ -802,6 +837,7 @@ bool UserManager::getYourFileMetadata(oid& id, const string& filename, UFile& fi
         file.isValid = tmp_file.second.find("isValid")->second.get_bool();
         file.id = tmp_file.second.find("_id")->second.get_oid().value;
         file.isShared = tmp_file.second.find("isShared")->second.get_bool();
+        file.owner = id;
         if(type == FILE_REGULAR) {
             file.lastValid = (uint64_t) tmp_file.second.find("lastValid")->second.get_int64();
         }
@@ -846,7 +882,7 @@ bool UserManager::addFileChunk(UFile& file, const string& chunk) {
     file.lastValid += chunk.size();
 
     if(db.incField("files", file.id, "lastValid", chunk.size())) {
-        return updateLastChunkTime(file);
+        return updateLastChunkTime(file) && changeFreeSpace(file.owner, -chunk.size());
     }
 
     return false;
@@ -861,6 +897,7 @@ bool UserManager::validateFile(UFile& file) {
 
     std::ifstream is (file.realPath, std::ios::binary | std::ios::in);
     if(!is.is_open()) {
+        deleteFile(file.owner, file.filename);
         return false;
     }
 
@@ -869,6 +906,7 @@ bool UserManager::validateFile(UFile& file) {
     is.seekg (0, is.beg);
 
     if(length != file.size) {
+        deleteFile(file.owner, file.filename);
         return false;
     }
 
@@ -883,6 +921,7 @@ bool UserManager::validateFile(UFile& file) {
     delete buffer;
 
     if(!is.eof()) {
+        deleteFile(file.owner, file.filename);
         return false;
     }
 
@@ -892,11 +931,13 @@ bool UserManager::validateFile(UFile& file) {
 
     for(int i=0; i<FILE_HASH_SIZE; i++) {
         if((uint8_t) file.hash[i] != hash[i]) {
+            deleteFile(file.owner, file.filename);
             return false;
         }
     }
 
     if(!db.setField("files", "isValid", file.id, true)) {
+        deleteFile(file.owner, file.filename);
         return false;
     }
 
@@ -968,6 +1009,8 @@ bool UserManager::deleteFile(oid& id, const string& path) {
 
     db.removeByOid("files", "_id", details.id);
 
+    changeFreeSpace(id, details.lastValid);
+
     return true;
 }
 
@@ -985,7 +1028,7 @@ bool UserManager::deletePath(oid& id, const string& path) {
     mongocxx::pipeline stages;
 
     stages.match(make_document(kvp("owner", id), kvp("type", FILE_REGULAR), kvp("filename", bsoncxx::types::b_regex("^"+parsedPath))));
-    stages.group(make_document(kvp("_id", bsoncxx::types::b_null{}), kvp("totalSize", make_document(kvp("$sum", "$size")))));
+    stages.group(make_document(kvp("_id", bsoncxx::types::b_null{}), kvp("totalSize", make_document(kvp("$sum", "$lastValid")))));
     stages.project(make_document(kvp("_id", 0)));
 
     uint64_t totalSize = 0;
@@ -1009,14 +1052,13 @@ bool UserManager::deletePath(oid& id, const string& path) {
 
     db.deleteDocs("files", make_document(kvp("owner", id), kvp("filename", bsoncxx::types::b_regex("^"+parsedPath+"($|(/.+))"))));
 
-
     string dir = parsedPath.substr(0, parsedPath.rfind('/'));
 
     if(!dir.empty()) {
         db.incField("files", "size", "owner", id, "filename", dir, -1);
     }
 
-    // TODO update quota
+    changeFreeSpace(id, totalSize);
 
     return true;
 }
@@ -1170,6 +1212,25 @@ bool UserManager::collectOldUnfinished() {
 
     return true;
 }
+
+bool UserManager::getTotalSpace(oid& id, uint64_t& res) {
+    return db.getField("users", "totalSpace", id, (int64_t&) res);
+}
+
+bool UserManager::getFreeSpace(oid& id, uint64_t& res) {
+    return db.getField("users", "freeSpace", id, (int64_t&) res);
+}
+
+bool UserManager::setTotalSpace(oid& id, uint64_t& newVal) {
+    return db.setField("users", "totalSpace", id, (int64_t&) newVal);
+}
+
+bool UserManager::changeFreeSpace(oid& id, int64_t diff) {
+    return db.incField("users", id, "freeSpace", diff);
+}
+
+
+
 /**
 
 db.getCollection('users').update(

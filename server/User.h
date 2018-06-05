@@ -35,6 +35,7 @@ class UserManager;
 // user file
 struct UFile {
     oid id;
+    oid owner;
     string filename;
     string hash;
     uint64_t size;
@@ -111,6 +112,7 @@ public:
 
     bool listUserFiles(string&, string&, vector<UFile>&);
     bool listUserShared(const string&, vector<UFile>&);
+    bool changeUserTotalStorage(const string&, uint64_t);
 };
 
 class UserManager {
@@ -174,6 +176,8 @@ public:
     bool updateLastChunkTime(UFile&);
     bool collectOldUnfinished();
     bool removeAllUnfinishedForUser(oid&);
+    bool setTotalSpace(oid&, uint64_t&);
+    bool changeFreeSpace(oid&, int64_t);
 
     bool runAsUser(const string&, std::function<bool(oid&)>);
 

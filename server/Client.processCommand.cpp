@@ -159,21 +159,21 @@ bool Client::processCommand(Command* cmd) {
 
                 if(!u.listFilesinPath(cmd->params(0).sparamval(), files)) {
                     resError(res, "Internal error occured", "tried to list files, but internal error occured");
-                }
+                } else {
 
-                for(auto&& file: files) {
-//                    logger.info("FILES", file.filename + " " + file.owner_name);
-                    File* tmp_file = res.add_filelist();
-                    tmp_file->set_filename(file.filename);
-                    tmp_file->set_filetype(file.type == FILE_REGULAR ? FileType::FILE : FileType::DIRECTORY);
-                    tmp_file->set_size(file.size);
-                    tmp_file->set_hash(file.hash);
-                    tmp_file->set_owner(file.owner_name);
-                    tmp_file->set_creationdate(file.creation_date);
-                    tmp_file->set_isshared(file.isShared);
-                }
+                    for(auto &&file: files) {
+                        File *tmp_file = res.add_filelist();
+                        tmp_file->set_filename(file.filename);
+                        tmp_file->set_filetype(file.type == FILE_REGULAR ? FileType::FILE : FileType::DIRECTORY);
+                        tmp_file->set_size(file.size);
+                        tmp_file->set_hash(file.hash);
+                        tmp_file->set_owner(file.owner_name);
+                        tmp_file->set_creationdate(file.creation_date);
+                        tmp_file->set_isshared(file.isShared);
+                    }
 
-                res.set_type(ResponseType::FILES);
+                    res.set_type(ResponseType::FILES);
+                }
             } else {
                 resError(res, "Wrong command format", "tried to list files, but command format was wrong");
             }
@@ -243,6 +243,8 @@ bool Client::processCommand(Command* cmd) {
                         resError(res, "Filename empty", "tried to add metadata, but provided empty filename");
                     } else if(wyn == ADD_FILE_FILE_EXISTS) {
                         resError(res, "File already exists", "tried to add metadata, but filename already exists");
+                    } else if(wyn == ADD_FILE_NO_SPACE) {
+                        resError(res, "Not enough space left", "tried to add metadata, but doesn't have enough free space");
                     } else {
                         resError(res, "Unknown error", "tried to add metadata, but unknown error occured");
                     }
@@ -416,20 +418,20 @@ bool Client::processCommand(Command* cmd) {
 
                 if(!u.listUserFiles(username, path, files)) {
                     resError(res, "Internal error occured", "tried to list user files, but internal error occured");
-                }
+                } else {
+                    for(auto &&file: files) {
+                        File *tmp_file = res.add_filelist();
+                        tmp_file->set_filename(file.filename);
+                        tmp_file->set_filetype(file.type == FILE_REGULAR ? FileType::FILE : FileType::DIRECTORY);
+                        tmp_file->set_size(file.size);
+                        tmp_file->set_hash(file.hash);
+                        tmp_file->set_owner(file.owner_name);
+                        tmp_file->set_creationdate(file.creation_date);
+                        tmp_file->set_isshared(file.isShared);
+                    }
 
-                for(auto&& file: files) {
-                    File* tmp_file = res.add_filelist();
-                    tmp_file->set_filename(file.filename);
-                    tmp_file->set_filetype(file.type == FILE_REGULAR ? FileType::FILE : FileType::DIRECTORY);
-                    tmp_file->set_size(file.size);
-                    tmp_file->set_hash(file.hash);
-                    tmp_file->set_owner(file.owner_name);
-                    tmp_file->set_creationdate(file.creation_date);
-                    tmp_file->set_isshared(file.isShared);
+                    res.set_type(ResponseType::FILES);
                 }
-
-                res.set_type(ResponseType::FILES);
             } else {
                 resError(res, "Wrong command format", "tried to list user files, but command format was wrong");
             }
@@ -779,6 +781,36 @@ bool Client::processCommand(Command* cmd) {
                 res.set_type(ResponseType::OK);
             } else {
                 resError(res, "Error occured", "tried to clear cache, but error occured");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::CHANGE_QUOTA) {
+        if(!(u.isAdmin())) {
+            resError(res, "Not enough permissions", "tried to change user quota, but was not logged as admin");
+        } else {
+            string username;
+            uint64_t newVal = 0;
+            uint8_t validFields = 0;
+
+            for(auto& param: cmd->params()) {
+                if(param.paramid() == "username") {
+                    username = param.sparamval();
+                    validFields++;
+                } else if(param.paramid() == "new_val") {
+                    newVal = param.iparamval();
+                    validFields++;
+                }
+            }
+
+            if(validFields == 2 && !username.empty()) {
+                if(!u.changeUserTotalStorage(username, newVal)) {
+                    resError(res, "Internal error occured", "tried to change user quota, but internal error occured");
+                } else {
+                    res.set_type(ResponseType::OK);
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to change user quota, but command format was wrong");
             }
         }
 
