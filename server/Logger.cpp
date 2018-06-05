@@ -37,12 +37,15 @@ void Logger::print_msg() {
                 message += "[DEBUG]";
             }
             if (msg.level == INFO) {
+                message = LIGHTBLUE + message;
                 message += "[INFO]";
             }
             if (msg.level == WARN) {
+                message = YELLOW + message;
                 message += "[WARN]";
             }
             if (msg.level == ERR) {
+                message = RED + message;
                 message += "[ERROR]";
             }
 
@@ -50,14 +53,9 @@ void Logger::print_msg() {
 
             message += msg.body;
 
-            cout << "\r" << message << endl;
+            cout << "\r" << message << RESET << endl;
 
             printed = true;
-
-
-//            if (msg.body == "bye!" && *should_exit) {
-//                break;
-//            }
         }
 
         if(input != nullptr) {
