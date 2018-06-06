@@ -15,6 +15,8 @@ import pl.edu.pw.elka.llepak.tinbox.Connection.initialized
 import pl.edu.pw.elka.llepak.tinbox.Connection.sendHandshake
 import pl.edu.pw.elka.llepak.tinbox.viewmodels.LoginViewModel
 
+
+
 class LoginActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +32,7 @@ class LoginActivity: AppCompatActivity() {
 
         if (!initialized) {
             login_progress.visibility = View.VISIBLE
-            Connection.connect("Connected to server!")
+            Connection.connect()
         }
 
         val viewModel = ViewModelProviders.of(this).get(LoginViewModel::class.java)
@@ -42,19 +44,16 @@ class LoginActivity: AppCompatActivity() {
             login_progress.visibility = View.VISIBLE
             viewModel.login(username.text.toString(), password.text.toString())
         })
+
+        login_register_button.setOnClickListener({
+            val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
+        })
     }
 
     private fun processConnect(connected: Boolean?) {
         if (connected != null) {
-            if (connected) {
-                if (!initialized) {
-                    sendHandshake()
-                    initialized = true
-                } else {
-                    login_progress.visibility = View.GONE
-                }
-            } else
-                login_progress.visibility = View.GONE
+            login_progress.visibility = View.GONE
             connectData.value = null
         }
     }

@@ -44,6 +44,10 @@ public enum ResponseType
    * <code>CAN_SEND = 8;</code>
    */
   CAN_SEND(8),
+  /**
+   * <code>USERS = 9;</code>
+   */
+  USERS(9),
   UNRECOGNIZED(-1),
   ;
 
@@ -83,6 +87,10 @@ public enum ResponseType
    * <code>CAN_SEND = 8;</code>
    */
   public static final int CAN_SEND_VALUE = 8;
+  /**
+   * <code>USERS = 9;</code>
+   */
+  public static final int USERS_VALUE = 9;
 
 
   public final int getNumber() {
@@ -108,6 +116,7 @@ public enum ResponseType
       case 6: return SHARED;
       case 7: return SRV_DATA;
       case 8: return CAN_SEND;
+      case 9: return USERS;
       default: return null;
     }
   }

@@ -15,6 +15,7 @@ public  final class ServerResponse extends
     params_ = emptyProtobufList();
     list_ = com.google.protobuf.GeneratedMessageLite.emptyProtobufList();
     fileList_ = emptyProtobufList();
+    userList_ = emptyProtobufList();
     data_ = com.google.protobuf.ByteString.EMPTY;
   }
   private int bitField0_;
@@ -381,16 +382,136 @@ public  final class ServerResponse extends
     fileList_.remove(index);
   }
 
-  public static final int DATA_FIELD_NUMBER = 5;
+  public static final int USERLIST_FIELD_NUMBER = 5;
+  private com.google.protobuf.Internal.ProtobufList<pl.edu.pw.elka.llepak.tinbox.protobuf.UserDetails> userList_;
+  /**
+   * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+   */
+  public java.util.List<pl.edu.pw.elka.llepak.tinbox.protobuf.UserDetails> getUserListList() {
+    return userList_;
+  }
+  /**
+   * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+   */
+  public java.util.List<? extends pl.edu.pw.elka.llepak.tinbox.protobuf.UserDetailsOrBuilder> 
+      getUserListOrBuilderList() {
+    return userList_;
+  }
+  /**
+   * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+   */
+  public int getUserListCount() {
+    return userList_.size();
+  }
+  /**
+   * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+   */
+  public pl.edu.pw.elka.llepak.tinbox.protobuf.UserDetails getUserList(int index) {
+    return userList_.get(index);
+  }
+  /**
+   * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+   */
+  public pl.edu.pw.elka.llepak.tinbox.protobuf.UserDetailsOrBuilder getUserListOrBuilder(
+      int index) {
+    return userList_.get(index);
+  }
+  private void ensureUserListIsMutable() {
+    if (!userList_.isModifiable()) {
+      userList_ =
+          com.google.protobuf.GeneratedMessageLite.mutableCopy(userList_);
+     }
+  }
+
+  /**
+   * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+   */
+  private void setUserList(
+      int index, pl.edu.pw.elka.llepak.tinbox.protobuf.UserDetails value) {
+    if (value == null) {
+      throw new NullPointerException();
+    }
+    ensureUserListIsMutable();
+    userList_.set(index, value);
+  }
+  /**
+   * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+   */
+  private void setUserList(
+      int index, pl.edu.pw.elka.llepak.tinbox.protobuf.UserDetails.Builder builderForValue) {
+    ensureUserListIsMutable();
+    userList_.set(index, builderForValue.build());
+  }
+  /**
+   * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+   */
+  private void addUserList(pl.edu.pw.elka.llepak.tinbox.protobuf.UserDetails value) {
+    if (value == null) {
+      throw new NullPointerException();
+    }
+    ensureUserListIsMutable();
+    userList_.add(value);
+  }
+  /**
+   * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+   */
+  private void addUserList(
+      int index, pl.edu.pw.elka.llepak.tinbox.protobuf.UserDetails value) {
+    if (value == null) {
+      throw new NullPointerException();
+    }
+    ensureUserListIsMutable();
+    userList_.add(index, value);
+  }
+  /**
+   * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+   */
+  private void addUserList(
+      pl.edu.pw.elka.llepak.tinbox.protobuf.UserDetails.Builder builderForValue) {
+    ensureUserListIsMutable();
+    userList_.add(builderForValue.build());
+  }
+  /**
+   * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+   */
+  private void addUserList(
+      int index, pl.edu.pw.elka.llepak.tinbox.protobuf.UserDetails.Builder builderForValue) {
+    ensureUserListIsMutable();
+    userList_.add(index, builderForValue.build());
+  }
+  /**
+   * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+   */
+  private void addAllUserList(
+      java.lang.Iterable<? extends pl.edu.pw.elka.llepak.tinbox.protobuf.UserDetails> values) {
+    ensureUserListIsMutable();
+    com.google.protobuf.AbstractMessageLite.addAll(
+        values, userList_);
+  }
+  /**
+   * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+   */
+  private void clearUserList() {
+    userList_ = emptyProtobufList();
+  }
+  /**
+   * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+   */
+  private void removeUserList(int index) {
+    ensureUserListIsMutable();
+    userList_.remove(index);
+  }
+
+  public static final int DATA_FIELD_NUMBER = 6;
   private com.google.protobuf.ByteString data_;
   /**
-   * <code>optional bytes data = 5;</code>
+   * <code>optional bytes data = 6;</code>
    */
   public com.google.protobuf.ByteString getData() {
     return data_;
   }
   /**
-   * <code>optional bytes data = 5;</code>
+   * <code>optional bytes data = 6;</code>
    */
   private void setData(com.google.protobuf.ByteString value) {
     if (value == null) {
@@ -400,7 +521,7 @@ public  final class ServerResponse extends
     data_ = value;
   }
   /**
-   * <code>optional bytes data = 5;</code>
+   * <code>optional bytes data = 6;</code>
    */
   private void clearData() {
     
@@ -421,8 +542,11 @@ public  final class ServerResponse extends
     for (int i = 0; i < fileList_.size(); i++) {
       output.writeMessage(4, fileList_.get(i));
     }
+    for (int i = 0; i < userList_.size(); i++) {
+      output.writeMessage(5, userList_.get(i));
+    }
     if (!data_.isEmpty()) {
-      output.writeBytes(5, data_);
+      output.writeBytes(6, data_);
     }
   }
 
@@ -452,9 +576,13 @@ public  final class ServerResponse extends
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(4, fileList_.get(i));
     }
+    for (int i = 0; i < userList_.size(); i++) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(5, userList_.get(i));
+    }
     if (!data_.isEmpty()) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBytesSize(5, data_);
+        .computeBytesSize(6, data_);
     }
     memoizedSerializedSize = size;
     return size;
@@ -846,13 +974,110 @@ public  final class ServerResponse extends
     }
 
     /**
-     * <code>optional bytes data = 5;</code>
+     * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+     */
+    public java.util.List<pl.edu.pw.elka.llepak.tinbox.protobuf.UserDetails> getUserListList() {
+      return java.util.Collections.unmodifiableList(
+          instance.getUserListList());
+    }
+    /**
+     * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+     */
+    public int getUserListCount() {
+      return instance.getUserListCount();
+    }/**
+     * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+     */
+    public pl.edu.pw.elka.llepak.tinbox.protobuf.UserDetails getUserList(int index) {
+      return instance.getUserList(index);
+    }
+    /**
+     * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+     */
+    public Builder setUserList(
+        int index, pl.edu.pw.elka.llepak.tinbox.protobuf.UserDetails value) {
+      copyOnWrite();
+      instance.setUserList(index, value);
+      return this;
+    }
+    /**
+     * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+     */
+    public Builder setUserList(
+        int index, pl.edu.pw.elka.llepak.tinbox.protobuf.UserDetails.Builder builderForValue) {
+      copyOnWrite();
+      instance.setUserList(index, builderForValue);
+      return this;
+    }
+    /**
+     * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+     */
+    public Builder addUserList(pl.edu.pw.elka.llepak.tinbox.protobuf.UserDetails value) {
+      copyOnWrite();
+      instance.addUserList(value);
+      return this;
+    }
+    /**
+     * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+     */
+    public Builder addUserList(
+        int index, pl.edu.pw.elka.llepak.tinbox.protobuf.UserDetails value) {
+      copyOnWrite();
+      instance.addUserList(index, value);
+      return this;
+    }
+    /**
+     * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+     */
+    public Builder addUserList(
+        pl.edu.pw.elka.llepak.tinbox.protobuf.UserDetails.Builder builderForValue) {
+      copyOnWrite();
+      instance.addUserList(builderForValue);
+      return this;
+    }
+    /**
+     * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+     */
+    public Builder addUserList(
+        int index, pl.edu.pw.elka.llepak.tinbox.protobuf.UserDetails.Builder builderForValue) {
+      copyOnWrite();
+      instance.addUserList(index, builderForValue);
+      return this;
+    }
+    /**
+     * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+     */
+    public Builder addAllUserList(
+        java.lang.Iterable<? extends pl.edu.pw.elka.llepak.tinbox.protobuf.UserDetails> values) {
+      copyOnWrite();
+      instance.addAllUserList(values);
+      return this;
+    }
+    /**
+     * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+     */
+    public Builder clearUserList() {
+      copyOnWrite();
+      instance.clearUserList();
+      return this;
+    }
+    /**
+     * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+     */
+    public Builder removeUserList(int index) {
+      copyOnWrite();
+      instance.removeUserList(index);
+      return this;
+    }
+
+    /**
+     * <code>optional bytes data = 6;</code>
      */
     public com.google.protobuf.ByteString getData() {
       return instance.getData();
     }
     /**
-     * <code>optional bytes data = 5;</code>
+     * <code>optional bytes data = 6;</code>
      */
     public Builder setData(com.google.protobuf.ByteString value) {
       copyOnWrite();
@@ -860,7 +1085,7 @@ public  final class ServerResponse extends
       return this;
     }
     /**
-     * <code>optional bytes data = 5;</code>
+     * <code>optional bytes data = 6;</code>
      */
     public Builder clearData() {
       copyOnWrite();
@@ -884,6 +1109,7 @@ public  final class ServerResponse extends
         params_.makeImmutable();
         list_.makeImmutable();
         fileList_.makeImmutable();
+        userList_.makeImmutable();
         return null;
       }
       case NEW_BUILDER: {
@@ -896,6 +1122,7 @@ public  final class ServerResponse extends
         params_= visitor.visitList(params_, other.params_);
         list_= visitor.visitList(list_, other.list_);
         fileList_= visitor.visitList(fileList_, other.fileList_);
+        userList_= visitor.visitList(userList_, other.userList_);
         data_ = visitor.visitByteString(data_ != com.google.protobuf.ByteString.EMPTY, data_,
             other.data_ != com.google.protobuf.ByteString.EMPTY, other.data_);
         if (visitor == com.google.protobuf.GeneratedMessageLite.MergeFromVisitor
@@ -957,6 +1184,15 @@ public  final class ServerResponse extends
                 break;
               }
               case 42: {
+                if (!userList_.isModifiable()) {
+                  userList_ =
+                      com.google.protobuf.GeneratedMessageLite.mutableCopy(userList_);
+                }
+                userList_.add(
+                    input.readMessage(pl.edu.pw.elka.llepak.tinbox.protobuf.UserDetails.parser(), extensionRegistry));
+                break;
+              }
+              case 50: {
 
                 data_ = input.readBytes();
                 break;

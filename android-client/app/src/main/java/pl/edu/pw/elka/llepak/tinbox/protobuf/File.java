@@ -15,9 +15,8 @@ public  final class File extends
     filename_ = "";
     hash_ = com.google.protobuf.ByteString.EMPTY;
     owner_ = "";
-    metadata_ = emptyProtobufList();
+    ownerUsername_ = "";
   }
-  private int bitField0_;
   public static final int FILENAME_FIELD_NUMBER = 1;
   private java.lang.String filename_;
   /**
@@ -242,147 +241,108 @@ public  final class File extends
     owner_ = value.toStringUtf8();
   }
 
-  public static final int CREATIONDATE_FIELD_NUMBER = 6;
+  public static final int OWNERUSERNAME_FIELD_NUMBER = 6;
+  private java.lang.String ownerUsername_;
+  /**
+   * <code>optional string ownerUsername = 6;</code>
+   */
+  public java.lang.String getOwnerUsername() {
+    return ownerUsername_;
+  }
+  /**
+   * <code>optional string ownerUsername = 6;</code>
+   */
+  public com.google.protobuf.ByteString
+      getOwnerUsernameBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(ownerUsername_);
+  }
+  /**
+   * <code>optional string ownerUsername = 6;</code>
+   */
+  private void setOwnerUsername(
+      java.lang.String value) {
+    if (value == null) {
+    throw new NullPointerException();
+  }
+  
+    ownerUsername_ = value;
+  }
+  /**
+   * <code>optional string ownerUsername = 6;</code>
+   */
+  private void clearOwnerUsername() {
+    
+    ownerUsername_ = getDefaultInstance().getOwnerUsername();
+  }
+  /**
+   * <code>optional string ownerUsername = 6;</code>
+   */
+  private void setOwnerUsernameBytes(
+      com.google.protobuf.ByteString value) {
+    if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+    
+    ownerUsername_ = value.toStringUtf8();
+  }
+
+  public static final int CREATIONDATE_FIELD_NUMBER = 7;
   private long creationDate_;
   /**
-   * <code>optional uint64 creationDate = 6;</code>
+   * <code>optional uint64 creationDate = 7;</code>
    */
   public long getCreationDate() {
     return creationDate_;
   }
   /**
-   * <code>optional uint64 creationDate = 6;</code>
+   * <code>optional uint64 creationDate = 7;</code>
    */
   private void setCreationDate(long value) {
     
     creationDate_ = value;
   }
   /**
-   * <code>optional uint64 creationDate = 6;</code>
+   * <code>optional uint64 creationDate = 7;</code>
    */
   private void clearCreationDate() {
     
     creationDate_ = 0L;
   }
 
-  public static final int METADATA_FIELD_NUMBER = 7;
-  private com.google.protobuf.Internal.ProtobufList<pl.edu.pw.elka.llepak.tinbox.protobuf.Param> metadata_;
+  public static final int ISSHARED_FIELD_NUMBER = 8;
+  private boolean isShared_;
   /**
-   * <code>repeated .StorageCloud.Param metadata = 7;</code>
+   * <pre>
+   * if shared with anyone
+   * </pre>
+   *
+   * <code>optional bool isShared = 8;</code>
    */
-  public java.util.List<pl.edu.pw.elka.llepak.tinbox.protobuf.Param> getMetadataList() {
-    return metadata_;
+  public boolean getIsShared() {
+    return isShared_;
   }
   /**
-   * <code>repeated .StorageCloud.Param metadata = 7;</code>
+   * <pre>
+   * if shared with anyone
+   * </pre>
+   *
+   * <code>optional bool isShared = 8;</code>
    */
-  public java.util.List<? extends pl.edu.pw.elka.llepak.tinbox.protobuf.ParamOrBuilder> 
-      getMetadataOrBuilderList() {
-    return metadata_;
+  private void setIsShared(boolean value) {
+    
+    isShared_ = value;
   }
   /**
-   * <code>repeated .StorageCloud.Param metadata = 7;</code>
+   * <pre>
+   * if shared with anyone
+   * </pre>
+   *
+   * <code>optional bool isShared = 8;</code>
    */
-  public int getMetadataCount() {
-    return metadata_.size();
-  }
-  /**
-   * <code>repeated .StorageCloud.Param metadata = 7;</code>
-   */
-  public pl.edu.pw.elka.llepak.tinbox.protobuf.Param getMetadata(int index) {
-    return metadata_.get(index);
-  }
-  /**
-   * <code>repeated .StorageCloud.Param metadata = 7;</code>
-   */
-  public pl.edu.pw.elka.llepak.tinbox.protobuf.ParamOrBuilder getMetadataOrBuilder(
-      int index) {
-    return metadata_.get(index);
-  }
-  private void ensureMetadataIsMutable() {
-    if (!metadata_.isModifiable()) {
-      metadata_ =
-          com.google.protobuf.GeneratedMessageLite.mutableCopy(metadata_);
-     }
-  }
-
-  /**
-   * <code>repeated .StorageCloud.Param metadata = 7;</code>
-   */
-  private void setMetadata(
-      int index, pl.edu.pw.elka.llepak.tinbox.protobuf.Param value) {
-    if (value == null) {
-      throw new NullPointerException();
-    }
-    ensureMetadataIsMutable();
-    metadata_.set(index, value);
-  }
-  /**
-   * <code>repeated .StorageCloud.Param metadata = 7;</code>
-   */
-  private void setMetadata(
-      int index, pl.edu.pw.elka.llepak.tinbox.protobuf.Param.Builder builderForValue) {
-    ensureMetadataIsMutable();
-    metadata_.set(index, builderForValue.build());
-  }
-  /**
-   * <code>repeated .StorageCloud.Param metadata = 7;</code>
-   */
-  private void addMetadata(pl.edu.pw.elka.llepak.tinbox.protobuf.Param value) {
-    if (value == null) {
-      throw new NullPointerException();
-    }
-    ensureMetadataIsMutable();
-    metadata_.add(value);
-  }
-  /**
-   * <code>repeated .StorageCloud.Param metadata = 7;</code>
-   */
-  private void addMetadata(
-      int index, pl.edu.pw.elka.llepak.tinbox.protobuf.Param value) {
-    if (value == null) {
-      throw new NullPointerException();
-    }
-    ensureMetadataIsMutable();
-    metadata_.add(index, value);
-  }
-  /**
-   * <code>repeated .StorageCloud.Param metadata = 7;</code>
-   */
-  private void addMetadata(
-      pl.edu.pw.elka.llepak.tinbox.protobuf.Param.Builder builderForValue) {
-    ensureMetadataIsMutable();
-    metadata_.add(builderForValue.build());
-  }
-  /**
-   * <code>repeated .StorageCloud.Param metadata = 7;</code>
-   */
-  private void addMetadata(
-      int index, pl.edu.pw.elka.llepak.tinbox.protobuf.Param.Builder builderForValue) {
-    ensureMetadataIsMutable();
-    metadata_.add(index, builderForValue.build());
-  }
-  /**
-   * <code>repeated .StorageCloud.Param metadata = 7;</code>
-   */
-  private void addAllMetadata(
-      java.lang.Iterable<? extends pl.edu.pw.elka.llepak.tinbox.protobuf.Param> values) {
-    ensureMetadataIsMutable();
-    com.google.protobuf.AbstractMessageLite.addAll(
-        values, metadata_);
-  }
-  /**
-   * <code>repeated .StorageCloud.Param metadata = 7;</code>
-   */
-  private void clearMetadata() {
-    metadata_ = emptyProtobufList();
-  }
-  /**
-   * <code>repeated .StorageCloud.Param metadata = 7;</code>
-   */
-  private void removeMetadata(int index) {
-    ensureMetadataIsMutable();
-    metadata_.remove(index);
+  private void clearIsShared() {
+    
+    isShared_ = false;
   }
 
   public void writeTo(com.google.protobuf.CodedOutputStream output)
@@ -402,11 +362,14 @@ public  final class File extends
     if (!owner_.isEmpty()) {
       output.writeString(5, getOwner());
     }
-    if (creationDate_ != 0L) {
-      output.writeUInt64(6, creationDate_);
+    if (!ownerUsername_.isEmpty()) {
+      output.writeString(6, getOwnerUsername());
     }
-    for (int i = 0; i < metadata_.size(); i++) {
-      output.writeMessage(7, metadata_.get(i));
+    if (creationDate_ != 0L) {
+      output.writeUInt64(7, creationDate_);
+    }
+    if (isShared_ != false) {
+      output.writeBool(8, isShared_);
     }
   }
 
@@ -435,13 +398,17 @@ public  final class File extends
       size += com.google.protobuf.CodedOutputStream
         .computeStringSize(5, getOwner());
     }
+    if (!ownerUsername_.isEmpty()) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeStringSize(6, getOwnerUsername());
+    }
     if (creationDate_ != 0L) {
       size += com.google.protobuf.CodedOutputStream
-        .computeUInt64Size(6, creationDate_);
+        .computeUInt64Size(7, creationDate_);
     }
-    for (int i = 0; i < metadata_.size(); i++) {
+    if (isShared_ != false) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(7, metadata_.get(i));
+        .computeBoolSize(8, isShared_);
     }
     memoizedSerializedSize = size;
     return size;
@@ -737,13 +704,53 @@ public  final class File extends
     }
 
     /**
-     * <code>optional uint64 creationDate = 6;</code>
+     * <code>optional string ownerUsername = 6;</code>
+     */
+    public java.lang.String getOwnerUsername() {
+      return instance.getOwnerUsername();
+    }
+    /**
+     * <code>optional string ownerUsername = 6;</code>
+     */
+    public com.google.protobuf.ByteString
+        getOwnerUsernameBytes() {
+      return instance.getOwnerUsernameBytes();
+    }
+    /**
+     * <code>optional string ownerUsername = 6;</code>
+     */
+    public Builder setOwnerUsername(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setOwnerUsername(value);
+      return this;
+    }
+    /**
+     * <code>optional string ownerUsername = 6;</code>
+     */
+    public Builder clearOwnerUsername() {
+      copyOnWrite();
+      instance.clearOwnerUsername();
+      return this;
+    }
+    /**
+     * <code>optional string ownerUsername = 6;</code>
+     */
+    public Builder setOwnerUsernameBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setOwnerUsernameBytes(value);
+      return this;
+    }
+
+    /**
+     * <code>optional uint64 creationDate = 7;</code>
      */
     public long getCreationDate() {
       return instance.getCreationDate();
     }
     /**
-     * <code>optional uint64 creationDate = 6;</code>
+     * <code>optional uint64 creationDate = 7;</code>
      */
     public Builder setCreationDate(long value) {
       copyOnWrite();
@@ -751,7 +758,7 @@ public  final class File extends
       return this;
     }
     /**
-     * <code>optional uint64 creationDate = 6;</code>
+     * <code>optional uint64 creationDate = 7;</code>
      */
     public Builder clearCreationDate() {
       copyOnWrite();
@@ -760,99 +767,37 @@ public  final class File extends
     }
 
     /**
-     * <code>repeated .StorageCloud.Param metadata = 7;</code>
+     * <pre>
+     * if shared with anyone
+     * </pre>
+     *
+     * <code>optional bool isShared = 8;</code>
      */
-    public java.util.List<pl.edu.pw.elka.llepak.tinbox.protobuf.Param> getMetadataList() {
-      return java.util.Collections.unmodifiableList(
-          instance.getMetadataList());
+    public boolean getIsShared() {
+      return instance.getIsShared();
     }
     /**
-     * <code>repeated .StorageCloud.Param metadata = 7;</code>
+     * <pre>
+     * if shared with anyone
+     * </pre>
+     *
+     * <code>optional bool isShared = 8;</code>
      */
-    public int getMetadataCount() {
-      return instance.getMetadataCount();
-    }/**
-     * <code>repeated .StorageCloud.Param metadata = 7;</code>
-     */
-    public pl.edu.pw.elka.llepak.tinbox.protobuf.Param getMetadata(int index) {
-      return instance.getMetadata(index);
-    }
-    /**
-     * <code>repeated .StorageCloud.Param metadata = 7;</code>
-     */
-    public Builder setMetadata(
-        int index, pl.edu.pw.elka.llepak.tinbox.protobuf.Param value) {
+    public Builder setIsShared(boolean value) {
       copyOnWrite();
-      instance.setMetadata(index, value);
+      instance.setIsShared(value);
       return this;
     }
     /**
-     * <code>repeated .StorageCloud.Param metadata = 7;</code>
+     * <pre>
+     * if shared with anyone
+     * </pre>
+     *
+     * <code>optional bool isShared = 8;</code>
      */
-    public Builder setMetadata(
-        int index, pl.edu.pw.elka.llepak.tinbox.protobuf.Param.Builder builderForValue) {
+    public Builder clearIsShared() {
       copyOnWrite();
-      instance.setMetadata(index, builderForValue);
-      return this;
-    }
-    /**
-     * <code>repeated .StorageCloud.Param metadata = 7;</code>
-     */
-    public Builder addMetadata(pl.edu.pw.elka.llepak.tinbox.protobuf.Param value) {
-      copyOnWrite();
-      instance.addMetadata(value);
-      return this;
-    }
-    /**
-     * <code>repeated .StorageCloud.Param metadata = 7;</code>
-     */
-    public Builder addMetadata(
-        int index, pl.edu.pw.elka.llepak.tinbox.protobuf.Param value) {
-      copyOnWrite();
-      instance.addMetadata(index, value);
-      return this;
-    }
-    /**
-     * <code>repeated .StorageCloud.Param metadata = 7;</code>
-     */
-    public Builder addMetadata(
-        pl.edu.pw.elka.llepak.tinbox.protobuf.Param.Builder builderForValue) {
-      copyOnWrite();
-      instance.addMetadata(builderForValue);
-      return this;
-    }
-    /**
-     * <code>repeated .StorageCloud.Param metadata = 7;</code>
-     */
-    public Builder addMetadata(
-        int index, pl.edu.pw.elka.llepak.tinbox.protobuf.Param.Builder builderForValue) {
-      copyOnWrite();
-      instance.addMetadata(index, builderForValue);
-      return this;
-    }
-    /**
-     * <code>repeated .StorageCloud.Param metadata = 7;</code>
-     */
-    public Builder addAllMetadata(
-        java.lang.Iterable<? extends pl.edu.pw.elka.llepak.tinbox.protobuf.Param> values) {
-      copyOnWrite();
-      instance.addAllMetadata(values);
-      return this;
-    }
-    /**
-     * <code>repeated .StorageCloud.Param metadata = 7;</code>
-     */
-    public Builder clearMetadata() {
-      copyOnWrite();
-      instance.clearMetadata();
-      return this;
-    }
-    /**
-     * <code>repeated .StorageCloud.Param metadata = 7;</code>
-     */
-    public Builder removeMetadata(int index) {
-      copyOnWrite();
-      instance.removeMetadata(index);
+      instance.clearIsShared();
       return this;
     }
 
@@ -869,7 +814,6 @@ public  final class File extends
         return DEFAULT_INSTANCE;
       }
       case MAKE_IMMUTABLE: {
-        metadata_.makeImmutable();
         return null;
       }
       case NEW_BUILDER: {
@@ -887,12 +831,14 @@ public  final class File extends
             other.hash_ != com.google.protobuf.ByteString.EMPTY, other.hash_);
         owner_ = visitor.visitString(!owner_.isEmpty(), owner_,
             !other.owner_.isEmpty(), other.owner_);
+        ownerUsername_ = visitor.visitString(!ownerUsername_.isEmpty(), ownerUsername_,
+            !other.ownerUsername_.isEmpty(), other.ownerUsername_);
         creationDate_ = visitor.visitLong(creationDate_ != 0L, creationDate_,
             other.creationDate_ != 0L, other.creationDate_);
-        metadata_= visitor.visitList(metadata_, other.metadata_);
+        isShared_ = visitor.visitBoolean(isShared_ != false, isShared_,
+            other.isShared_ != false, other.isShared_);
         if (visitor == com.google.protobuf.GeneratedMessageLite.MergeFromVisitor
             .INSTANCE) {
-          bitField0_ |= other.bitField0_;
         }
         return this;
       }
@@ -943,18 +889,20 @@ public  final class File extends
                 owner_ = s;
                 break;
               }
-              case 48: {
+              case 50: {
+                String s = input.readStringRequireUtf8();
+
+                ownerUsername_ = s;
+                break;
+              }
+              case 56: {
 
                 creationDate_ = input.readUInt64();
                 break;
               }
-              case 58: {
-                if (!metadata_.isModifiable()) {
-                  metadata_ =
-                      com.google.protobuf.GeneratedMessageLite.mutableCopy(metadata_);
-                }
-                metadata_.add(
-                    input.readMessage(pl.edu.pw.elka.llepak.tinbox.protobuf.Param.parser(), extensionRegistry));
+              case 64: {
+
+                isShared_ = input.readBool();
                 break;
               }
             }

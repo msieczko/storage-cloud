@@ -15,7 +15,6 @@ class LoginViewModel: ViewModel() {
     lateinit var loginTask: LoginTask
     val loggedInLiveData = MutableLiveData<Boolean>()
 
-
     fun login(username: String, password: String) {
         try {
             when(loginTask.status) {
@@ -26,7 +25,9 @@ class LoginViewModel: ViewModel() {
                 AsyncTask.Status.PENDING -> {
                     loginTask.execute()
                 }
-                AsyncTask.Status.RUNNING -> {}
+                AsyncTask.Status.RUNNING -> {
+                    return
+                }
                 else -> {
                     loginTask = LoginTask(username, password)
                     loginTask.execute()
@@ -54,9 +55,14 @@ class LoginViewModel: ViewModel() {
                     false
                 }
                 else -> {
-                    Connection.reconnect()
-                    errorData.postValue("Error while logging in.")
-                    false
+                    if (Connection.reconnect()) {
+                        login(username, password)
+                        false
+                    }
+                    else {
+                        errorData.postValue("Error while logging in.")
+                        false
+                    }
                 }
             }
             loggedInLiveData.postValue(loggedIn)

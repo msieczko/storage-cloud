@@ -63,21 +63,26 @@ public interface FileOrBuilder extends
       getOwnerBytes();
 
   /**
-   * <code>optional uint64 creationDate = 6;</code>
+   * <code>optional string ownerUsername = 6;</code>
+   */
+  java.lang.String getOwnerUsername();
+  /**
+   * <code>optional string ownerUsername = 6;</code>
+   */
+  com.google.protobuf.ByteString
+      getOwnerUsernameBytes();
+
+  /**
+   * <code>optional uint64 creationDate = 7;</code>
    */
   long getCreationDate();
 
   /**
-   * <code>repeated .StorageCloud.Param metadata = 7;</code>
+   * <pre>
+   * if shared with anyone
+   * </pre>
+   *
+   * <code>optional bool isShared = 8;</code>
    */
-  java.util.List<pl.edu.pw.elka.llepak.tinbox.protobuf.Param> 
-      getMetadataList();
-  /**
-   * <code>repeated .StorageCloud.Param metadata = 7;</code>
-   */
-  pl.edu.pw.elka.llepak.tinbox.protobuf.Param getMetadata(int index);
-  /**
-   * <code>repeated .StorageCloud.Param metadata = 7;</code>
-   */
-  int getMetadataCount();
+  boolean getIsShared();
 }

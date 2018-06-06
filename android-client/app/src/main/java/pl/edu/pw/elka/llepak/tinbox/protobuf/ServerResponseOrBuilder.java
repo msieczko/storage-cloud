@@ -64,7 +64,21 @@ public interface ServerResponseOrBuilder extends
   int getFileListCount();
 
   /**
-   * <code>optional bytes data = 5;</code>
+   * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+   */
+  java.util.List<pl.edu.pw.elka.llepak.tinbox.protobuf.UserDetails> 
+      getUserListList();
+  /**
+   * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+   */
+  pl.edu.pw.elka.llepak.tinbox.protobuf.UserDetails getUserList(int index);
+  /**
+   * <code>repeated .StorageCloud.UserDetails userList = 5;</code>
+   */
+  int getUserListCount();
+
+  /**
+   * <code>optional bytes data = 6;</code>
    */
   com.google.protobuf.ByteString getData();
 }

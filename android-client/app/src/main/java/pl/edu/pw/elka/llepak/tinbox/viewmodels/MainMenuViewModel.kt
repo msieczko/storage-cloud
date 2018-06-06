@@ -10,12 +10,13 @@ import pl.edu.pw.elka.llepak.tinbox.protobuf.File
 import pl.edu.pw.elka.llepak.tinbox.protobuf.ResponseType
 import pl.edu.pw.elka.llepak.tinbox.tasks.ListFilesTask
 import pl.edu.pw.elka.llepak.tinbox.tasks.LogoutTask
-import pl.edu.pw.elka.llepak.tinbox.tasks.MkdirTask
+import pl.edu.pw.elka.llepak.tinbox.tasks.SendFileTask
 
 class MainMenuViewModel: ViewModel() {
 
     var logoutTask: LogoutTask = LogoutTask()
     val loggedOutLiveData = MutableLiveData<Boolean>()
+    lateinit var sendFileTask: SendFileTask
 
 
     fun logout() {
@@ -27,7 +28,9 @@ class MainMenuViewModel: ViewModel() {
             AsyncTask.Status.PENDING -> {
                 logoutTask.execute()
             }
-            AsyncTask.Status.RUNNING -> {}
+            AsyncTask.Status.RUNNING -> {
+                return
+            }
             else -> {
                 logoutTask = LogoutTask()
                 logoutTask.execute()
@@ -48,12 +51,28 @@ class MainMenuViewModel: ViewModel() {
                     false
                 }
                 else -> {
-                    Connection.reconnect()
-                    Connection.errorData.postValue("Error while logging out.")
-                    false
+                    if(Connection.reconnect()) {
+                        logoutTask = LogoutTask()
+                        logoutTask.execute()
+                        if (logoutTask.get().second == ResponseType.OK) {
+                            Connection.username = ""
+                            Connection.sid = ByteString.EMPTY
+                            Connection.connectionData.postValue("Logged out!")
+                            true
+                        }
+                        else {
+                            Connection.errorData.postValue("Error while logging out.")
+                            false
+                        }
+                    }
+                    else {
+                        Connection.errorData.postValue("Error while logging out.")
+                        false
+                    }
                 }
             }
             loggedOutLiveData.postValue(loggedOut)
         }).start()
     }
+
 }

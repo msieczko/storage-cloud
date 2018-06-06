@@ -45,21 +45,21 @@ public enum CommandType
    */
   DELETE(8),
   /**
-   * <code>RENAME = 9;</code>
+   * <code>C_DOWNLOAD = 9;</code>
    */
-  RENAME(9),
+  C_DOWNLOAD(9),
   /**
    * <code>SHARE = 10;</code>
    */
   SHARE(10),
   /**
-   * <code>SHARE_INFO = 11;</code>
+   * <code>LIST_SHARED = 11;</code>
    */
-  SHARE_INFO(11),
+  LIST_SHARED(11),
   /**
-   * <code>MOVE = 12;</code>
+   * <code>ADMIN_LIST_SHARED = 12;</code>
    */
-  MOVE(12),
+  ADMIN_LIST_SHARED(12),
   /**
    * <code>DOWNLOAD = 13;</code>
    */
@@ -108,6 +108,30 @@ public enum CommandType
    * <code>WARN = 24;</code>
    */
   WARN(24),
+  /**
+   * <code>LIST_USERS = 25;</code>
+   */
+  LIST_USERS(25),
+  /**
+   * <code>CHANGE_PASSWD = 26;</code>
+   */
+  CHANGE_PASSWD(26),
+  /**
+   * <code>CLEAR_CACHE = 27;</code>
+   */
+  CLEAR_CACHE(27),
+  /**
+   * <code>CHANGE_QUOTA = 28;</code>
+   */
+  CHANGE_QUOTA(28),
+  /**
+   * <code>SHARED_DOWNLOAD = 29;</code>
+   */
+  SHARED_DOWNLOAD(29),
+  /**
+   * <code>SHARE_INFO = 30;</code>
+   */
+  SHARE_INFO(30),
   UNRECOGNIZED(-1),
   ;
 
@@ -148,21 +172,21 @@ public enum CommandType
    */
   public static final int DELETE_VALUE = 8;
   /**
-   * <code>RENAME = 9;</code>
+   * <code>C_DOWNLOAD = 9;</code>
    */
-  public static final int RENAME_VALUE = 9;
+  public static final int C_DOWNLOAD_VALUE = 9;
   /**
    * <code>SHARE = 10;</code>
    */
   public static final int SHARE_VALUE = 10;
   /**
-   * <code>SHARE_INFO = 11;</code>
+   * <code>LIST_SHARED = 11;</code>
    */
-  public static final int SHARE_INFO_VALUE = 11;
+  public static final int LIST_SHARED_VALUE = 11;
   /**
-   * <code>MOVE = 12;</code>
+   * <code>ADMIN_LIST_SHARED = 12;</code>
    */
-  public static final int MOVE_VALUE = 12;
+  public static final int ADMIN_LIST_SHARED_VALUE = 12;
   /**
    * <code>DOWNLOAD = 13;</code>
    */
@@ -211,6 +235,30 @@ public enum CommandType
    * <code>WARN = 24;</code>
    */
   public static final int WARN_VALUE = 24;
+  /**
+   * <code>LIST_USERS = 25;</code>
+   */
+  public static final int LIST_USERS_VALUE = 25;
+  /**
+   * <code>CHANGE_PASSWD = 26;</code>
+   */
+  public static final int CHANGE_PASSWD_VALUE = 26;
+  /**
+   * <code>CLEAR_CACHE = 27;</code>
+   */
+  public static final int CLEAR_CACHE_VALUE = 27;
+  /**
+   * <code>CHANGE_QUOTA = 28;</code>
+   */
+  public static final int CHANGE_QUOTA_VALUE = 28;
+  /**
+   * <code>SHARED_DOWNLOAD = 29;</code>
+   */
+  public static final int SHARED_DOWNLOAD_VALUE = 29;
+  /**
+   * <code>SHARE_INFO = 30;</code>
+   */
+  public static final int SHARE_INFO_VALUE = 30;
 
 
   public final int getNumber() {
@@ -236,10 +284,10 @@ public enum CommandType
       case 6: return LIST_FILES;
       case 7: return MKDIR;
       case 8: return DELETE;
-      case 9: return RENAME;
+      case 9: return C_DOWNLOAD;
       case 10: return SHARE;
-      case 11: return SHARE_INFO;
-      case 12: return MOVE;
+      case 11: return LIST_SHARED;
+      case 12: return ADMIN_LIST_SHARED;
       case 13: return DOWNLOAD;
       case 14: return METADATA;
       case 15: return USR_DATA;
@@ -252,6 +300,12 @@ public enum CommandType
       case 22: return ADMIN_UNSHARE;
       case 23: return ADMIN_SHARE_INFO;
       case 24: return WARN;
+      case 25: return LIST_USERS;
+      case 26: return CHANGE_PASSWD;
+      case 27: return CLEAR_CACHE;
+      case 28: return CHANGE_QUOTA;
+      case 29: return SHARED_DOWNLOAD;
+      case 30: return SHARE_INFO;
       default: return null;
     }
   }

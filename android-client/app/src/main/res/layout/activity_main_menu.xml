@@ -22,6 +22,12 @@
             android:layout_height="wrap_content"
             android:id="@+id/upload_file_button"/>
 
+    <Button
+            android:text="@string/change_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/menu_change_password"/>
+
     <ProgressBar
             android:id="@+id/main_menu_progress"
             style="?android:attr/progressBarStyle"
@@ -29,4 +35,5 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
             />
+
 </LinearLayout>

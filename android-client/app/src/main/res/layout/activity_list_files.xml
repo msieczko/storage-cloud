@@ -11,4 +11,16 @@
             android:text="@string/create_folder"
             android:id="@+id/create_folder_button"/>
 
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_directory"
+            android:id="@+id/choose_dir_button"/>
+
+    <Button
+            android:text="@string/delete_directory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/delete_button"/>
+
 </LinearLayout>

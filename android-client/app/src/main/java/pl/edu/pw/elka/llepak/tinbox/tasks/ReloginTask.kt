@@ -2,14 +2,15 @@ package pl.edu.pw.elka.llepak.tinbox.tasks
 
 import android.os.AsyncTask
 import pl.edu.pw.elka.llepak.tinbox.Connection
+import pl.edu.pw.elka.llepak.tinbox.Connection.buildParam
 import pl.edu.pw.elka.llepak.tinbox.protobuf.CommandType
 import pl.edu.pw.elka.llepak.tinbox.protobuf.ResponseType
 import pl.edu.pw.elka.llepak.tinbox.protobuf.ServerResponse
 
 class ReloginTask: AsyncTask<Unit, Unit, Pair<ServerResponse, ResponseType>>() {
     override fun doInBackground(vararg params: Unit?): Pair<ServerResponse, ResponseType> {
-        val sidParam = Connection.messageBuilder.buildParam("sid", Connection.sid)
-        val userParam = Connection.messageBuilder.buildParam("username", Connection.username)
+        val sidParam = buildParam("sid", Connection.sid.toByteArray())
+        val userParam = buildParam("username", Connection.username)
 
         val command = Connection.messageBuilder.buildCommand(CommandType.RELOGIN, mutableListOf(sidParam, userParam))
 

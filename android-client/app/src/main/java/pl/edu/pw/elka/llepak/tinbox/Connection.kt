@@ -7,10 +7,7 @@ import com.google.protobuf.ByteString
 import pl.edu.pw.elka.llepak.tinbox.messageutils.MessageBuilder
 import pl.edu.pw.elka.llepak.tinbox.messageutils.MessageDecoder
 import pl.edu.pw.elka.llepak.tinbox.protobuf.*
-import pl.edu.pw.elka.llepak.tinbox.tasks.ConnectTask
-import pl.edu.pw.elka.llepak.tinbox.tasks.HandshakeTask
-import pl.edu.pw.elka.llepak.tinbox.tasks.ReconnectTask
-import pl.edu.pw.elka.llepak.tinbox.tasks.ReloginTask
+import pl.edu.pw.elka.llepak.tinbox.tasks.*
 import java.net.InetSocketAddress
 import java.net.Socket
 
@@ -26,6 +23,8 @@ object Connection {
     var reconnectTask: ReconnectTask = ReconnectTask()
     var reloginTask: ReloginTask = ReloginTask()
 
+    lateinit var listFilesTask: ListFilesTask
+
     var socket: Socket = Socket()
 
     val messageBuilder = MessageBuilder()
@@ -34,6 +33,8 @@ object Connection {
     val connectionData = MutableLiveData<String>()
     val errorData = MutableLiveData<String>()
     val connectData = MutableLiveData<Boolean>()
+
+    val transferProgressData = MutableLiveData<Int>()
 
     var initialized: Boolean = false
 
@@ -49,7 +50,9 @@ object Connection {
             AsyncTask.Status.PENDING -> {
                 connectTask.execute()
             }
-            AsyncTask.Status.RUNNING -> { }
+            AsyncTask.Status.RUNNING -> {
+                return
+            }
             else -> {
                 connectTask = ConnectTask()
                 connectTask.execute()
@@ -57,12 +60,29 @@ object Connection {
         }
         Thread({
             val connected = connectTask.get()
-            connectData.postValue(connected)
-            if (connected)
+            if (connected) {
                 connectionData.postValue(message)
-            else
+                sendHandshake()
+            }
+            else {
                 errorData.postValue("Error while connecting!")
+                connectData.postValue(false)
+            }
         }).start()
+    }
+
+    fun buildCommand(type: CommandType, params: List<Param>): Command {
+        return messageBuilder.buildCommand(type, params)
+    }
+
+    fun buildParam(paramId: String, paramVal: Any): Param {
+        val partParam = Param.newBuilder().setParamId(paramId)
+        return when (paramVal) {
+            is String -> partParam.setSParamVal(paramVal).build()
+            is Long -> partParam.setIParamVal(paramVal).build()
+            is ByteArray -> partParam.setBParamVal(ByteString.copyFrom(paramVal)).build()
+            else -> Param.getDefaultInstance()
+        }
     }
 
 
@@ -74,15 +94,23 @@ object Connection {
             when (responseType) {
                 ResponseType.OK -> {
                     connectData.postValue(true)
-                    connectionData.postValue("Handshake successful!")
+                    connectionData.postValue("Connection established!!")
                 }
                 ResponseType.ERROR -> {
                     connectData.postValue(false)
                     val errorMsg = response.getParams(0).sParamVal
                     errorData.postValue(errorMsg)
                 }
+                else -> {
+                    connectData.postValue(false)
+                    errorData.postValue("Error while sending handshake!")
+                }
             }
         }).start()
+    }
+
+    fun buildHandshake(encryptionAlgorithm: EncryptionAlgorithm): Handshake {
+        return messageBuilder.buildHandshake(encryptionAlgorithm)
     }
 
     fun sendHandshake(handshake: Handshake): ServerResponse {
@@ -118,7 +146,7 @@ object Connection {
         return messageDecoder.decodeMessage(receiveBuffer, received)
     }
 
-    fun reconnect() {
+    fun reconnect(): Boolean {
         when (reconnectTask.status) {
             AsyncTask.Status.FINISHED -> {
                 encryptionAlgorithm = EncryptionAlgorithm.NOENCRYPTION
@@ -136,21 +164,23 @@ object Connection {
                 reconnectTask.execute()
             }
         }
-        Thread({
-            val reconnected = reconnectTask.get()
-            if (reconnected) {
-                sendHandshake()
-                if (sid != ByteString.EMPTY && username != "")
-                    relogin()
-                else
-                    connectionData.postValue("Reconnected!")
+        val reconnected = reconnectTask.get()
+        return if (reconnected) {
+            sendHandshake()
+            if (sid != ByteString.EMPTY && username != "")
+                relogin()
+            else {
+                connectionData.postValue("Reconnected!")
+                true
             }
-            else
-                errorData.postValue("Error while reconnecting!")
-        }).start()
+        }
+        else {
+            errorData.postValue("Error while reconnecting!")
+            false
+        }
     }
 
-    private fun relogin() {
+    private fun relogin(): Boolean {
         when (reloginTask.status) {
             AsyncTask.Status.FINISHED -> {
                 reloginTask = ReloginTask()
@@ -165,19 +195,22 @@ object Connection {
                 reloginTask.execute()
             }
         }
-        Thread({
-            val (response, responseType) = reloginTask.get()
-            when(responseType) {
-                ResponseType.LOGGED -> {
-                    Connection.sid = response.getParams(0).bParamVal
-                    connectionData.postValue("Logged in as $username")
-                }
-                ResponseType.ERROR -> {
-                    val errorMsg = response.getParams(0).sParamVal
-                    errorData.postValue(errorMsg)
-                }
-                else -> errorData.postValue("Error while relogging")
+        val (response, responseType) = reloginTask.get()
+        return when(responseType) {
+            ResponseType.LOGGED -> {
+                Connection.sid = response.getParams(0).bParamVal
+                connectionData.postValue("Logged in as $username")
+                true
             }
-        }).start()
+            ResponseType.ERROR -> {
+                val errorMsg = response.getParams(0).sParamVal
+                errorData.postValue(errorMsg)
+                false
+            }
+            else -> {
+                errorData.postValue("Error while relogging")
+                false
+            }
+        }
     }
 }
