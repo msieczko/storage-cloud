@@ -188,8 +188,13 @@ class ListFilesViewModel: ViewModel() {
                 connectionData.postValue("File sent!")
             }
             else {
-                fileTransferLiveData.postValue(false)
-                connectionData.postValue("Error while sending file!")
+                if (reconnect()) {
+                    uploadFile(filepath, path)
+                }
+                else {
+                    fileTransferLiveData.postValue(false)
+                    connectionData.postValue("Error while sending file!")
+                }
             }
         }).start()
     }
@@ -226,8 +231,13 @@ class ListFilesViewModel: ViewModel() {
                 connectionData.postValue("File downloaded!")
             }
             else {
-                fileTransferLiveData.postValue(false)
-                connectionData.postValue("Error while downloading file!")
+                if (reconnect()) {
+                    download(file)
+                }
+                else {
+                    fileTransferLiveData.postValue(false)
+                    connectionData.postValue("Error while downloading file!")
+                }
             }
         }).start()
     }

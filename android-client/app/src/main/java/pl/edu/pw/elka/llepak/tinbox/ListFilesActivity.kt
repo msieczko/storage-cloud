@@ -87,7 +87,13 @@ class ListFilesActivity: AppCompatActivity() {
             viewModel.delete(path)
         })
 
-        progressDialog = ProgressDialog(this)
+        try {
+            if (!progressDialog.isShowing)
+                progressDialog = ProgressDialog(this)
+        }
+        catch (e: UninitializedPropertyAccessException) {
+            progressDialog = ProgressDialog(this)
+        }
     }
 
     private fun listFiles(files: List<File>?) {

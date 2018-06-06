@@ -68,6 +68,8 @@ class SendFileTask(private val filepath: String, private val path: String): Asyn
                         throw RuntimeException()
                     val fileDataParam = buildParam("data", dataBuffer)
                     val sendCommand = buildCommand(CommandType.USR_DATA, mutableListOf(fileDataParam))
+                    response = ServerResponse.getDefaultInstance()
+                    responseType = ResponseType.NULL5
                     try {
                         response = sendCommandWithResponse(sendCommand)
                         responseType = response.type
@@ -81,16 +83,7 @@ class SendFileTask(private val filepath: String, private val path: String): Asyn
                             toRet = false
                         }
                         else -> {
-                            for (r in 0 until 3) {
-                                if (reconnect()) {
-                                    toRet = true
-                                    counter -= 1
-                                    break
-                                }
-                                else {
-                                    toRet = false
-                                }
-                            }
+                            toRet = false
                         }
                     }
                     counter += 1
@@ -105,10 +98,7 @@ class SendFileTask(private val filepath: String, private val path: String): Asyn
                 return false
             }
             else -> {
-                return if (reconnect())
-                    doInBackground()
-                else
-                    false
+                return false
             }
         }
     }

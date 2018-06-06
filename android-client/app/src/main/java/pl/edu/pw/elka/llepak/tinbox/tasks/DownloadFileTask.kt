@@ -64,14 +64,7 @@ class DownloadFileTask(private val file: File): AsyncTask<Unit, Unit, Boolean>()
                             toRet = false
                         }
                         else -> {
-                            for (r in 0 until 3) {
-                                if (Connection.reconnect()) {
-                                    toRet = true
-                                    break
-                                } else {
-                                    toRet = false
-                                }
-                            }
+                            toRet = false
                         }
                     }
                     if (!toRet)
@@ -83,10 +76,7 @@ class DownloadFileTask(private val file: File): AsyncTask<Unit, Unit, Boolean>()
                 return false
             }
             else -> {
-                return if (Connection.reconnect())
-                    doInBackground()
-                else
-                    false
+                return false
             }
         }
     }
