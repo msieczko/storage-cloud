@@ -4,6 +4,11 @@
 #include "main.h"
 #include <sstream>
 
+#define RED "\033[;31m"
+#define LIGHTBLUE "\033[;36m"
+#define YELLOW "\033[;33m"
+#define RESET "\033[0m"
+
 enum MessageLevel {
     DEBUG,
     INFO,
@@ -26,6 +31,7 @@ private:
     std::string last_printed = "";
     std::thread printer;
     bool* should_exit;
+    bool destroying = false;
 
     void print_msg();
 

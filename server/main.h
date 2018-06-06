@@ -39,9 +39,9 @@
 
 #include "protbuf/messages.pb.h"
 
-#define MAX_CONNECTIONS 10
+#define MAX_CONNECTIONS 20
 
-#define MAX_PACKET_SIZE 4096
+#define MAX_PACKET_SIZE 1024*1024*4+100
 
 #define DEFAULT_ENCRYPTION_ALGORITHM StorageCloud::EncryptionAlgorithm::NOENCRYPTION
 #define DEFAULT_HASHING_ALGORITHM StorageCloud::HashAlgorithm::H_SHA512

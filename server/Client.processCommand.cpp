@@ -50,6 +50,11 @@ bool Client::processCommand(Command* cmd) {
             tmp_param->set_paramid("sid");
             tmp_param->set_bparamval(sid);
             logger->log(id, "user " + t_username + " logged in");
+            vector<string> warns;
+            u.getWarnings(warns);
+            for(auto& warn: warns) {
+                res.add_list(warn);
+            }
         } else {
             res.set_type(ResponseType::ERROR);
             Param* tmp_param = res.add_params();
@@ -108,6 +113,11 @@ bool Client::processCommand(Command* cmd) {
             tmp_param->set_paramid("sid");
             tmp_param->set_bparamval(sid);
             logger->log(id, "user " + t_username + " relogged in");
+            vector<string> warns;
+            u.getWarnings(warns);
+            for(auto& warn: warns) {
+                res.add_list(warn);
+            }
         } else {
             res.set_type(ResponseType::ERROR);
             Param* tmp_param = res.add_params();
@@ -159,20 +169,21 @@ bool Client::processCommand(Command* cmd) {
 
                 if(!u.listFilesinPath(cmd->params(0).sparamval(), files)) {
                     resError(res, "Internal error occured", "tried to list files, but internal error occured");
-                }
+                } else {
 
-                for(auto&& file: files) {
-//                    logger.info("FILES", file.filename + " " + file.owner_name);
-                    File* tmp_file = res.add_filelist();
-                    tmp_file->set_filename(file.filename);
-                    tmp_file->set_filetype(file.type == FILE_REGULAR ? FileType::FILE : FileType::DIRECTORY);
-                    tmp_file->set_size(file.size);
-                    tmp_file->set_hash(file.hash);
-                    tmp_file->set_owner(file.owner_name);
-                    tmp_file->set_creationdate(file.creation_date);
-                }
+                    for(auto &&file: files) {
+                        File *tmp_file = res.add_filelist();
+                        tmp_file->set_filename(file.filename);
+                        tmp_file->set_filetype(file.type == FILE_REGULAR ? FileType::FILE : FileType::DIRECTORY);
+                        tmp_file->set_size(file.size);
+                        tmp_file->set_hash(file.hash);
+                        tmp_file->set_owner(file.owner_name);
+                        tmp_file->set_creationdate(file.creation_date);
+                        tmp_file->set_isshared(file.isShared);
+                    }
 
-                res.set_type(ResponseType::FILES);
+                    res.set_type(ResponseType::FILES);
+                }
             } else {
                 resError(res, "Wrong command format", "tried to list files, but command format was wrong");
             }
@@ -224,6 +235,7 @@ bool Client::processCommand(Command* cmd) {
                     tmp->set_paramid("starting_chunk");
                     tmp->set_iparamval(0);
                 } else if(wyn == ADD_FILE_CONTINUE_OK) {
+                    res.set_type(ResponseType::CAN_SEND);
                     UFile tmp_file = u.getCurrentInFileMetadata();
                     if(!u.isCurrentInFileValid()) {
                         resError(res, "Internal error occured (2)", "tried to add metadata, tried to continue, but internal error occured");
@@ -242,6 +254,8 @@ bool Client::processCommand(Command* cmd) {
                         resError(res, "Filename empty", "tried to add metadata, but provided empty filename");
                     } else if(wyn == ADD_FILE_FILE_EXISTS) {
                         resError(res, "File already exists", "tried to add metadata, but filename already exists");
+                    } else if(wyn == ADD_FILE_NO_SPACE) {
+                        resError(res, "Not enough space left", "tried to add metadata, but doesn't have enough free space");
                     } else {
                         resError(res, "Unknown error", "tried to add metadata, but unknown error occured");
                     }
@@ -376,6 +390,7 @@ bool Client::processCommand(Command* cmd) {
                 u_d.username = username;
                 u_d.name = name;
                 u_d.surname = surname;
+                u_d.role = USER_USER;
 
                 bool usernameTaken = false;
                 if(!UserManager::getInstance().registerUser(u_d, passwd, usernameTaken)) {
@@ -415,19 +430,20 @@ bool Client::processCommand(Command* cmd) {
 
                 if(!u.listUserFiles(username, path, files)) {
                     resError(res, "Internal error occured", "tried to list user files, but internal error occured");
-                }
+                } else {
+                    for(auto &&file: files) {
+                        File *tmp_file = res.add_filelist();
+                        tmp_file->set_filename(file.filename);
+                        tmp_file->set_filetype(file.type == FILE_REGULAR ? FileType::FILE : FileType::DIRECTORY);
+                        tmp_file->set_size(file.size);
+                        tmp_file->set_hash(file.hash);
+                        tmp_file->set_owner(file.owner_name);
+                        tmp_file->set_creationdate(file.creation_date);
+                        tmp_file->set_isshared(file.isShared);
+                    }
 
-                for(auto&& file: files) {
-                    File* tmp_file = res.add_filelist();
-                    tmp_file->set_filename(file.filename);
-                    tmp_file->set_filetype(file.type == FILE_REGULAR ? FileType::FILE : FileType::DIRECTORY);
-                    tmp_file->set_size(file.size);
-                    tmp_file->set_hash(file.hash);
-                    tmp_file->set_owner(file.owner_name);
-                    tmp_file->set_creationdate(file.creation_date);
+                    res.set_type(ResponseType::FILES);
                 }
-
-                res.set_type(ResponseType::FILES);
             } else {
                 resError(res, "Wrong command format", "tried to list user files, but command format was wrong");
             }
@@ -691,6 +707,7 @@ bool Client::processCommand(Command* cmd) {
                     tmp_file->set_owner(file.owner_name);
                     tmp_file->set_ownerusername(file.owner_username);
                     tmp_file->set_creationdate(file.creation_date);
+                    tmp_file->set_isshared(file.isShared);
                 }
 
                 res.set_type(ResponseType::FILES);
@@ -716,6 +733,7 @@ bool Client::processCommand(Command* cmd) {
                         tmp_file->set_owner(file.owner_name);
                         tmp_file->set_ownerusername(file.owner_username);
                         tmp_file->set_creationdate(file.creation_date);
+                        tmp_file->set_isshared(file.isShared);
                     }
 
                     res.set_type(ResponseType::FILES);
@@ -763,6 +781,130 @@ bool Client::processCommand(Command* cmd) {
                 }
             } else {
                 resError(res, "Wrong command format", "tried to download shared file, but command format was wrong");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::CLEAR_CACHE) {
+        if(!(u.isValid() && u.isAuthorized())) {
+            resError(res, "You are not logged in", "tried to clear cache, but was not logged in");
+        } else {
+            if(u.clearCache()) {
+                res.set_type(ResponseType::OK);
+            } else {
+                resError(res, "Error occured", "tried to clear cache, but error occured");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::CHANGE_QUOTA) {
+        if(!(u.isAdmin())) {
+            resError(res, "Not enough permissions", "tried to change user quota, but was not logged as admin");
+        } else {
+            string username;
+            uint64_t newVal = 0;
+            uint8_t validFields = 0;
+
+            for(auto& param: cmd->params()) {
+                if(param.paramid() == "username") {
+                    username = param.sparamval();
+                    validFields++;
+                } else if(param.paramid() == "new_val") {
+                    newVal = param.iparamval();
+                    validFields++;
+                }
+            }
+
+            if(validFields == 2 && !username.empty()) {
+                if(!u.changeUserTotalStorage(username, newVal)) {
+                    resError(res, "Internal error occured", "tried to change user quota, but internal error occured");
+                } else {
+                    res.set_type(ResponseType::OK);
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to change user quota, but command format was wrong");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::SHARE_INFO) {
+        if(!(u.isValid() && u.isAuthorized())) {
+            resError(res, "You are not logged in", "tried to get shared info, but was not logged in");
+        } else {
+            if(cmd->params_size() == 1 && cmd->params(0).paramid() == "file_path" && !cmd->params(0).sparamval().empty()) {
+                vector<string> users;
+                if(u.shareInfo(cmd->params(0).sparamval(), users)) {
+                    res.set_type(ResponseType::SHARED);
+                    for(auto& username: users) {
+                        res.add_list(username);
+                    }
+                } else {
+                    resError(res, "Error occured", "tried to get shared info about " + cmd->params(0).sparamval() + ", but error occured");
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to get shared info, but command format was wrong");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::ADMIN_SHARE_INFO) {
+        if(!(u.isAdmin())) {
+            resError(res, "Not enough permissions", "tried to get share info, but was not logged as admin");
+        } else {
+            string username, filename;
+            uint8_t validFields = 0;
+
+            for(auto& param: cmd->params()) {
+                if(param.paramid() == "owner_username") {
+                    username = param.sparamval();
+                    validFields++;
+                } else if(param.paramid() == "file_path") {
+                    filename = param.sparamval();
+                    validFields++;
+                }
+            }
+
+            if(validFields == 2 && !username.empty() && !filename.empty()) {
+                vector<string> users;
+                if(u.shareInfoUser(username, filename, users)) {
+                    res.set_type(ResponseType::SHARED);
+                    for(auto& usr: users) {
+                        res.add_list(usr);
+                    }
+                } else {
+                    resError(res, "Error occured", "tried to get admin shared info about " + cmd->params(0).sparamval() + ", but error occured");
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to get admin shared info, but command format was wrong");
+            }
+        }
+
+        sendServerResponse(&res);
+    } else if (cmd->type() == CommandType::WARN) {
+        if(!(u.isAdmin())) {
+            resError(res, "Not enough permissions", "tried to warn user, but was not logged as admin");
+        } else {
+            string username, warnBody;
+            uint8_t validFields = 0;
+
+            for(auto& param: cmd->params()) {
+                if(param.paramid() == "user") {
+                    username = param.sparamval();
+                    validFields++;
+                } else if(param.paramid() == "message") {
+                    warnBody = param.sparamval();
+                    validFields++;
+                }
+            }
+
+            if(validFields == 2 && !username.empty() && !warnBody.empty()) {
+                if(u.warnUser(username, warnBody)) {
+                    res.set_type(ResponseType::OK);
+                } else {
+                    resError(res, "Error occured", "tried to warn user " + username + ", but error occured");
+                }
+            } else {
+                resError(res, "Wrong command format", "tried to warn user, but command format was wrong");
             }
         }
 
