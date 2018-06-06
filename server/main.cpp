@@ -16,14 +16,6 @@ bool should_exit = false;
 Logger logger(&should_exit);
 Database db(&logger);
 
-void sig_handler(int signo)
-{
-    if (signo == SIGTERM) {
-        logger.log("sig_handler", "received SIGTERM " + to_string(getpid()));
-        should_exit = true;
-    }
-}
-
 void process(int sock, connection* conn) {
 
     int optval = 1;

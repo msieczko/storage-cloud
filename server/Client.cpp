@@ -64,6 +64,8 @@ bool Client::getNBytes(const int n, uint8_t buf[], bool& exitReason) {
         }
     }
 
+    close(epfd);
+
     return (received == n);
 }
 
@@ -105,6 +107,8 @@ bool Client::sendNBytes(const int n, uint8_t buf[]) {
             sent += last_sent;
         }
     }
+
+    close(epfd);
 
     return (sent == n);
 }

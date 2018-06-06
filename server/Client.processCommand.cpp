@@ -215,7 +215,7 @@ bool Client::processCommand(Command* cmd) {
             bool paramsOk = false;
 
             if(validFields == 3) {
-                if(path.size() > 0 && hash.size() == FILE_HASH_SIZE && size < 1024ull*1024ull*1024ull*50ull) {
+                if(path.size() > 0 && hash.size() == FILE_HASH_SIZE && size < 1024*1024*1024*50ull) {
                     paramsOk = true;
                 }
             }
