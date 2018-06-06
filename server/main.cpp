@@ -195,7 +195,7 @@ int main(int argc, char **argv) {
                     logger.info("main", conn);
                 }
             } else if (cmd == "help") {
-                logger.info("main", "Available commands:\n  exit - closes server\n  list - lists active connections");
+                logger.info("main", "Available commands:\n  exit - closes server\n  list - lists active connections\n  users - list registered users");
             } else if (cmd == "users") {
                 logger.info("main", "All users:");
                 vector<UDetails> users;
