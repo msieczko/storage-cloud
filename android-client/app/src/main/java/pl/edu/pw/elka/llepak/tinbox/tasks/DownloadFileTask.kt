@@ -2,6 +2,7 @@ package pl.edu.pw.elka.llepak.tinbox.tasks
 
 import android.os.AsyncTask
 import android.os.Environment
+import android.util.Log
 import pl.edu.pw.elka.llepak.tinbox.Connection
 import pl.edu.pw.elka.llepak.tinbox.Connection.buildCommand
 import pl.edu.pw.elka.llepak.tinbox.Connection.buildParam
@@ -29,8 +30,8 @@ class DownloadFileTask(private val file: File): AsyncTask<Unit, Unit, Boolean>()
         when (responseType) {
             ResponseType.SRV_DATA -> {
                 var saved: Long = 0
-                val savePath = Environment.getExternalStorageDirectory().path + "/TINBox" + file.filename
-                val saveFile = java.io.File(savePath)
+                var savePath = Environment.getExternalStorageDirectory().path + "/TINBox" + file.filename
+                var saveFile = java.io.File(savePath)
                 saveFile.mkdirs()
                 if (saveFile.exists())
                     saveFile.delete()
@@ -41,18 +42,21 @@ class DownloadFileTask(private val file: File): AsyncTask<Unit, Unit, Boolean>()
                 saved += response.data.size()
                 var toRet = true
                 while (saved != file.size) {
-                    val partObject = buildCommand(CommandType.C_DOWNLOAD, mutableListOf())
                     response = ServerResponse.getDefaultInstance()
                     responseType = ResponseType.NULL5
                     try {
-                        response = sendCommandWithResponse(partObject)
+                        response = sendCommandWithResponse(buildCommand(CommandType.C_DOWNLOAD, mutableListOf()))
                         responseType = response.type
                     }
-                    catch (e: Exception) { }
+                    catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                     when (responseType) {
                         ResponseType.SRV_DATA -> {
-                            randomAccessFile.write(response.data.toByteArray())
-                            saved += response.data.size()
+                            val data = response.data.toByteArray()
+                            randomAccessFile.write(data)
+                            saved += data.size
+                            Log.i("dataSize: ", data.size.toString())
                             transferProgressData.postValue((saved * 100 / file.size).toInt())
                         }
                         ResponseType.ERROR -> {
