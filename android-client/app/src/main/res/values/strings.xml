@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">TINBox</string>
+    <string name="message_hint">Message</string>
+    <string name="message_button">Send</string>
+    <string name="socket_connected">Connected</string>
+    <string name="socket_disconnected">Disconnected</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="username">username</string>
+    <string name="password">password</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="show_files">List my files</string>
+    <string name="create_folder">Create a folder</string>
+    <string name="upload_file">Upload a file</string>
+    <string name="register">Register</string>
+    <string name="change_password">Change password</string>
+    <string name="new_password">new password</string>
+    <string name="current_password">current password</string>
+    <string name="name">name</string>
+    <string name="surname">surname</string>
+    <string name="choose_directory">Choose directory</string>
+    <string name="delete_directory">Delete directory</string>
+</resources>
