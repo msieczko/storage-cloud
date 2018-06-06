@@ -25,6 +25,8 @@
 
 #define OUT_FILE_CHUNK_SIZE 2048
 
+#define GARBAGE_COLLECTOR_TRESHOLD_MINUTES 30
+
 using bsoncxx::oid;
 using std::vector;
 
@@ -33,6 +35,7 @@ class UserManager;
 // user file
 struct UFile {
     oid id;
+    oid owner;
     string filename;
     string hash;
     uint64_t size;
@@ -43,6 +46,8 @@ struct UFile {
     string owner_username;
     uint8_t type;
     string realPath;
+    bool isShared;
+    std::chrono::system_clock::time_point lastChunkTime;
 };
 
 struct UDetails {
@@ -89,9 +94,6 @@ public:
     uint8_t addFile(UFile&);
     bool addFileChunk(const string&);
     bool isAdmin();
-    bool getRole(uint8_t&);
-    bool getCapacity(uint64_t&);
-    bool getFreeSpace(uint64_t&);
     bool getYourStats(UDetails&);
     bool deleteFile(const string&);
     bool deleteUserFile(const string&, const string&);
@@ -103,9 +105,15 @@ public:
     bool shareWith(const string& filename, const string& username);
     bool unshareWith(const string& filename, const string& username);
     bool listShared(vector<UFile>&);
+    bool clearCache();
+    bool shareInfo(const string&, vector<string>&);
+    bool shareInfoUser(const string&, const string&, vector<string>&);
+    bool getWarnings(vector<string>&);
+    bool warnUser(const string&, const string&);
 
     bool listUserFiles(string&, string&, vector<UFile>&);
     bool listUserShared(const string&, vector<UFile>&);
+    bool changeUserTotalStorage(const string&, uint64_t);
 };
 
 class UserManager {
@@ -120,6 +128,7 @@ private:
     explicit UserManager(Database&, Logger&);
     bool parseUserDetails(std::map<string, bsoncxx::types::value>&, UDetails&);
     bool getPasswdHash(oid&, string&);
+    void garbageCollectorMain(std::condition_variable&, bool&);
 
     bsoncxx::types::b_utf8 toUTF8(string&);
     bsoncxx::types::b_int64 toINT64(uint64_t i);
@@ -128,7 +137,6 @@ private:
     bsoncxx::types::b_bool toBool(bool);
     bsoncxx::types::b_binary toBinary(string&);
 
-//    string mapToString(std::map<string, bsoncxx::document::element>&);
 public:
     bool getName(oid&, string&);
     bool getSurname(oid&, string&);
@@ -144,7 +152,7 @@ public:
     bool removeSid(oid&, string&);
     bool listAllUsers(std::vector<UDetails>&);
     bool getUserDetails(oid, UDetails&);
-    bool getUserRole(oid&, uint8_t&);
+    bool getUserRole(oid&, uint64_t&);
     bool getTotalSpace(oid&, uint64_t&);
     bool getFreeSpace(oid&, uint64_t&);
     bool registerUser(UDetails&, const string&, bool&);
@@ -163,6 +171,14 @@ public:
     bool unshareWith(oid& fileId, oid& userId);
     bool listSharedWithUser(oid&, vector<UFile>&);
     bool getFileFilename(oid&, string&);
+    bool updateLastChunkTime(UFile&);
+    bool collectOldUnfinished();
+    bool removeAllUnfinishedForUser(oid&);
+    bool setTotalSpace(oid&, uint64_t&);
+    bool changeFreeSpace(oid&, int64_t);
+    bool shareInfo(oid& fileId, vector<string>&);
+    bool getWarningList(oid&, vector<string>&);
+    bool addWarning(oid&, const string&);
 
     bool runAsUser(const string&, std::function<bool(oid&)>);
 
@@ -173,6 +189,8 @@ public:
         static UserManager instance(*db, *logger);
         return instance;
     }
+
+    std::thread startGarbageCollector(std::condition_variable&, bool&);
 };
 
 #endif //SERVER_USER_H

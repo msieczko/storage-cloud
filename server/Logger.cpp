@@ -1,7 +1,3 @@
-//
-// Created by milosz on 19.05.18.
-//
-
 #include "Logger.h"
 
 using namespace std;
@@ -11,6 +7,11 @@ void Logger::print_msg() {
         unique_lock<mutex> l(queue_mutex);
         if (msg_queue.empty()) {
             queue_empty.wait(l);
+        }
+
+        if(destroying) {
+            cout<<"\r[LOGGER] Bye!"<<endl;
+            break;
         }
 
         bool printed = false;
@@ -32,12 +33,15 @@ void Logger::print_msg() {
                 message += "[DEBUG]";
             }
             if (msg.level == INFO) {
+                message = LIGHTBLUE + message;
                 message += "[INFO]";
             }
             if (msg.level == WARN) {
+                message = YELLOW + message;
                 message += "[WARN]";
             }
             if (msg.level == ERR) {
+                message = RED + message;
                 message += "[ERROR]";
             }
 
@@ -45,13 +49,9 @@ void Logger::print_msg() {
 
             message += msg.body;
 
-            cout << "\r" << message << endl;
+            cout << "\r" << message << RESET << endl;
 
             printed = true;
-
-            if (msg.body == "bye!" && *should_exit) {
-                break;
-            }
         }
 
         if(input != nullptr) {
@@ -74,6 +74,8 @@ Logger::Logger(bool* s_e) {
 }
 
 Logger::~Logger() {
+    destroying = true;
+    queue_empty.notify_one();
     if(printer.joinable())
         printer.join();
 }

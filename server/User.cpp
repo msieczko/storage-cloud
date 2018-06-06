@@ -38,6 +38,8 @@ bool User::addUsername(const string &username) {
         authorized = false;
         valid = true;
     }
+
+    return true;
 }
 
 bool User::getName(string& name) {
@@ -129,7 +131,13 @@ uint8_t User::addFile(UFile& file) {
             UFile tmp_file;
             if(user_manager.getYourFileMetadata(id, file.filename, tmp_file, FILE_REGULAR)) {
                 if(!tmp_file.isValid && tmp_file.size == file.size && tmp_file.hash == file.hash) {
+                    uint64_t spaceNeeded = tmp_file.size - tmp_file.lastValid;
+                    uint64_t availableSpace;
+                    if(!user_manager.getFreeSpace(id, availableSpace) || availableSpace < spaceNeeded) {
+                        return ADD_FILE_NO_SPACE;
+                    }
                     currentInFile = tmp_file;
+                    currentInFile.owner = id;
                     currentInFileValid = true;
                     return ADD_FILE_CONTINUE_OK;
                 }
@@ -143,10 +151,16 @@ uint8_t User::addFile(UFile& file) {
 
     if(user_manager.addNewFile(id, file, dir, fileId)) {
         if(file.type == FILE_REGULAR) {
+            uint64_t availableSpace;
+            if(!user_manager.getFreeSpace(id, availableSpace) || availableSpace < file.size) {
+                return ADD_FILE_NO_SPACE;
+            }
+
             currentInFile = file;
             currentInFile.isValid = false;
             currentInFile.lastValid = 0;
             currentInFile.id = fileId;
+            currentInFile.owner = id;
             currentInFileValid = true;
         }
 
@@ -169,7 +183,12 @@ bool User::addFileChunk(const string& chunk) {
         return false;
     }
 
-    if(currentInFile.size > currentInFile.lastValid + chunk.size()) {
+    uint64_t freeSpace;
+    if(!user_manager.getFreeSpace(id, freeSpace) || freeSpace < chunk.size()) {
+        return false;
+    }
+
+    if(currentInFile.size < currentInFile.lastValid + chunk.size()) {
         return false;
     }
 
@@ -182,12 +201,11 @@ bool User::addFileChunk(const string& chunk) {
     }
 
     return user_manager.validateFile(currentInFile);
-    //TODO dodac usuwanie jak nie pyknie
 }
 
 bool User::isAdmin() {
     if(valid && authorized) {
-        uint8_t role;
+        uint64_t role;
         if(user_manager.getUserRole(id, role) && role == USER_ADMIN) {
             return true;
         }
@@ -281,9 +299,7 @@ bool User::initSharedFileDownload(const string& filename, const string& ownerUse
 
     UFile file;
 
-    if(!user_manager.runAsUser(ownerUsername, [&file, &realFilename, this](oid& id) -> bool
-        {return user_manager.getYourFileMetadata(id, realFilename, file, FILE_REGULAR);})
-    ) {
+    if(!user_manager.getYourFileMetadata(ownerId, realFilename, file, FILE_REGULAR)) {
         return false;
     }
 
@@ -339,9 +355,71 @@ bool User::listUserShared(const string& username, vector<UFile>& list) {
     return user_manager.runAsUser(username, [&list, this](oid& id) -> bool {return user_manager.listSharedWithUser(id, list);});
 }
 
+bool User::clearCache() {
+    return user_manager.removeAllUnfinishedForUser(id);
+}
+
+bool User::changeUserTotalStorage(const string& username, uint64_t newVal) {
+    oid userId;
+    if(!user_manager.getUserId(username, userId)) {
+        return false;
+    }
+
+    uint64_t freeSpace, totalSpace;
+
+    if(!user_manager.getFreeSpace(userId, freeSpace) || user_manager.getTotalSpace(userId, totalSpace)) {
+        return false;
+    }
+
+    if(totalSpace - freeSpace > newVal) {
+        return false;
+    }
+
+    return user_manager.setTotalSpace(userId, newVal);
+}
+
+bool User::shareInfo(const string& filename, vector<string>& res) {
+    oid fileId;
+    if(!user_manager.getFileId(id, filename, fileId)) {
+        return false;
+    }
+    return user_manager.shareInfo(fileId, res);
+}
+
+bool User::shareInfoUser(const string& username, const string& filename, vector<string>& res) {
+    oid fileId;
+    if(!user_manager.runAsUser(username , [&filename, &fileId, this](oid& id) -> bool {return user_manager.getFileId(id, filename, fileId);})) {
+        return false;
+    }
+
+    return user_manager.shareInfo(fileId, res);
+}
+
+bool User::getWarnings(vector<string>& list) {
+    return user_manager.getWarningList(id, list);
+}
+
+bool User::warnUser(const string& username, const string& body) {
+    return user_manager.runAsUser(username , [&body, this](oid& id) -> bool {return user_manager.addWarning(id, body);});
+}
+
 ///---------------------UserManager---------------------
 
 UserManager::UserManager(Database& db_t, Logger& logger_t): db(db_t), logger(logger_t) {}
+
+std::thread UserManager::startGarbageCollector(std::condition_variable& g_cond, bool& should_exit) {
+    return std::thread(&UserManager::garbageCollectorMain, this, std::ref(g_cond), std::ref(should_exit));
+}
+
+void UserManager::garbageCollectorMain(std::condition_variable& g_cond, bool& should_exit) {
+    std::mutex g_mutex;
+    while (!should_exit) {
+        logger.log("UserManager", "running garbage collector");
+        collectOldUnfinished();
+        std::unique_lock<std::mutex> lock(g_mutex);
+        g_cond.wait_for(lock, std::chrono::minutes(5));
+    }
+}
 
 bool UserManager::getName(oid& id, string& res) {
     return db.getField("users", "name", id, res);
@@ -359,7 +437,7 @@ bool UserManager::setName(oid& id, string& res) {
     return db.setField("users", "name", id, res);
 }
 
-bool UserManager::getUserRole(oid& id, uint8_t& role) {
+bool UserManager::getUserRole(oid& id, uint64_t& role) {
     return db.getField("users", "role", id, (int64_t&)role);
 }
 
@@ -423,23 +501,6 @@ bool UserManager::removeSid(oid& id, string &sid) {
     return db.removeFieldFromArray("users", "sids", id, make_document(kvp("sid", Database::stringToBinary(sid))));
 }
 
-//string UserManager::mapToString(map<string, bsoncxx::document::element>& in) {
-//    string wyn;
-//    for(auto &flds: in) {
-//        if(flds.second.type() == bsoncxx::type::k_utf8) {
-//            wyn += flds.first + ": " + bsoncxx::string::to_string(flds.second.get_utf8().value) + " ";
-//        } else if(flds.second.type() == bsoncxx::type::k_int64) {
-//            wyn += flds.first + ": " + std::to_string(flds.second.get_int64().value) + " ";
-//        } else {
-//            wyn += flds.first + ": unknown type ";
-//        }
-//    }
-//
-//    wyn.pop_back();
-//
-//    return wyn;
-//}
-
 bool UserManager::parseUserDetails(map<string, bsoncxx::types::value>& usr, UDetails& tmp_u) {
     try {
         tmp_u.username = bsoncxx::string::to_string(usr.find("username")->second.get_utf8().value);
@@ -449,7 +510,6 @@ bool UserManager::parseUserDetails(map<string, bsoncxx::types::value>& usr, UDet
         tmp_u.totalSpace = (uint64_t) usr.find("totalSpace")->second.get_int64().value;
         uint64_t freeSpace = (uint64_t) usr.find("freeSpace")->second.get_int64().value;
         tmp_u.usedSpace = tmp_u.totalSpace - freeSpace;
-        logger.log("Freespace", std::to_string(usr.find("totalSpace")->second.get_int64().value));
     } catch (const std::exception& ex) {
         logger.err(l_id, "error while parsing user details: " + string(ex.what()));
         return false;
@@ -457,6 +517,7 @@ bool UserManager::parseUserDetails(map<string, bsoncxx::types::value>& usr, UDet
         logger.err(l_id, "error while parsing user details: unknown error");
         return false;
     }
+    return true;
 }
 
 bool UserManager::getUserDetails(oid id, UDetails& userDetails) {
@@ -515,7 +576,7 @@ bool UserManager::registerUser(UDetails& user, const string& password, bool& use
         return false;
     }
 
-    setPasswd(tmp_id, password);
+    return setPasswd(tmp_id, password);
 }
 
 bool UserManager::listAllUsers(std::vector<UDetails>& res) {
@@ -527,8 +588,6 @@ bool UserManager::listAllUsers(std::vector<UDetails>& res) {
     }
 
     for(auto &usr: mmap) {
-//        id: usr.first.to_string()
-//        res.emplace_back(mapToString(usr.second));
         UDetails tmp_u;
         if(parseUserDetails(usr.second, tmp_u)) {
             res.emplace_back(tmp_u);
@@ -541,7 +600,6 @@ bool UserManager::listAllUsers(std::vector<UDetails>& res) {
 }
 
 bool UserManager::listFilesinPath(oid& id, const string& path, vector<UFile>& files) {
-//    return false;
     map<string, map<string, bsoncxx::types::value> > mmap;
     vector<string> fields;
     fields.emplace_back("filename");
@@ -550,11 +608,7 @@ bool UserManager::listFilesinPath(oid& id, const string& path, vector<UFile>& fi
     fields.emplace_back("ownerName");
     fields.emplace_back("type");
     fields.emplace_back("hash");
-//    fields.emplace_back("isValid");
-
-//    map<string, bsoncxx::types::value> queryValues;
-//    queryValues.emplace("owner", id);
-//    queryValues.emplace("filename", bsoncxx::types::b_regex(R"(\/dir\/nice\/[^\/]+)"));
+    fields.emplace_back("isShared");
 
     string parsedPath = path;
 
@@ -568,6 +622,10 @@ bool UserManager::listFilesinPath(oid& id, const string& path, vector<UFile>& fi
     stages.lookup(make_document(kvp("from", "users"), kvp("localField", "owner"), kvp("foreignField", "_id"), kvp("as", "ownerTMP")));
     stages.unwind("$ownerTMP");
     stages.add_fields(make_document(kvp("ownerName", make_document(kvp("$concat", make_array("$ownerTMP.name", " ", "$ownerTMP.surname"))))));
+    stages.add_fields(make_document(kvp("isShared", make_document(kvp("$and", make_array(
+            make_document(kvp("$eq", make_array(make_document(kvp("$type", "$sharedWith")), "array"))),
+            make_document(kvp("$gt", make_array(make_document(kvp("$size", "$sharedWith")), 0)))
+    ))))));
     stages.project(make_document(kvp("ownerTMP", 0), kvp("_id", 0)));
 
     if(!db.getFieldsAdvanced("files", stages, fields, mmap)) {
@@ -576,8 +634,6 @@ bool UserManager::listFilesinPath(oid& id, const string& path, vector<UFile>& fi
 
     try {
         for(std::pair<string, map<string, bsoncxx::types::value> > usr: mmap) {
-    //        id: usr.first.to_string()
-    //        res.emplace_back(mapToString(usr.second));
 
             UFile tmp;
             tmp.filename = usr.first;
@@ -586,6 +642,7 @@ bool UserManager::listFilesinPath(oid& id, const string& path, vector<UFile>& fi
             tmp.owner_name = bsoncxx::string::to_string(usr.second.find("ownerName")->second.get_utf8().value);
             tmp.type = (uint8_t) usr.second.find("type")->second.get_int64().value;
             tmp.hash = string((const char*) usr.second.find("hash")->second.get_binary().bytes, usr.second.find("hash")->second.get_binary().size);
+            tmp.isShared = usr.second.find("isShared")->second.get_bool();
 
             files.emplace_back(tmp);
         }
@@ -637,8 +694,6 @@ bsoncxx::types::b_binary UserManager::toBinary(string& str) {
 bool UserManager::addNewFile(oid& id, UFile& file, string& dir, oid& newId) {
     auto doc = bsoncxx::builder::basic::document{};
 
-    //TODO increase file count in parent dir
-
     if(file.type == FILE_REGULAR) {
         doc.append(kvp("filename", toUTF8(file.filename)));
         doc.append(kvp("size", toINT64(file.size)));
@@ -661,7 +716,6 @@ bool UserManager::addNewFile(oid& id, UFile& file, string& dir, oid& newId) {
         fs.open(fullPath, std::ios::out);
 
         if(!fs.is_open()) {
-            //TODO log it;
             return false;
         }
 
@@ -741,6 +795,7 @@ bool UserManager::getYourFileMetadata(oid& id, const string& filename, UFile& fi
     fields.emplace_back("type");
     fields.emplace_back("hash");
     fields.emplace_back("isValid");
+    fields.emplace_back("isShared");
     fields.emplace_back("_id");
     if(type == FILE_REGULAR) {
         fields.emplace_back("lastValid");
@@ -753,6 +808,10 @@ bool UserManager::getYourFileMetadata(oid& id, const string& filename, UFile& fi
     stages.unwind("$ownerTMP");
     stages.add_fields(make_document(kvp("ownerName", make_document(kvp("$concat", make_array("$ownerTMP.name", " ", "$ownerTMP.surname")))),
                                     kvp("ownerUsername", "$ownerTMP.username")));
+    stages.add_fields(make_document(kvp("isShared", make_document(kvp("$and", make_array(
+            make_document(kvp("$eq", make_array(make_document(kvp("$type", "$sharedWith")), "array"))),
+            make_document(kvp("$gt", make_array(make_document(kvp("$size", "$sharedWith")), 0)))
+    ))))));
     stages.project(make_document(kvp("ownerTMP", 0)));
 
     if(!db.getFieldsAdvanced("files", stages, fields, mmap)) {
@@ -760,7 +819,6 @@ bool UserManager::getYourFileMetadata(oid& id, const string& filename, UFile& fi
     }
     
     if(mmap.size() != 1) {
-        //TODO log
         return false;
     }
 
@@ -775,6 +833,8 @@ bool UserManager::getYourFileMetadata(oid& id, const string& filename, UFile& fi
         file.hash = string((const char*) tmp_file.second.find("hash")->second.get_binary().bytes, tmp_file.second.find("hash")->second.get_binary().size);
         file.isValid = tmp_file.second.find("isValid")->second.get_bool();
         file.id = tmp_file.second.find("_id")->second.get_oid().value;
+        file.isShared = tmp_file.second.find("isShared")->second.get_bool();
+        file.owner = id;
         if(type == FILE_REGULAR) {
             file.lastValid = (uint64_t) tmp_file.second.find("lastValid")->second.get_int64();
         }
@@ -818,7 +878,11 @@ bool UserManager::addFileChunk(UFile& file, const string& chunk) {
 
     file.lastValid += chunk.size();
 
-    return db.incField("files", file.id, "lastValid", chunk.size());
+    if(db.incField("files", file.id, "lastValid", chunk.size())) {
+        return updateLastChunkTime(file) && changeFreeSpace(file.owner, -chunk.size());
+    }
+
+    return false;
 }
 
 bool UserManager::validateFile(UFile& file) {
@@ -830,6 +894,7 @@ bool UserManager::validateFile(UFile& file) {
 
     std::ifstream is (file.realPath, std::ios::binary | std::ios::in);
     if(!is.is_open()) {
+        deleteFile(file.owner, file.filename);
         return false;
     }
 
@@ -838,6 +903,7 @@ bool UserManager::validateFile(UFile& file) {
     is.seekg (0, is.beg);
 
     if(length != file.size) {
+        deleteFile(file.owner, file.filename);
         return false;
     }
 
@@ -852,6 +918,7 @@ bool UserManager::validateFile(UFile& file) {
     delete buffer;
 
     if(!is.eof()) {
+        deleteFile(file.owner, file.filename);
         return false;
     }
 
@@ -861,11 +928,13 @@ bool UserManager::validateFile(UFile& file) {
 
     for(int i=0; i<FILE_HASH_SIZE; i++) {
         if((uint8_t) file.hash[i] != hash[i]) {
+            deleteFile(file.owner, file.filename);
             return false;
         }
     }
 
     if(!db.setField("files", "isValid", file.id, true)) {
+        deleteFile(file.owner, file.filename);
         return false;
     }
 
@@ -914,7 +983,10 @@ bool UserManager::deleteUser(const string& username) {
 
     db.removeByOid("files", "owner", id);
     db.removeByOid("users", "_id", id);
-    db.removeFieldFromArrays("files", "sharedWith", "sharedWith.userId", make_document(kvp("userId", id)));
+
+    bsoncxx::types::b_oid id_obj;
+    id_obj.value = id;
+    db.removeFieldFromArrays("files", "sharedWith", "userId", bsoncxx::types::value{id_obj});
 
     return true;
 }
@@ -937,6 +1009,8 @@ bool UserManager::deleteFile(oid& id, const string& path) {
 
     db.removeByOid("files", "_id", details.id);
 
+    changeFreeSpace(id, details.lastValid);
+
     return true;
 }
 
@@ -954,7 +1028,7 @@ bool UserManager::deletePath(oid& id, const string& path) {
     mongocxx::pipeline stages;
 
     stages.match(make_document(kvp("owner", id), kvp("type", FILE_REGULAR), kvp("filename", bsoncxx::types::b_regex("^"+parsedPath))));
-    stages.group(make_document(kvp("_id", bsoncxx::types::b_null{}), kvp("totalSize", make_document(kvp("$sum", "$size")))));
+    stages.group(make_document(kvp("_id", bsoncxx::types::b_null{}), kvp("totalSize", make_document(kvp("$sum", "$lastValid")))));
     stages.project(make_document(kvp("_id", 0)));
 
     uint64_t totalSize = 0;
@@ -978,14 +1052,13 @@ bool UserManager::deletePath(oid& id, const string& path) {
 
     db.deleteDocs("files", make_document(kvp("owner", id), kvp("filename", bsoncxx::types::b_regex("^"+parsedPath+"($|(/.+))"))));
 
-
     string dir = parsedPath.substr(0, parsedPath.rfind('/'));
 
     if(!dir.empty()) {
         db.incField("files", "size", "owner", id, "filename", dir, -1);
     }
 
-    // TODO update quota
+    changeFreeSpace(id, totalSize);
 
     return true;
 }
@@ -1068,6 +1141,7 @@ bool UserManager::listSharedWithUser(oid& id, vector<UFile>& list) {
             tmp.owner_username = bsoncxx::string::to_string(usr.second.find("ownerUsername")->second.get_utf8().value);
             tmp.type = (uint8_t) usr.second.find("type")->second.get_int64().value;
             tmp.hash = string((const char*) usr.second.find("hash")->second.get_binary().bytes, usr.second.find("hash")->second.get_binary().size);
+            tmp.isShared = true;
 
             list.emplace_back(tmp);
         }
@@ -1085,6 +1159,114 @@ bool UserManager::listSharedWithUser(oid& id, vector<UFile>& list) {
 bool UserManager::getFileFilename(oid& fileId, string& res) {
     return db.getField("files", "filename", fileId, res);
 }
+
+bool UserManager::updateLastChunkTime(UFile& file) {
+    return db.setFieldCurrentDate("files", "lastChunkTime", file.id, file.lastChunkTime);
+}
+
+bool UserManager::removeAllUnfinishedForUser(oid& id) {
+    vector<string> filesToDel;
+
+    if(!db.getFieldM("files", "filename", make_document(
+            kvp("isValid", false),
+            kvp("type", FILE_REGULAR),
+            kvp("owner", id)
+    ), filesToDel)){
+        return false;
+    }
+
+    logger.log(l_id, "deleting " + std::to_string(filesToDel.size()) + " unfinished files for user");
+
+    for(auto& file: filesToDel) {
+        if(!deleteFile(id, file)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool UserManager::collectOldUnfinished() {
+    std::chrono::system_clock::time_point curr = std::chrono::system_clock::now();
+    std::chrono::system_clock::time_point thresholdTime
+            = std::chrono::system_clock::time_point(curr - std::chrono::minutes(GARBAGE_COLLECTOR_TRESHOLD_MINUTES));
+
+    map<string, map<string, bsoncxx::types::value> > mmap;
+
+    if(!db.getFields("files", make_document(
+            kvp("isValid", false),
+            kvp("type", FILE_REGULAR),
+            kvp("lastChunkTime", make_document(kvp("$lt", bsoncxx::types::b_date(thresholdTime))))
+    ), vector<string>{"filename", "owner"}, mmap)){
+        return false;
+    }
+
+    logger.info(l_id, "deleting " + std::to_string(mmap.size()) + " old unfinished files");
+
+    for(auto& file: mmap) {
+        oid id = file.second.find("owner")->second.get_oid().value;
+        if(!deleteFile(id, file.first)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool UserManager::getTotalSpace(oid& id, uint64_t& res) {
+    return db.getField("users", "totalSpace", id, (int64_t&) res);
+}
+
+bool UserManager::getFreeSpace(oid& id, uint64_t& res) {
+    return db.getField("users", "freeSpace", id, (int64_t&) res);
+}
+
+bool UserManager::setTotalSpace(oid& id, uint64_t& newVal) {
+    return db.setField("users", "totalSpace", id, (int64_t&) newVal);
+}
+
+bool UserManager::changeFreeSpace(oid& id, int64_t diff) {
+    return db.incField("users", id, "freeSpace", diff);
+}
+
+
+bool UserManager::shareInfo(oid& fileId, vector<string>& res) {
+    mongocxx::pipeline stages;
+
+    stages.match(make_document(kvp("_id", fileId)));
+    stages.lookup(make_document(kvp("from", "users"), kvp("localField", "sharedWith.userId"), kvp("foreignField", "_id"), kvp("as", "sharedTMP")));
+    stages.project(make_document(kvp("sharedWith", make_document(kvp("$map", make_document(
+            kvp("input", "$sharedTMP"),
+            kvp("as", "users"),
+            kvp("in", "$$users.username")
+    )))), kvp("_id", 0)));
+    stages.unwind("$sharedWith");
+
+    return db.getFieldMAdvanced("files", "sharedWith", stages, res);
+}
+
+bool UserManager::getWarningList(oid& id, vector<string>& list) {
+    mongocxx::pipeline stages;
+
+    stages.match(make_document(kvp("_id", id)));
+    stages.project(make_document(kvp("warning", make_document(kvp("$map", make_document(
+            kvp("input", "$warnings"),
+            kvp("as", "warn"),
+            kvp("in", "$$warn.body")
+    )))), kvp("_id", 0)));
+    stages.unwind("$warning");
+
+    if(db.getFieldMAdvanced("users", "warning", stages, list)) {
+        return db.setField("users", "warnings", id, bsoncxx::types::value{bsoncxx::types::b_array{}});
+    }
+
+    return false;
+}
+
+bool UserManager::addWarning(oid& id, const string& body) {
+    return db.pushValToArr("users", "warnings", id, make_document(kvp("body", body)));
+}
+
 /**
 
 db.getCollection('users').update(

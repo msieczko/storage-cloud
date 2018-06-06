@@ -26,11 +26,9 @@ Database::Database(Logger* l) {
 }
 
 Database::~Database() {
-    logger->info(l_id, "closing database connection 0");
+    logger->info(l_id, "closing database connection");
     delete client;
-    logger->info(l_id, "closing database connection 1");
     delete inst;
-    logger->info(l_id, "closing database connection 2");
 }
 
 bool Database::getField(string& colName, string& fieldName, bsoncxx::oid id, bsoncxx::document::element& el) {
@@ -145,6 +143,81 @@ bool Database::getField(string&& colName, string&& fieldToGetName, string&& idFi
         return false;
     } catch (...) {
         logger->err(l_id, "error while getting field (2): unknown error");
+        return false;
+    }
+}
+
+bool Database::getFieldM(string&& colName, string&& fieldName, bsoncxx::document::value&& fDoc, std::vector<string>& res) {
+    auto doc = bsoncxx::builder::basic::document{};
+    doc.append(kvp("_id", 0));
+    doc.append(kvp(fieldName, 1));
+
+    mongocxx::options::find opts{};
+    opts.projection(doc.view());
+
+    try {
+        auto cursor = db[colName].find(fDoc.view(), opts);
+
+        bool notEmpty = false;
+
+        for (auto doc_v: cursor) {
+            notEmpty = true;
+
+            auto obj = doc_v.begin();
+
+            if (distance(obj, doc_v.end()) != 1) {
+                logger->log(l_id, "getFieldM got too much fields");
+                return false;
+            }
+
+            res.emplace_back(bsoncxx::string::to_string(obj->get_utf8().value));
+        }
+
+        if(!notEmpty) {
+            logger->log(l_id, "getFieldM got empty result");
+        }
+
+        return true;
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while getting field multiple times: " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while getting field multiple times: unknown error");
+        return false;
+    }
+}
+
+bool Database::getFieldMAdvanced(string&& colName, string&& fieldName, mongocxx::pipeline& stages, std::vector<string>& res) {
+    stages.project(make_document(kvp("_id", 0), kvp(fieldName, 1)));
+
+    try {
+        auto cursor = db[colName].aggregate(stages);
+
+        bool notEmpty = false;
+
+        for (auto doc_v: cursor) {
+            notEmpty = true;
+
+            auto obj = doc_v.begin();
+
+            if (distance(obj, doc_v.end()) != 1) {
+                logger->log(l_id, "getFieldMAdvanced got too much fields");
+                return false;
+            }
+
+            res.emplace_back(bsoncxx::string::to_string(obj->get_utf8().value));
+        }
+
+        if(!notEmpty) {
+            logger->log(l_id, "getFieldMAdvanced got empty result");
+        }
+
+        return true;
+    } catch (const std::exception& ex) {
+        logger->err(l_id, "error while getting field multiple times advanced: " + string(ex.what()));
+        return false;
+    } catch (...) {
+        logger->err(l_id, "error while getting field multiple times advanced: unknown error");
         return false;
     }
 }
@@ -272,6 +345,8 @@ bool Database::getFields(string&& colName, bsoncxx::oid id, map<string, bsoncxx:
             return false;
         }
 
+        elements.clear();
+
         for(auto val: (*doc_i)) {
             string key = bsoncxx::string::to_string(val.key());
             if (key != "_id") {
@@ -346,7 +421,7 @@ bool Database::getFields(string&& colName, vector<string>& fields, map<bsoncxx::
     }
 }
 
-bool Database::getFields(string&& colName, bsoncxx::document::value&& doc, vector<string>& fields, map<string, map<string, bsoncxx::types::value> >& elements) {
+bool Database::getFields(string&& colName, bsoncxx::document::value&& doc, const vector<string>& fields, map<string, map<string, bsoncxx::types::value> >& elements) {
     auto odoc = bsoncxx::builder::basic::document{};
 
     for(const auto &name: fields) {
@@ -383,9 +458,7 @@ bool Database::getFields(string&& colName, bsoncxx::document::value&& doc, vecto
 
             for (auto val: doc_v) {
                 string key = bsoncxx::string::to_string(val.key());
-//                if (key != "_id") {
-                    elements[id].emplace(key, val.get_value());
-//                }
+                elements[id].emplace(key, val.get_value());
             }
         }
 
@@ -401,7 +474,6 @@ bool Database::getFields(string&& colName, bsoncxx::document::value&& doc, vecto
         logger->err(l_id, "error while getting fields (3): unknown error");
         return false;
     }
-//    return false;
 }
 
 bool Database::getFieldsAdvanced(string&& colName, mongocxx::pipeline& stages, vector<string>& fields, map<string, map<string, bsoncxx::types::value> >& elements) {
@@ -441,9 +513,7 @@ bool Database::getFieldsAdvanced(string&& colName, mongocxx::pipeline& stages, v
 
             for (bsoncxx::v_noabi::document::element val: doc_v) {
                 string key = bsoncxx::string::to_string(val.key());
-//                if (key != "_id") {
                 elements[id].emplace(key, val.get_value());
-//                }
             }
         }
 
@@ -451,7 +521,7 @@ bool Database::getFieldsAdvanced(string&& colName, mongocxx::pipeline& stages, v
             logger->log(l_id, "getFieldsAdvanced got empty result");
         }
 
-        return notEmpty;
+        return true;
     } catch (const std::exception& ex) {
         logger->err(l_id, "error while getting fields (4): " + string(ex.what()));
         return false;
@@ -459,7 +529,6 @@ bool Database::getFieldsAdvanced(string&& colName, mongocxx::pipeline& stages, v
         logger->err(l_id, "error while getting fields (4): unknown error");
         return false;
     }
-//    return false;
 }
 
 bool Database::setField(string& colName, string& fieldName, bsoncxx::oid id, bsoncxx::types::value& val) {
@@ -500,6 +569,16 @@ bool Database::setField(string&& colName, string&& fieldName, bsoncxx::oid id, i
     bsoncxx::types::b_int64 tmp{};
     tmp.value = newVal;
     return setField(colName, fieldName, id, bsoncxx::types::value{tmp});
+}
+
+bool Database::setFieldCurrentDate(string&& colName, string&& fieldName, bsoncxx::oid id, std::chrono::system_clock::time_point& returnVal) {
+    bsoncxx::types::b_date tmp{std::chrono::system_clock::now()};
+    if(setField(colName, fieldName, id, bsoncxx::types::value{tmp})) {
+        returnVal = tmp;
+        return true;
+    }
+
+    return false;
 }
 
 bool Database::setField(string&& colName, string&& fieldName, bsoncxx::oid id, bool newVal) {
@@ -597,10 +676,11 @@ bool Database::removeFieldFromArray(string&& colName, string&& arrayName, bsoncx
     return true;
 }
 
-bool Database::removeFieldFromArrays(string&& colName, string&& arrayName, string&& fullName, bsoncxx::document::value&& val) {
+bool Database::removeFieldFromArrays(string&& colName, string&& arrayName, string&& fieldName, bsoncxx::types::value&& val) {
+    string fullName = arrayName + "." + fieldName;
     try {
         db[colName].update_many(make_document(kvp(fullName, val)),
-                               make_document(kvp("$pull", make_document(kvp(arrayName, val)))));
+                               make_document(kvp("$pull", make_document(kvp(arrayName, make_document(kvp(fieldName, val)))))));
     } catch (const std::exception& ex) {
         logger->err(l_id, "error while removing field from arrays: " + string(ex.what()));
         return false;
