@@ -1,0 +1,58 @@
+{
+  "COMMONS": {
+    "BUTTON_LABELS": {
+      "ASSIGN_TO_ME": "Przypisz do mnie"
+    },
+    "FILTER": "Filtry"
+  },
+  "MENU": {
+    "FILES": "Pliki",
+    "USERS": "Użytkownicy",
+    "BUTTONS": {
+      "LOGOUT": "Wyloguj"
+    }
+  },
+  "FILES": {
+    "FILE_ROW": {
+      "FILENAME": "Nazwa pliku",
+      "SIZE": "Rozmiar",
+      "CREATION_DATE": "Data utworzenia",
+      "ACTIONS": "Akcje"
+    },
+    "FILTER": {
+      "FILENAME": "Nazwa pliku"
+    },
+    "DELETE_BUTTON": {
+      "SINGULAR": "Usuń plik",
+      "PLURAL": "Usuń pliki"
+    },
+    "DELETE": "Usuń",
+    "MESSAGE": {
+      "CHOOSE_USER_FIRST": "Proszę najpierw wybrać użytkownika.",
+      "EMPTY_DIRECTORY": "Pusty katalog."
+    }
+  },
+  "USERS": {
+    "TITLE": "Użytkownicy",
+    "ADD_BUTTON": "Dodaj użytkownika",
+    "LIST_HEADER": {
+      "USERNAME": "Nazwa użytkownika",
+      "FULL_NAME": "Imię i nazwisko",
+      "USED_SPACE": "Wykorzystana przestrzeń",
+      "CAPACITY": "Przydzielona przestrzeń"
+    },
+    "FILTER": {
+      "USERNAME": "Nazwa użytkownika",
+      "FULL_NAME": "Imie i nazwisko"
+    },
+    "NEW_USER_MODAL": {
+      "TITLE": "Nowy użytkownik",
+      "USERNAME": "Nazwa użytkownika",
+      "FIRST_NAME": "Imię",
+      "LAST_NAME": "Nazwisko",
+      "PASSWORD": "Hasło",
+      "ADD_BUTTON": "Dodaj",
+      "ALL_FIELDS_REQUIRED": "Wypełnij wszystkie pola"
+    }
+  }
+}
