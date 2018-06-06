@@ -1,0 +1,24 @@
+POST http://localhost:8080/api/login
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json;charset=UTF-8
+
+{"username":"mikee2509", "password":"pass"}
+
+###
+
+GET http://localhost:8080/api/login
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json;charset=UTF-8
+Cookie: JSESSIONID=33A38E9CEE8FB4147BEE3579608484BA
+
+###
+
+GET http://localhost:8080/api/logout
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json;charset=UTF-8
+Cookie: JSESSIONID=2AF2FE1A844F12119A8D387B60B5843F
+
+###

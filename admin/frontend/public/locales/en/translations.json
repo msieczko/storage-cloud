@@ -1,0 +1,64 @@
+{
+  "COMMONS": {
+    "BUTTON_LABELS": {
+      "ASSIGN_TO_ME": "Assign to me"
+    },
+    "FILTER": "Filters"
+  },
+  "MENU": {
+    "FILES": "Files",
+    "USERS": "Users",
+    "BUTTONS": {
+      "LOGOUT": "Logout"
+    }
+  },
+  "FILES": {
+    "FILE_ROW": {
+      "FILENAME": "Filename",
+      "SIZE": "Size",
+      "CREATION_DATE": "Creation time",
+      "ACTIONS": "Actions"
+    },
+    "FILTER": {
+      "FILENAME": "Filename"
+    },
+    "DELETE_BUTTON": {
+      "SINGULAR": "Delete file",
+      "PLURAL": "Delete files"
+    },
+    "DELETE": "Delete",
+    "MESSAGE": {
+      "CHOOSE_USER_FIRST": "Please choose user first.",
+      "EMPTY_DIRECTORY": "Empty directory."
+    }
+  },
+  "USERS": {
+    "TITLE": "Users",
+    "ADD_BUTTON": "Add user",
+    "LIST_HEADER": {
+      "USERNAME": "Username",
+      "FULL_NAME": "Full Name",
+      "USED_SPACE": "Used space",
+      "CAPACITY": "Capacity"
+    },
+    "FILTER": {
+      "USERNAME": "Username",
+      "FULL_NAME": "Full Name"
+    },
+    "NEW_USER_MODAL": {
+      "TITLE": "New user",
+      "USERNAME": "Username",
+      "FIRST_NAME": "First Name",
+      "LAST_NAME": "Last Name",
+      "PASSWORD": "Password",
+      "ADD_BUTTON": "Add",
+      "ALL_FIELDS_REQUIRED": "All fields are required"
+    }
+  },
+  "SIGN_IN": {
+    "WELCOME_MSG": "Admin Panel",
+    "USERNAME_HINT": "Username",
+    "PASSWORD_HINT": "Password",
+    "SUBMIT_BUTTON": "Sign In"
+  }
+}
