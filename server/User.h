@@ -137,9 +137,6 @@ private:
     bsoncxx::types::b_bool toBool(bool);
     bsoncxx::types::b_binary toBinary(string&);
 
-
-
-//    string mapToString(std::map<string, bsoncxx::document::element>&);
 public:
     bool getName(oid&, string&);
     bool getSurname(oid&, string&);

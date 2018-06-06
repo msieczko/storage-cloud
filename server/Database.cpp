@@ -458,9 +458,7 @@ bool Database::getFields(string&& colName, bsoncxx::document::value&& doc, const
 
             for (auto val: doc_v) {
                 string key = bsoncxx::string::to_string(val.key());
-//                if (key != "_id") {
-                    elements[id].emplace(key, val.get_value());
-//                }
+                elements[id].emplace(key, val.get_value());
             }
         }
 
@@ -476,7 +474,6 @@ bool Database::getFields(string&& colName, bsoncxx::document::value&& doc, const
         logger->err(l_id, "error while getting fields (3): unknown error");
         return false;
     }
-//    return false;
 }
 
 bool Database::getFieldsAdvanced(string&& colName, mongocxx::pipeline& stages, vector<string>& fields, map<string, map<string, bsoncxx::types::value> >& elements) {
@@ -516,9 +513,7 @@ bool Database::getFieldsAdvanced(string&& colName, mongocxx::pipeline& stages, v
 
             for (bsoncxx::v_noabi::document::element val: doc_v) {
                 string key = bsoncxx::string::to_string(val.key());
-//                if (key != "_id") {
                 elements[id].emplace(key, val.get_value());
-//                }
             }
         }
 
@@ -534,7 +529,6 @@ bool Database::getFieldsAdvanced(string&& colName, mongocxx::pipeline& stages, v
         logger->err(l_id, "error while getting fields (4): unknown error");
         return false;
     }
-//    return false;
 }
 
 bool Database::setField(string& colName, string& fieldName, bsoncxx::oid id, bsoncxx::types::value& val) {

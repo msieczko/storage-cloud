@@ -38,6 +38,8 @@ bool User::addUsername(const string &username) {
         authorized = false;
         valid = true;
     }
+
+    return true;
 }
 
 bool User::getName(string& name) {
@@ -186,7 +188,7 @@ bool User::addFileChunk(const string& chunk) {
         return false;
     }
 
-    if(currentInFile.size > currentInFile.lastValid + chunk.size()) {
+    if(currentInFile.size < currentInFile.lastValid + chunk.size()) {
         return false;
     }
 
@@ -499,23 +501,6 @@ bool UserManager::removeSid(oid& id, string &sid) {
     return db.removeFieldFromArray("users", "sids", id, make_document(kvp("sid", Database::stringToBinary(sid))));
 }
 
-//string UserManager::mapToString(map<string, bsoncxx::document::element>& in) {
-//    string wyn;
-//    for(auto &flds: in) {
-//        if(flds.second.type() == bsoncxx::type::k_utf8) {
-//            wyn += flds.first + ": " + bsoncxx::string::to_string(flds.second.get_utf8().value) + " ";
-//        } else if(flds.second.type() == bsoncxx::type::k_int64) {
-//            wyn += flds.first + ": " + std::to_string(flds.second.get_int64().value) + " ";
-//        } else {
-//            wyn += flds.first + ": unknown type ";
-//        }
-//    }
-//
-//    wyn.pop_back();
-//
-//    return wyn;
-//}
-
 bool UserManager::parseUserDetails(map<string, bsoncxx::types::value>& usr, UDetails& tmp_u) {
     try {
         tmp_u.username = bsoncxx::string::to_string(usr.find("username")->second.get_utf8().value);
@@ -525,7 +510,6 @@ bool UserManager::parseUserDetails(map<string, bsoncxx::types::value>& usr, UDet
         tmp_u.totalSpace = (uint64_t) usr.find("totalSpace")->second.get_int64().value;
         uint64_t freeSpace = (uint64_t) usr.find("freeSpace")->second.get_int64().value;
         tmp_u.usedSpace = tmp_u.totalSpace - freeSpace;
-        logger.log("Freespace", std::to_string(usr.find("totalSpace")->second.get_int64().value));
     } catch (const std::exception& ex) {
         logger.err(l_id, "error while parsing user details: " + string(ex.what()));
         return false;
@@ -533,6 +517,7 @@ bool UserManager::parseUserDetails(map<string, bsoncxx::types::value>& usr, UDet
         logger.err(l_id, "error while parsing user details: unknown error");
         return false;
     }
+    return true;
 }
 
 bool UserManager::getUserDetails(oid id, UDetails& userDetails) {
@@ -603,8 +588,6 @@ bool UserManager::listAllUsers(std::vector<UDetails>& res) {
     }
 
     for(auto &usr: mmap) {
-//        id: usr.first.to_string()
-//        res.emplace_back(mapToString(usr.second));
         UDetails tmp_u;
         if(parseUserDetails(usr.second, tmp_u)) {
             res.emplace_back(tmp_u);
@@ -617,7 +600,6 @@ bool UserManager::listAllUsers(std::vector<UDetails>& res) {
 }
 
 bool UserManager::listFilesinPath(oid& id, const string& path, vector<UFile>& files) {
-//    return false;
     map<string, map<string, bsoncxx::types::value> > mmap;
     vector<string> fields;
     fields.emplace_back("filename");
@@ -627,10 +609,6 @@ bool UserManager::listFilesinPath(oid& id, const string& path, vector<UFile>& fi
     fields.emplace_back("type");
     fields.emplace_back("hash");
     fields.emplace_back("isShared");
-
-//    map<string, bsoncxx::types::value> queryValues;
-//    queryValues.emplace("owner", id);
-//    queryValues.emplace("filename", bsoncxx::types::b_regex(R"(\/dir\/nice\/[^\/]+)"));
 
     string parsedPath = path;
 
@@ -656,8 +634,6 @@ bool UserManager::listFilesinPath(oid& id, const string& path, vector<UFile>& fi
 
     try {
         for(std::pair<string, map<string, bsoncxx::types::value> > usr: mmap) {
-    //        id: usr.first.to_string()
-    //        res.emplace_back(mapToString(usr.second));
 
             UFile tmp;
             tmp.filename = usr.first;
@@ -718,8 +694,6 @@ bsoncxx::types::b_binary UserManager::toBinary(string& str) {
 bool UserManager::addNewFile(oid& id, UFile& file, string& dir, oid& newId) {
     auto doc = bsoncxx::builder::basic::document{};
 
-    //TODO increase file count in parent dir
-
     if(file.type == FILE_REGULAR) {
         doc.append(kvp("filename", toUTF8(file.filename)));
         doc.append(kvp("size", toINT64(file.size)));
@@ -742,7 +716,6 @@ bool UserManager::addNewFile(oid& id, UFile& file, string& dir, oid& newId) {
         fs.open(fullPath, std::ios::out);
 
         if(!fs.is_open()) {
-            //TODO log it;
             return false;
         }
 
@@ -846,7 +819,6 @@ bool UserManager::getYourFileMetadata(oid& id, const string& filename, UFile& fi
     }
     
     if(mmap.size() != 1) {
-        //TODO log
         return false;
     }
 

@@ -235,6 +235,7 @@ bool Client::processCommand(Command* cmd) {
                     tmp->set_paramid("starting_chunk");
                     tmp->set_iparamval(0);
                 } else if(wyn == ADD_FILE_CONTINUE_OK) {
+                    res.set_type(ResponseType::CAN_SEND);
                     UFile tmp_file = u.getCurrentInFileMetadata();
                     if(!u.isCurrentInFileValid()) {
                         resError(res, "Internal error occured (2)", "tried to add metadata, tried to continue, but internal error occured");

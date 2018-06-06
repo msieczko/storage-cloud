@@ -47,7 +47,7 @@ void process(int sock, connection* conn) {
 
     client.loop();
 
-//    "closed connection process "<<EncryptionAlgorithm_Name(conn->encryption)<<endl;
+    logger.info("PROCESS", "closed process, fd was " + to_string(sock));
 
     close(sock);
 
@@ -58,9 +58,12 @@ void server() {
     int sock;
     unsigned int length;
     struct sockaddr_in server;
-    int msgsock = -1;
 
     sock = socket(AF_INET, SOCK_STREAM, 0);
+    int optval = 1;
+    socklen_t optlen = sizeof(optval);
+    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, optlen);
+
     if (sock == -1) {
         logger.err("server", "error while opening stream socket", errno);
         should_exit = true;
@@ -87,11 +90,13 @@ void server() {
     }
     logger.info("server", "Socket port #" + to_string(ntohs(server.sin_port)));
 
-    listen(sock, 5);
+    listen(sock, 50);
 
     fd_set set;
     struct timeval timeout;
     int rv;
+
+    logger.log("SERVER", "My fd is " + to_string(sock));
 
     do {
         FD_ZERO(&set); /* clear the set */
@@ -106,7 +111,9 @@ void server() {
             struct sockaddr_in clientaddr;
             unsigned int len = sizeof(clientaddr);
 
-            msgsock = accept(sock, (struct sockaddr *) &clientaddr, &len);
+            int msgsock = accept(sock, (struct sockaddr *) &clientaddr, &len);
+
+            logger.log("SERVER", "accepted " + to_string(sock) + " to " + to_string(msgsock));
 
             if (msgsock == -1)
                 logger.err("server", "error while accepting connection", errno);
@@ -127,7 +134,6 @@ void server() {
                 connections.push_back(new_connection);
 
                 new_connection->t = thread(process, msgsock, new_connection);
-//                    close(msgsock); //needed?
             }
         }
 
@@ -170,123 +176,6 @@ int main(int argc, char **argv) {
     std::condition_variable g_cond;
 
     auto garbageCollector = u_m.startGarbageCollector(g_cond, should_exit);
-
-//    vector<User> allUsers;
-//    db.listUsers(allUsers);
-
-//    map<string, bsoncxx::document::element> elM;
-//
-//    elM.emplace("username", bsoncxx::document::element{});
-//    elM.emplace("surname", bsoncxx::document::element{});
-//    elM.emplace("name", bsoncxx::document::element{});
-//
-//    db.getFields("users", allUsers[0].id, elM);
-
-//    for(const auto &val: elM) {
-//        cout<<val.first<<": "<<bsoncxx::string::to_string(val.second.get_utf8().value)<<endl;
-//    }
-
-//    map<bsoncxx::oid, map<string, bsoncxx::document::element> > mmap;
-//
-//    vector<string> fields;
-//    fields.emplace_back("username");
-//    fields.emplace_back("surname");
-//    fields.emplace_back("name");
-
-//    cout<<"XD:"<<endl;
-
-
-
-//    cout<<((db.getFields("users", fields, mmap)) ? "ok" : "not ok")<<endl;
-//
-//    for(auto &usr: mmap) {
-//        cout<<"id:"<<usr.first.to_string()<<endl;
-//        for(auto &flds: usr.second) {
-//            cout<<flds.first<<": "<<flds.second.get_utf8().value<<endl;
-//        }
-//    }
-
-//    cout<<":XD"<<endl;
-//
-//    map<string, bsoncxx::types::value> elMi;
-//
-//    elMi.emplace("username", bsoncxx::types::value{bsoncxx::types::b_utf8{"miloszXD"}});
-//    elMi.emplace("name", bsoncxx::types::value{bsoncxx::types::b_utf8{"MiloszTest"}});
-//    elMi.emplace("surname", bsoncxx::types::value{bsoncxx::types::b_utf8{"SuRnAmE"}});
-//    elMi.emplace("password", bsoncxx::types::value{bsoncxx::types::b_utf8{"safepasswd"}});
-//
-//    bsoncxx::oid i_id;
-
-    //db.insertDoc("users", i_id, elMi);
-
-    //cout<<"inserted id: "<<i_id.to_string()<<endl;
-
-//    string tmpi = "WELP";
-
-//    db.setField("users", "testField", allUsers[0].id, tmpi);
-
-
-//    string u_name = "lukasz";
-//    User u(u_name, u_m);
-//
-//    vector<UFile> users;
-//    u.listShared(users);
-//
-//    for(auto& usr: users) {
-//        logger.info("main/users", usr.filename);
-//        logger.info("main/users", "|-> " + usr.owner_name);
-//        logger.info("main/users", "|-> " + usr.owner_username);
-//        logger.info("main/users", "|-> total space:" + to_string(usr.size) + "B");
-//    }
-
-//    u.deleteUserFile("miloszXD", "/test_dirXD/lol2");
-
-//    string passwd = "nicepasswd";
-//    string newSid;
-//    u.loginByPassword(passwd, newSid);
-//
-//    UFile f;
-//    f.filename = "/dir/dir23/file24.test";
-//    f.size = 254345;
-//    f.creation_date = time(0);
-//    f.type = FILE_REGULAR;
-//
-//    string s_tmp("/dir/dir23");
-//
-//    vector<UFile> fields;
-//
-//    u.listFilesinPath(s_tmp, fields);
-//
-//    for(auto&& file: fields) {
-//        logger.info("FILES", file.filename + " " + file.owner_name);
-//    }
-
-//    u.addFile(f);
-
-//    cout<<(u.getName(u_name) ? "got user name" : "error while getting user name")<<endl;
-//
-//    cout<<"received user name: "<<u_name<<" ("<<u_name.size()<<")"<<endl;
-//
-//    string passwd = "nicepasswd";
-
-//    u.setPassword(passwd);
-
-//    string newSid;
-
-//    cout<<(u.loginByPassword(passwd, newSid) ? "passwd ok" : "passwd wrong")<<" sid: "<<newSid<<endl;
-
-//    bool xd_ok;
-//    UDetails tmp_u;
-//    tmp_u.surname = "Nazwisko";
-//    tmp_u.name = "MiłoszTest";
-//    tmp_u.username = "miloszXD";
-//    tmp_u.role = USER_ADMIN;
-//    UserManager::getInstance().registerUser(tmp_u, passwd, xd_ok);
-
-    auto tmp_id = bsoncxx::oid{string("5b134cabe206a52f873c0d43")};
-
-//    UserManager::getInstance().deletePath(tmp_id, "/test_dirXD/lol3/lol");
-
 
     while(!should_exit) {
         c = getch();
@@ -340,20 +229,6 @@ int main(int argc, char **argv) {
     logger.info("main", "joining garbage collector");
     g_cond.notify_one();
     garbageCollector.join();
-//    db.~Database();
-//    log"server closed"<<endl;
     logger.info("main", "bye!");
     return 0;
 }
-
-/**
-
- filename
-hash
-size
-creationDate
-owner
-isComplete
-lastValid
-
- **/

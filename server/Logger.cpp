@@ -1,7 +1,3 @@
-//
-// Created by milosz on 19.05.18.
-//
-
 #include "Logger.h"
 
 using namespace std;

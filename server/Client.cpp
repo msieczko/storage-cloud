@@ -43,7 +43,6 @@ bool Client::getNBytes(const int n, uint8_t buf[], bool& exitReason) {
         nfds = epoll_wait(epfd, events, 1, 1000);
 
         if (nfds == -1) {
-//            perror("epoll_wait");
             break;
         }
 
@@ -86,7 +85,6 @@ bool Client::sendNBytes(const int n, uint8_t buf[]) {
         nfds = epoll_wait(epfd, events, 1, 1000);
 
         if (nfds == -1) {
-//            perror("epoll_wait");
             break;
         }
 
@@ -127,6 +125,9 @@ bool Client::processMessage(uint8_t buf[], int len) {
     if(msg_type == MessageType::COMMAND) {
         Command cmd;
         cmd.ParseFromArray(parsed_msg, parsed_len);
+        if(cmd.type() != CommandType::USR_DATA) {
+            logger->info(id, cmd.DebugString());
+        }
         processCommand(&cmd);
     } else if(msg_type == MessageType::HANDSHAKE) {
         Handshake handshake;
@@ -165,13 +166,6 @@ bool Client::parseMessage(uint8_t buf[], int len, MessageType* msg_type, uint8_t
         logger->warn(id, "wrong data length");
         return false;
     }
-
-//    cout<<"decrypted data: "<<flush;
-//
-//    for(int i=0; i<*parsed_len; i++) {
-//        cout<<(char) (*parsed_data)[i]<<flush;
-//    }
-//    cout<<endl;
 
     uint8_t* hash = nullptr;
     uint16_t hash_size;
