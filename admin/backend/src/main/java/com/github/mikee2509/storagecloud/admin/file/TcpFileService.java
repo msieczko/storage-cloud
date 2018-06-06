@@ -4,6 +4,7 @@ import com.github.mikee2509.storagecloud.admin.client.TcpClientService;
 import com.github.mikee2509.storagecloud.admin.client.TcpService;
 import com.github.mikee2509.storagecloud.admin.domain.Packet;
 import com.github.mikee2509.storagecloud.admin.domain.exception.FileServiceException;
+import com.github.mikee2509.storagecloud.admin.domain.exception.ParsingException;
 import com.github.mikee2509.storagecloud.proto.*;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -24,7 +25,33 @@ class TcpFileService extends TcpService implements FileService {
     }
 
     @Override
-    public List<File> listFiles(String username, String path) {
+    public String deleteUserFile(String username, String path) {
+        path = "/" + path;
+        Packet deleteFilePacket = Packet.builder()
+                .hashAlgorithm(hAlgorithm)
+                .encryptionAlgorithm(eAlgorithm)
+                .command()
+                .type(CommandType.DELETE_USER_FILE)
+                .addParam(USERNAME.toString()).ofValue(username)
+                .addParam(PATH.toString()).ofValue(path)
+                .build();
+
+        Packet response = sendPacket(deleteFilePacket);
+        ServerResponse serverResponse = parse(response, eAlgorithm);
+
+        if (serverResponse.getType() == ResponseType.ERROR) {
+            String msg = getMsgOrThrow(serverResponse, new FileServiceException("Error deleting file"));
+            throw new FileServiceException("Error deleting file: " + msg);
+        }
+        if (serverResponse.getType() == ResponseType.OK) {
+            return "OK";
+        } else {
+            throw new ParsingException("Server returned response of unknown type");
+        }
+    }
+
+    @Override
+    public List<File> listUserFiles(String username, String path) {
         path = "/" + path;
         Packet listFilesPacket = Packet.builder()
                 .hashAlgorithm(hAlgorithm)

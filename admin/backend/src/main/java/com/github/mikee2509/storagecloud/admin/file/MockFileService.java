@@ -74,15 +74,21 @@ class MockFileService implements FileService {
 
         //lorem ipsum
 
-        this.files = Arrays.asList(cat, cats, doge, dogs, husky, lorem, photos);
-        this.photos = Arrays.asList(cats, dogs);
-        this.dogs = Arrays.asList(doge, husky);
-        this.cats = Collections.singletonList(cat);
+        this.files = new ArrayList<>(Arrays.asList(cat, cats, doge, dogs, husky, lorem, photos));
+        this.photos = new ArrayList<>(Arrays.asList(cats, dogs));
+        this.dogs = new ArrayList<>(Arrays.asList(doge, husky));
+        this.cats = new ArrayList<>(Collections.singletonList(cat));
 
     }
 
     @Override
-    public List<File> listFiles(String username, String path) {
+    public String deleteUserFile(String username, String path) {
+        dogs.remove(0);
+        return "OK";
+    }
+
+    @Override
+    public List<File> listUserFiles(String username, String path) {
         if (path.isEmpty()) {
             return getFiles(username, path, files);
         }

@@ -30,4 +30,10 @@ class FileController {
         String path = extractPath(request);
         return fileFacade.getUserFilesFromPath(username, path);
     }
+
+    @GetMapping("/delete/{username}/**")
+    String deleteFile(@PathVariable @NotBlank String username, HttpServletRequest request) {
+        String path = extractPath(request);
+        return fileFacade.deleteFile(username, path);
+    }
 }

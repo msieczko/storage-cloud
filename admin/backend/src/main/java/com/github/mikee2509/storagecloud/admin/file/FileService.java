@@ -5,5 +5,6 @@ import com.github.mikee2509.storagecloud.proto.File;
 import java.util.List;
 
 interface FileService {
-    List<File> listFiles(String username, String path);
+    List<File> listUserFiles(String username, String path);
+    String deleteUserFile(String username, String path);
 }

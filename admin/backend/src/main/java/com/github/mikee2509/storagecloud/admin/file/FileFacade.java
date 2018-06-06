@@ -14,8 +14,13 @@ public class FileFacade {
 
     public List<FileDto> getUserFilesFromPath(String username, String path) {
         requireNonNull(username, path);
-        return fileService.listFiles(username, path).stream()
+        return fileService.listUserFiles(username, path).stream()
                 .map(FileDto::from)
                 .collect(Collectors.toList());
+    }
+
+    public String deleteFile(String username, String path) {
+        requireNonNull(username, path);
+        return fileService.deleteUserFile(username, path);
     }
 }
